@@ -20,10 +20,9 @@ set -e
 
 case "$1" in
   configure)
-    if [ -f /opt/kirby-tools/kirbySetup.sh ];then ln -sf /opt/kirby-tools/kirbySetup.sh /usr/local/bin/kirbySetup;fi
-    if [ -f /opt/kirby-tools/kirbyDownload.sh ];then ln -sf /opt/kirby-tools/kirbySetup.sh /usr/local/bin/kirbyDownload;fi
-    if [ -f /opt/kirby-tools/kirbyInstall.sh ];then ln -sf /opt/kirby-tools/kirbySetup.sh /usr/local/bin/kirbyInstall;fi
-    if [ -f /opt/kirby-tools/kirbyDeinstall.sh ];then ln -sf /opt/kirby-tools/kirbySetup.sh /usr/local/bin/kirbyDeinstall;fi
+    for script in kirbySetup kirbyDownload kirbyInstall kirbyDeinstall;do
+      if [ -f /opt/kirby-tools/$script.sh ];then ln -sf /opt/kirby-tools/$script.sh /usr/local/bin/$script;fi
+    done
   ;;
 
   abort-upgrade|abort-remove|abort-deconfigure)

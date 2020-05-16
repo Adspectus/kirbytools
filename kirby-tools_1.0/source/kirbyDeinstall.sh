@@ -29,19 +29,17 @@ usage() {
   echo "  -h: Show this help"
   echo "  -d: Show debug information"
   echo "  -l: will remove linked kirby dir from $KIRBYLIBDIR as well (not implemented)"
-#  echo "  -p: package to be installed (default: ${txtbld}$KIRBYDEFAULTPACKAGE${txtrst})"
   echo "  -w: virtual hostname(s) to be removed (wildcards ok)"
   echo ""
   exit 1
 }
 
 ## Get commandline options
-while getopts ":dhlp:w:" opt;do
+while getopts ":dhlw:" opt;do
   case "${opt}" in
     d)  DEBUG=1;;
     h)  usage;;
     l)  LINKKIRBY=1;;
-#    p)  package=$OPTARG;;
     w)  vhost=$OPTARG;;
     :)  errMsg "-$OPTARG requires an argument" && usage;;
     *)  errMsg "Invalid option $OPTARG" && usage;;
