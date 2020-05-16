@@ -1,5 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: kirby-vhost-tools
+Upstream-Name: kirby-tools
 
 Files: *
 Copyright: 2020 Uwe Gehring <uwe@imap.cc>
