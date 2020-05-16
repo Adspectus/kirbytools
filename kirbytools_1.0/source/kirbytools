@@ -1,7 +1,7 @@
 ## bash completion for kirby-tools
 ##
 ## Read default variables
-if [ -f /etc/default/kirbyrc ];then . /etc/default/kirbyrc; fi
+if [ -f /etc/kirbytools/kirbyrc ];then . /etc/kirbytools/kirbyrc; fi
 
 _kirbyDeinstall() {
   set -o noglob

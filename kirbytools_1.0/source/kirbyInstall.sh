@@ -3,17 +3,17 @@
 # kirbyInstall by Uwe Gehring <uwe@imap.cc>
 
 ## Read default variables
-if [ -f /usr/local/etc/kirbyrc ];then
-  . /usr/local/etc/kirbyrc
+if [ -f /etc/kirbytools/kirbyrc ];then
+  . /etc/kirbytools/kirbyrc
 else
-  echo "File /usr/local/etc/kirbyrc not found!" && exit 2
+  echo "File /etc/kirbytools/kirbyrc not found!" && exit 2
 fi
 
 ## Read default functions
-if [ -f /usr/local/etc/kirbyfunctions ];then
-  . /usr/local/etc/kirbyfunctions
+if [ -f /etc/kirbytools/kirbyfunctions ];then
+  . /etc/kirbytools/kirbyfunctions
 else
-  echo "File /usr/local/etc/kirbyfunctions not found!" && exit 2
+  echo "File /etc/kirbytools/kirbyfunctions not found!" && exit 2
 fi
 
 ## Initialize settings

@@ -21,7 +21,7 @@ set -e
 case "$1" in
   configure)
     for script in kirbySetup kirbyDownload kirbyInstall kirbyDeinstall;do
-      if [ -f /usr/local/share/kirbytools/$script.sh ];then ln -sf /usr/local/share/kirbytools/$script.sh /usr/local/bin/$script;fi
+      if [ -f /usr/share/kirbytools/$script.sh ];then ln -sf /usr/share/kirbytools/$script.sh /usr/bin/$script;fi
     done
   ;;
 

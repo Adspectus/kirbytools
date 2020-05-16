@@ -1,7 +1,7 @@
-/source/kirbyrc /usr/local/etc
-/source/kirbyfunctions /usr/local/etc
+/source/kirbyrc /etc/kirbytools
+/source/kirbyfunctions /etc/kirbytools
 /source/kirbytools /usr/share/bash-completion/completions
-/source/kirbySetup.sh /usr/local/share/kirbytools
-/source/kirbyDownload.sh /usr/local/share/kirbytools
-/source/kirbyInstall.sh /usr/local/share/kirbytools
-/source/kirbyDeinstall.sh /usr/local/share/kirbytools
+/source/kirbySetup.sh /usr/share/kirbytools
+/source/kirbyDownload.sh /usr/share/kirbytools
+/source/kirbyInstall.sh /usr/share/kirbytools
+/source/kirbyDeinstall.sh /usr/share/kirbytools
