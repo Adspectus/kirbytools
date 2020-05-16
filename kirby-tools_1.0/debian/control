@@ -9,5 +9,5 @@ Package: kirby-tools
 Architecture: all
 Depends: cat, cp, curl, head, jq, ln, ls, mkdir, mv, php, rm, sudo, tr, vhostmanage, wget, ${misc:Depends}
 Description: Tools to create & manage kirby websites with apache2
- Tools to create & manage kirby websites with apache2
+ Various tools to create & manage kirby websites with apache2
 
