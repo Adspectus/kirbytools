@@ -1,5 +1,5 @@
 #!/bin/sh
-# preinst script for kirby-vhost-tools
+# preinst script for kirby-tools
 #
 # see: dh_installdeb(1)
 
@@ -15,17 +15,17 @@ set -e
 
 
 case "$1" in
-    install|upgrade)
-	if [ -f /etc/kirbyrc ];then rm /etc/kirbyrc;fi
-    ;;
+  install|upgrade)
+    if [ -f /etc/kirbyrc ];then rm /etc/kirbyrc;fi
+  ;;
 
-    abort-upgrade)
-    ;;
+  abort-upgrade)
+  ;;
 
-    *)
-        echo "preinst called with unknown argument \`$1'" >&2
-        exit 1
-    ;;
+  *)
+    echo "preinst called with unknown argument \`$1'" >&2
+    exit 1
+  ;;
 esac
 
 # dh_installdeb will replace this with shell code automatically
@@ -34,4 +34,3 @@ esac
 #DEBHELPER#
 
 exit 0
-

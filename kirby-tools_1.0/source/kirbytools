@@ -1,0 +1,13 @@
+## bash completion for kirby-tools
+##
+## Read default variables
+if [ -f /etc/default/kirbyrc ];then . /etc/default/kirbyrc; fi
+
+_kirbyDeinstall() {
+  set -o noglob
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $( cd $KIRBYVHOSTROOT && compgen -d -- "$cur" ) )
+}
+complete -F _kirbyDeinstall kirbyDeinstall
+
+## code: language=bash

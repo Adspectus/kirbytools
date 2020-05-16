@@ -7,7 +7,7 @@ Standards-Version: 4.1.2
 
 Package: kirby-tools
 Architecture: all
-Depends: cat, cp, curl, head, jq, ln, ls, mkdir, mv, php, rm, sudo, tr, wget, ${misc:Depends}
+Depends: cat, cp, curl, head, jq, ln, ls, mkdir, mv, php, rm, sudo, tr, vhostManage, wget, ${misc:Depends}
 Description: Tools to create & manage kirby websites with apache2
  Tools to create & manage kirby websites with apache2
 
