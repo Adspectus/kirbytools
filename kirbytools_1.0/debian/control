@@ -1,11 +1,11 @@
-Source: kirby-tools
+Source: kirbytools
 Section: misc
 Priority: optional
 Maintainer: Uwe Gehring <uwe@imap.cc>
 Build-Depends: debhelper (>= 10)
 Standards-Version: 4.1.2
 
-Package: kirby-tools
+Package: kirbytools
 Architecture: all
 Depends: cat, cp, curl, head, jq, ln, ls, mkdir, mv, php, rm, sudo, tr, vhostmanage, wget, ${misc:Depends}
 Description: Tools to create & manage kirby websites with apache2

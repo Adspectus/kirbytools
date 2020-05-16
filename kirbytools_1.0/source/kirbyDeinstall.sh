@@ -3,17 +3,17 @@
 # kirbyDeinstall by Uwe Gehring <uwe@imap.cc>
 
 ## Read default variables
-if [ -f /etc/default/kirbyrc ];then
-  . /etc/default/kirbyrc
+if [ -f /usr/local/etc/kirbyrc ];then
+  . /usr/local/etc/kirbyrc
 else
-  echo "File /etc/default/kirbyrc not found!" && exit 2
+  echo "File /usr/local/etc/kirbyrc not found!" && exit 2
 fi
 
 ## Read default functions
-if [ -f /etc/default/kirby_functions ];then
-  . /etc/default/kirby_functions
+if [ -f /usr/local/etc/kirbyfunctions ];then
+  . /usr/local/etc/kirbyfunctions
 else
-  echo "File /etc/default/kirby_functions not found!" && exit 2
+  echo "File /usr/local/etc/kirbyfunctions not found!" && exit 2
 fi
 
 ## Initialize settings

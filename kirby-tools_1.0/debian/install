@@ -1,7 +1,0 @@
-/source/kirbyrc /etc/default
-/source/kirby_functions /etc/default
-/source/kirbytools /usr/share/bash-completion/completions
-/source/kirbySetup.sh /opt/kirby-tools
-/source/kirbyDownload.sh /opt/kirby-tools
-/source/kirbyInstall.sh /opt/kirby-tools
-/source/kirbyDeinstall.sh /opt/kirby-tools

@@ -16,6 +16,7 @@ set -e
 
 case "$1" in
   install|upgrade)
+    if [ -f /etc/default/kirbyrc ];then rm /etc/default/kirbyrc;fi
   ;;
 
   abort-upgrade)

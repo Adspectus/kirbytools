@@ -1,4 +1,4 @@
-## File: /etc/default/kirbyrc
+## File: /usr/local/etc/kirbyrc
 ## Variables for kirby* shell scripts by Uwe Gehring <uwe@imap.cc>
 ##
 ## Do not change this file! Put your changes in $HOME/.kirbyrc

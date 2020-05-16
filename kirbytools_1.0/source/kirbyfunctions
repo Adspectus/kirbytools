@@ -1,15 +1,15 @@
-## File: /etc/default/kirby_functions
+## File: /usr/local/etc/kirbyfunctions
 ## Functions for kirby* shell scripts by Uwe Gehring <uwe@imap.cc>
 ##
-## Do not change this file! Put your changes in $HOME/.kirby_functions
+## Do not change this file! Put your changes in $HOME/.kirbyfunctions
 ##
-## Functions can be overridden by settings in $HOME/.kirby_functions which will be
+## Functions can be overridden by settings in $HOME/.kirbyfunctions which will be
 ## loaded after this file if it exists.
 
 ## Initialisation of various settings
 function initKirbySetup {
   # Check if needed programs are installed
-  for prg in KirbyDownload KirbyInstall VHostEnable cat cp curl head jq ln ls mkdir mv php rm sed sudo tar tr wget;do
+  for prg in kirbyDownload kirbyInstall cat cp curl head jq ln ls mkdir mv php rm sed sudo tar tr wget;do
     [[ ! $(which $prg) ]] && errMsg "Program '$prg' not installed" && exit 2
   done
 
