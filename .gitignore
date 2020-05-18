@@ -2,5 +2,5 @@
 */debian/.debhelper/
 */debian/debhelper-build-stamp
 */debian/files
-*/debian/kirby-tools.substvars
-*/debian/kirby-tools/
+*/debian/kirbytools.substvars
+*/debian/kirbytools/

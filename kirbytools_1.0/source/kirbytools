@@ -3,11 +3,11 @@
 ## Read default variables
 if [ -f /etc/kirbytools/kirbyrc ];then . /etc/kirbytools/kirbyrc; fi
 
-_kirbyDeinstall() {
+_kirbydeinstall() {
   set -o noglob
   local cur=${COMP_WORDS[COMP_CWORD]}
   COMPREPLY=( $( cd $KIRBYVHOSTROOT && compgen -d -- "$cur" ) )
 }
-complete -F _kirbyDeinstall kirbyDeinstall
+complete -F _kirbydeinstall kirbydeinstall
 
 ## code: language=bash

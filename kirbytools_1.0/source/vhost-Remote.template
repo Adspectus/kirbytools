@@ -1,0 +1,22 @@
+<VirtualHost localhost:80>
+  ServerName <VHOST>.home.uwe-gehring.de
+
+  Define VIRTUAL_ROOT /srv/www/vhosts/<VHOST>
+
+  CustomLog ${VIRTUAL_ROOT}/logs/access.log combined
+  ErrorLog ${VIRTUAL_ROOT}/logs/error.log
+
+  DocumentRoot "${VIRTUAL_ROOT}/htdocs"
+
+  <Directory "${VIRTUAL_ROOT}/htdocs">
+    AllowOverride All
+  </Directory>
+
+#  <Location "/">
+#    AuthName "Caboto"
+#    AuthType Basic
+#    AuthUserFile "/home/uwe/.apache2/htpasswd"
+#    Require valid-user
+#  </Location>
+
+</VirtualHost>

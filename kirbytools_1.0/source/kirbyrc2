@@ -1,0 +1,19 @@
+## File: /etc/kirbytools/kirbyrc
+## Dependent variables for kirby* shell scripts by Uwe Gehring <uwe@imap.cc>
+##
+## Do not change this file!
+
+# The directory where templates for configuration will be find
+KIRBYTEMPLATEDIR="$KIRBYAPACHECONFDIR/templates"
+# The directory where apache vhost configuration files will be placed
+KIRBYCONFAVAILABLEDIR="$KIRBYAPACHECONFDIR/sites-available"
+# The directory where apache vhost configuration files will be linked
+KIRBYCONFENABLEDDIR="$KIRBYAPACHECONFDIR/sites-enabled"
+# Directory to which the packages should be downloaded
+KIRBYDOWNLOADDIR="/usr/local/src/$KIRBYPREFIX"
+# Directory where only the /kirby folder will be placed for use in vhost-symlinks
+KIRBYLIBDIR="/usr/local/lib/$KIRBYPREFIX"
+# Temporary directory where files will be unpacked
+KIRBYTEMPDIR="/tmp/$KIRBYPREFIX"
+
+## code: language=bash

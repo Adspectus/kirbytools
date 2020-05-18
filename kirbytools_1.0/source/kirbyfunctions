@@ -6,34 +6,37 @@
 ## Functions can be overridden by settings in $HOME/.kirbyfunctions which will be
 ## loaded after this file if it exists.
 
-## Initialisation of various settings
+
+## Initialisation of all settings
 function initKirbySetup {
   # Check if needed programs are installed
-  for prg in kirbyDownload kirbyInstall cat cp curl head jq ln ls mkdir mv php rm sed sudo tar tr wget;do
-    [[ ! $(which $prg) ]] && errMsg "Program '$prg' not installed" && exit 2
+  for prg in kirbydownload kirbyinstall cat cp curl head jq ln ls mkdir mv php rm sed sudo tar tr wget;do
+    [[ ! $(which $prg) ]] && errMsg "Program '$prg' is not installed" && exit 1
   done
 
   # The directory with apache configuration must exist (and configured to be read by apache2)
-  [[ ! -d $KIRBYAPACHECONFDIR ]] && errMsg "KIRBYAPACHECONFDIR $KIRBYAPACHECONFDIR does not exist" && exit 2
+#  [[ ! -d $KIRBYAPACHECONFDIR ]] && errMsg "KIRBYAPACHECONFDIR $KIRBYAPACHECONFDIR does not exist" && exit 2
 
-  # The download and lib directory will be created if they do not exist (sudo necessary when using system directories)
-  sudo mkdir -p $KIRBYDOWNLOADDIR
-  mkdir -p $KIRBYLIBDIR
+  # The download and lib directory will be created if they do not exist (sudo necessary when using system directories, which is the default)
+  sudo mkdir -p $KIRBYDOWNLOADDIR $KIRBYLIBDIR
 
   # The temporary directory will be created if it does not exist
   mkdir -p $KIRBYTEMPDIR
 
-  ## TODO: Check if VHOSTROOT is owned by running user/group and is 775
+  ## TODO: Check if KIRBYVHOSTROOT is owned by running user/group and is 775
+  # The personal apache dirs will be created if they do not exist
+  mkdir -p $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYVHOSTROOT
 
   # Get existing tags (versions)
   getKirbyTags
 
   # The default package is the combination of default kit and current version of this kit
-  KIRBYDEFAULTPACKAGE="$KIRBYDEFAULTKIT-${_KIRBYTAGCURRENT[$KIRBYDEFAULTKIT]}"
+  KIRBYDEFAULTPACKAGE="$KIRBYKIT-${_KIRBYTAGCURRENT[$KIRBYKIT]}"
 
-  # The default virtual host directory is generated randomly (prefixed by "KIRBYPREFIX-")
+  # The default virtual host directory is generated randomly (and later prefixed by "KIRBYPREFIX-")
   KIRBYDEFAULTVHOST=$(getRandomVHost)
 }
+
 
 ## Sets the hash variables _KIRBYTAGCURRENT, _KIRBYTAGRECENT, and _KIRBYTAGSOTHERS
 ## The hash key for all these variables is either 'starterkit' or 'plainkit'
@@ -63,7 +66,7 @@ function getRandomVHost {
   while true;do
     RANDOMCODE=$(cat /dev/urandom | tr -cd 'a-z' | head -c 8)
     KIRBYVHOST="$KIRBYPREFIX-$RANDOMCODE"
-    [[ ! -d $KIRBYVHOSTDIRROOT/$KIRBYVHOST ]] && echo "$KIRBYVHOST" && break
+    [[ ! -d $KIRBYVHOSTROOT/$KIRBYVHOST ]] && echo "$KIRBYVHOST" && break
   done
 }
 
@@ -83,12 +86,12 @@ function getLogDir {
   echo $LOGDIR
 }
 
-## Ask which kit to install (default: KIRBYDEFAULTKIT)
+## Ask which kit to install (default: KIRBYKIT)
 function askKit {
   while true;do
-    read -n1 -p "${txtbld}Which kit to install? Choose (p)lainkit or (s)tarterkit [${txtrst}${txtblue}$KIRBYDEFAULTKIT${txtrst}${txtbld}] ${txtrst}"
+    read -n1 -p "${txtbld}Which kit to install? Choose (p)lainkit or (s)tarterkit [${txtrst}${txtblue}$KIRBYKIT${txtrst}${txtbld}] ${txtrst}"
     [[ -z $REPLY ]] || echo ""
-    SEL=${REPLY:-${KIRBYDEFAULTKIT:0:1}}
+    SEL=${REPLY:-${KIRBYKIT:0:1}}
     [[ "$SEL" == "p" || "$SEL" == "s" ]] && KIRBYSELECTEDKIT=${_KIRBYKITS[$SEL]} && break
     echo "${txtred}You need to specify either of \"(p)lainkit\" or \"(s)tarterkit\"!${txtrst}"
   done
@@ -97,9 +100,9 @@ function askKit {
 ## Ask which version to install (default: current version of selected kit)
 function askVersion {
   while true;do
-    read -n1 -p "${txtbld}Which Version to install? Choose (c)urrent or (o)ther [${txtrst}${txtblue}$KIRBYDEFAULTVERSION (${_KIRBYTAGCURRENT[$KIRBYSELECTEDKIT]})${txtrst}${txtbld}] ${txtrst}"
+    read -n1 -p "${txtbld}Which Version to install? Choose (c)urrent or (o)ther [${txtrst}${txtblue}$KIRBYVERSION (${_KIRBYTAGCURRENT[$KIRBYSELECTEDKIT]})${txtrst}${txtbld}] ${txtrst}"
     [[ -z $REPLY ]] || echo ""
-    SEL=${REPLY:-${KIRBYDEFAULTVERSION:0:1}}
+    SEL=${REPLY:-${KIRBYVERSION:0:1}}
     [[ "$SEL" == "c" ]] && KIRBYSELECTEDVERSION=${_KIRBYTAGCURRENT[$KIRBYSELECTEDKIT]} && break
     # If other than current version should be installed, ask for specific tag
     [[ "$SEL" == "o" ]] && askTag && break
@@ -128,7 +131,7 @@ function checkValidKirbyVersion {
   return 1
 }
 
-## Ask the name of virtual host (default: KIRBYDEFAULTVHOST which has been rendomly generated in initKirby)
+## Ask the name of virtual host (default: KIRBYDEFAULTVHOST which has been rendomly generated in initKirbySetup)
 function askVHost {
   while true;do
     read -p "${txtbld}Virtual Host Name? [${txtrst}${txtblue}$KIRBYDEFAULTVHOST${txtrst}${txtbld}] ${txtrst}"
@@ -220,5 +223,4 @@ function errMsg {
 ## Source user kirby_functions file if it exists
 [[ -f $HOME/.kirby_functions ]] && . $HOME/.kirby_functions
 
-exit 0
 ## code: language=bash

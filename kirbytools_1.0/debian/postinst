@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for kirby-tools
+# postinst script for kirbytools
 #
 # see: dh_installdeb(1)
 
@@ -20,7 +20,7 @@ set -e
 
 case "$1" in
   configure)
-    for script in kirbySetup kirbyDownload kirbyInstall kirbyDeinstall;do
+    for script in kirbyconfigure kirbysetup kirbydownload kirbyinstall kirbydeinstall;do
       if [ -f /usr/share/kirbytools/$script.sh ];then ln -sf /usr/share/kirbytools/$script.sh /usr/bin/$script;fi
     done
   ;;

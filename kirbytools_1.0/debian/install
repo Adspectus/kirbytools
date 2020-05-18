@@ -1,7 +1,13 @@
 /source/kirbyrc /etc/kirbytools
+/source/kirbyrc2 /etc/kirbytools
 /source/kirbyfunctions /etc/kirbytools
 /source/kirbytools /usr/share/bash-completion/completions
-/source/kirbySetup.sh /usr/share/kirbytools
-/source/kirbyDownload.sh /usr/share/kirbytools
-/source/kirbyInstall.sh /usr/share/kirbytools
-/source/kirbyDeinstall.sh /usr/share/kirbytools
+/source/kirbyconfigure.sh /usr/share/kirbytools
+/source/kirbysetup.sh /usr/share/kirbytools
+/source/kirbydownload.sh /usr/share/kirbytools
+/source/kirbyinstall.sh /usr/share/kirbytools
+/source/kirbydeinstall.sh /usr/share/kirbytools
+/source/vhost-Redirection.template /usr/share/kirbytools
+/source/vhost-Remote.template /usr/share/kirbytools
+/source/vhost-SSL.template /usr/share/kirbytools
+/source/createUser.php /usr/share/kirbytools

@@ -1,42 +1,54 @@
 ## File: /etc/kirbytools/kirbyrc
 ## Variables for kirby* shell scripts by Uwe Gehring <uwe@imap.cc>
 ##
-## Do not change this file! Put your changes in $HOME/.kirbyrc
+## Do not change this file! Put your changes in $HOME/.kirbyrc. If $HOME/.kirbyrc
+## does not exists, it will be created and you can change all *DEFAULT* variables
+## interactively or leave them at their default values. Anything else can be
+## overridden by defining it in $HOME/.kirbyrc which will be loaded after this
+## file if it exists.
+KIRBYTOOLSVERSION="1.1"
+
+## Default values for custom variables
 ##
-## Variables can be overridden by settings in $HOME/.kirbyrc which will be
-## loaded after this file if it exists.
-KIRBYTOOLSVERSION="1.0"
+## These variables are likely to be changed in $HOME/.kirbyrc or set by kirbyconfigure
+#
+declare -A _KIRBYDEFAULTVARTXT=(
+  ["KIRBYKIT"]="The default kit to be downloaded/installed"
+  ["KIRBYVERSION"]="The default version to be downloaded/installed"
+  ["KIRBYVHOSTROOT"]="The root directory of your personal virtual hosts"
+  ["KIRBYAPACHECONFDIR"]="The root directory of your personal apache2 configuration files"
+  ["KIRBYPREFIX"]="The prefix to be used for other directories and filenames"
+  ["KIRBYADMINUSERMAIL"]="The email addres of the default panel admin user"
+  ["KIRBYADMINUSERNAME"]="The name of the default panel admin user"
+  ["KIRBYADMINUSERLANG"]="The language of the default panel admin user"
+  ["KIRBYADMINUSERPASS"]="The password of the default panel admin user"
+  ["KIRBYCREATEUSERSCRIPT"]="The php script to be used for creating the default panel admin user"
+)
+
+declare -A _KIRBYDEFAULTVAR=(
+  ["KIRBYKIT"]="starterkit"
+  ["KIRBYVERSION"]="current"
+  ["KIRBYVHOSTROOT"]="$HOME/vhosts"
+  ["KIRBYAPACHECONFDIR"]="$HOME/apache2"
+  ["KIRBYPREFIX"]="kirby"
+  ["KIRBYADMINUSERMAIL"]=""
+  ["KIRBYADMINUSERNAME"]=""
+  ["KIRBYADMINUSERLANG"]="en"
+  ["KIRBYADMINUSERPASS"]=""
+  ["KIRBYCREATEUSERSCRIPT"]="/usr/share/kirbytools/createUser.php"
+)
 
 
-# The default kit to be downloaded/installed
-KIRBYDEFAULTKIT="starterkit"
-# The default version to be downloaded/installed (will be replaced by most recent version number)
-KIRBYDEFAULTVERSION="current"
-
-# Prefix to be used for other directories and filenames
-KIRBYPREFIX="kirby"
-# Directory to which the package should be downloaded
-KIRBYDOWNLOADDIR="/usr/local/src/$KIRBYPREFIX"
-# Directory where only the /kirby folder will be placed for use in vhost-symlinks
-KIRBYLIBDIR="/srv/www/$KIRBYPREFIX-lib"
-# Temporary directory where files will be unpacked
-KIRBYTEMPDIR="/tmp/$KIRBYPREFIX"
-
+## Other variables which will likely not be changed
+#
 # The Github URL where we can find kirby packages to download
 KIRBYGITURL="https://github.com/getkirby"
 # The Github API URL where we can find information about releases (tags)
 KIRBYGITAPIURL="https://api.github.com/repos/getkirby"
-
-# The root directory of all virtual hosts (should be owned by running user)
-KIRBYVHOSTROOT="/srv/www/vhosts"
 # The vhost subdirectory where the document root will be
 KIRBYHTDOCSDIR="htdocs"
 # The vhost subdirectory where logfiles can be placed (if not /var/log/apache2)
 KIRBYLOGDIR="logs"
-# The root directory of user specific apache2 configuration files (this directory must exist)
-KIRBYAPACHECONFDIR="$HOME/.apache2"
-# The directory where templates for configuration will be find
-KIRBYTEMPLATEDIR="$KIRBYAPACHECONFDIR/templates"
 
 # An array of configuration templates to be used (extension .template is appended)
 declare -a _KIRBYTEMPLATES=("vhost-Remote" "vhost-Redirection" "vhost-SSL")
@@ -44,7 +56,7 @@ declare -a _KIRBYTEMPLATES=("vhost-Remote" "vhost-Redirection" "vhost-SSL")
 declare -A _KIRBYKITS=( ["p"]="plainkit" ["s"]="starterkit" )
 # An associative array of versions and their abbreviation
 declare -A _KIRBYVERSIONS=( ["c"]="current" ["o"]="other" )
-# Associative arrays which will be filled with tag names by function getKirbyTags (see below)
+# Associative arrays which will be filled with tag names by function getKirbyTags (see file kirbyfunctions)
 declare -A _KIRBYTAGCURRENT
 declare -A _KIRBYTAGRECENT
 declare -A _KIRBYTAGSOTHERS
@@ -63,17 +75,4 @@ if [ ! -z $(which tput) ];then
   txtblue=${txtbld}$(tput -Txterm-256color setaf 4)
 fi
 
-## Source user kirbyrc file if it exists
-[[ -f $HOME/.kirbyrc ]] && . $HOME/.kirbyrc
-
-# Variables which will likely be changed in $HOME/.kirbyrc
-# These values are only examples:
-#
-#KIRBYADMINUSERMAIL="uwe@imap.cc"
-#KIRBYADMINUSERNAME="Uwe Gehring"
-#KIRBYADMINUSERLANG="de"
-#KIRBYADMINUSERPASS="secretpassword"
-#KIRBYCREATEUSERSCRIPT="$HOME/bin/createUser.php"
-
-exit 0
 ## code: language=bash

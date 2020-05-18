@@ -1,0 +1,20 @@
+<VirtualHost ${APACHE_IP}:443>
+  ServerName <VHOST>.home.uwe-gehring.de
+
+  Define VIRTUAL_ROOT /srv/www/vhosts/<VHOST>
+
+  CustomLog ${VIRTUAL_ROOT}/logs/access.log combined
+  ErrorLog ${VIRTUAL_ROOT}/logs/error.log
+
+  SSLEngine on
+  SSLCertificateFile /etc/LetsEncrypt/live/home.uwe-gehring.de/fullchain.pem
+  SSLCertificateKeyFile /etc/LetsEncrypt/live/home.uwe-gehring.de/privkey.pem
+  SSLCACertificatePath /etc/ssl/certs/
+
+  DocumentRoot "${VIRTUAL_ROOT}/htdocs"
+
+  <Directory "${VIRTUAL_ROOT}/htdocs">
+    SSLRequireSSL
+    AllowOverride All
+  </Directory>
+</VirtualHost>

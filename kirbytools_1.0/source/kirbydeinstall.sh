@@ -1,20 +1,16 @@
 #!/bin/bash
 #
-# kirbyDeinstall by Uwe Gehring <uwe@imap.cc>
+# kirbydeinstall by Uwe Gehring <uwe@imap.cc>
 
-## Read default variables
-if [ -f /etc/kirbytools/kirbyrc ];then
-  . /etc/kirbytools/kirbyrc
-else
-  echo "File /etc/kirbytools/kirbyrc not found!" && exit 2
-fi
+## Read settings and make sure all config files exist
+if ! kirbyconfigure;then exit 1;fi
 
-## Read default functions
-if [ -f /etc/kirbytools/kirbyfunctions ];then
-  . /etc/kirbytools/kirbyfunctions
-else
-  echo "File /etc/kirbytools/kirbyfunctions not found!" && exit 2
-fi
+## Source the configuration files
+. /etc/kirbytools/kirbyrc
+. $HOME/.kirbyrc
+. /etc/kirbytools/kirbyrc2
+. /etc/kirbytools/kirbyfunctions
+
 
 ## Initialize settings
 initKirbySetup

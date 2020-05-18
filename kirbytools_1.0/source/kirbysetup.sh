@@ -1,20 +1,15 @@
 #!/bin/bash
 #
-# kirbySetup by Uwe Gehring <uwe@imap.cc>
+# kirbysetup by Uwe Gehring <uwe@imap.cc>
 
-## Read default variables
-if [ -f /etc/kirbytools/kirbyrc ];then
-  . /etc/kirbytools/kirbyrc
-else
-  echo "File /etc/kirbytools/kirbyrc not found!" && exit 2
-fi
+## Read settings and make sure all config files exist
+if ! kirbyconfigure;then exit 1;fi
 
-## Read default functions
-if [ -f /etc/kirbytools/kirbyfunctions ];then
-  . /etc/kirbytools/kirbyfunctions
-else
-  echo "File /etc/kirbytools/kirbyfunctions not found!" && exit 2
-fi
+## Source the configuration files
+. /etc/kirbytools/kirbyrc
+. $HOME/.kirbyrc
+. /etc/kirbytools/kirbyrc2
+. /etc/kirbytools/kirbyfunctions
 
 ## Initialize settings
 initKirbySetup
@@ -70,17 +65,17 @@ SEL=${REPLY:-y}
 
 ## Download Kit if not already here
 echo -en "\nDownloading Kirby $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION... "
-KirbyDownload -k $KIRBYSELECTEDKIT -v $KIRBYSELECTEDVERSION -t $KIRBYDOWNLOADDIR > /dev/null 2>&1
+kirbydownload -k $KIRBYSELECTEDKIT -v $KIRBYSELECTEDVERSION -t $KIRBYDOWNLOADDIR > /dev/null 2>&1
 [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 
 ## Install Kit to Virtual Host Dir
 echo -n "Installing Kirby $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION... "
 if [ "$KIRBYSELECTEDKIRBYLINK" == "Yes" ];then
 ## and replacing the 'kirby' folder with a symbolic link
-  KirbyInstall -l -p $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION -w $KIRBYSELECTEDVHOST > /dev/null 2>&1
+  kirbyinstall -l -p $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION -w $KIRBYSELECTEDVHOST > /dev/null 2>&1
 else
 ## and NOT replacing the 'kirby' folder with a symbolic link
-  KirbyInstall -p $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION -w $KIRBYSELECTEDVHOST > /dev/null 2>&1
+  kirbyinstall -p $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION -w $KIRBYSELECTEDVHOST > /dev/null 2>&1
 fi
 [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 
@@ -138,7 +133,7 @@ if $(which vhostEnable);then
     SEL=${REPLY:-n}
     if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
       echo -n "Enabling Virtual Host $CONF ..."
-      vhostEnable $CONF > /dev/null
+      vhostenable $CONF > /dev/null
       CONFIGTEST=$(sudo apache2ctl configtest 2>&1 > /dev/null)
       ERR=$?
       if [ "$ERR" != "0" ];then
