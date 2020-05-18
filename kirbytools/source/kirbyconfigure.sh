@@ -21,7 +21,7 @@ KIRBYFUNC="/etc/kirbytools/kirbyfunctions"
 KIRBYUSERRC="$HOME/.kirbyrc"
 
 if [ ! -f $KIRBYUSERRC ];then
-# Read main configuration file
+# Read main configuration file to get the variables to configure
 . $KIRBYRC
   echo -e "\n${txtbld}First setup! Define your personal defaults which will be saved in $KIRBYUSERRC!${txtrst}\n"
 # Create KIRBYUSERRC
