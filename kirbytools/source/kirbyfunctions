@@ -14,18 +14,19 @@ function initKirbySetup {
     [[ ! $(which $prg) ]] && errMsg "Program '$prg' is not installed" && exit 1
   done
 
-  # The directory with apache configuration must exist (and configured to be read by apache2)
-#  [[ ! -d $KIRBYAPACHECONFDIR ]] && errMsg "KIRBYAPACHECONFDIR $KIRBYAPACHECONFDIR does not exist" && exit 2
-
   # The download and lib directory will be created if they do not exist (sudo necessary when using system directories, which is the default)
   sudo mkdir -p $KIRBYDOWNLOADDIR $KIRBYLIBDIR
 
   # The temporary directory will be created if it does not exist
   mkdir -p $KIRBYTEMPDIR
 
-  ## TODO: Check if KIRBYVHOSTROOT is owned by running user/group and is 775
   # The personal apache dirs will be created if they do not exist
   mkdir -p $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYVHOSTROOT
+
+  ## TODO: Check if KIRBYVHOSTROOT is owned by running user/group and is 775
+
+  # Copy the template files into KIRBYTEMPLATEDIR
+  for tpl in ${_KIRBYTEMPLATES[@]};do cp /usr/share/kirbytools/$tpl.template $KIRBYTEMPLATEDIR;done
 
   # Get existing tags (versions)
   getKirbyTags
