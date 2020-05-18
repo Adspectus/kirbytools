@@ -62,7 +62,7 @@ VERSION=$(echo $package | cut -d"-" -f2)
 
 ## Check first if package is already downloaded. If not, download package
 if [ ! -f $KIRBYDOWNLOADDIR/$package.tar.gz ];then
-  KirbyDownload -k $KIT -v $VERSION > /dev/null
+  kirbydownload -l -k $KIT -v $VERSION > /dev/null
   [[ $? -ne 0 ]] && errMsg "Could not download $package" && usage
 fi
 
@@ -72,8 +72,8 @@ cp -au $KIRBYTEMPDIR/$package/. $KIRBYVHOSTDIR
 
 if [ $LINKKIRBY ];then
   if [ ! -d $KIRBYLIBDIR/$VERSION ];then
-    mkdir -p $KIRBYLIBDIR/$VERSION
-    cp -au $KIRBYVHOSTDIR/kirby/. $KIRBYLIBDIR/$VERSION
+    sudo mkdir -p $KIRBYLIBDIR/$VERSION
+    sudo cp -au $KIRBYVHOSTDIR/kirby/. $KIRBYLIBDIR/$VERSION
   fi
   rm -rf $KIRBYVHOSTDIR/kirby && ln -fs $KIRBYLIBDIR/$VERSION $KIRBYVHOSTDIR/kirby
   sed -i.bak -e "s/Kirby)/Kirby\(\[ 'roots' => \[ 'index' => __DIR__ \] \]\)\)/" $KIRBYVHOSTDIR/index.php

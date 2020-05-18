@@ -82,8 +82,8 @@ fi
 ## Unpack kirby directory to KIRBYLIBDIR
 if [[ $LINKKIRBY && ! -d $KIRBYLIBDIR/$version ]];then
   tar -xzf $target/$kit-$version.tar.gz -C $KIRBYTEMPDIR
-  mkdir -p $KIRBYLIBDIR/$version
-  cp -au $KIRBYTEMPDIR/$kit-$version/kirby/. $KIRBYLIBDIR/$version
+  sudo mkdir -p $KIRBYLIBDIR/$version
+  sudo cp -au $KIRBYTEMPDIR/$kit-$version/kirby/. $KIRBYLIBDIR/$version
 fi
 
 ## If all went right, print message and exit with code 0
