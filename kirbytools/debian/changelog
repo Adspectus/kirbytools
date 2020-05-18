@@ -1,3 +1,11 @@
+kirbytools (1.1ubuntu3) bionic; urgency=medium
+
+  * 89e382e Added comments
+  * 16d9179 Fixed permissions when creating link (run as sudo)
+  * 77ea277 Copy templates to templatedir
+
+ -- Uwe Gehring <uwe@imap.cc>  Mon, 18 May 2020 15:49:39 +0200
+
 kirbytools (1.1) bionic; urgency=medium
 
   * Added templates and createuser.php to dist
