@@ -124,7 +124,7 @@ if [ "$KIRBYSELECTEDCOMBINECONF" == "Yes" ];then
   fi
 fi
 
-if $(which vhostEnable);then
+if $(which vhostenable);then
   for conf in $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST*.conf;do
     echo ""
     CONF=$(basename $conf .conf)
@@ -146,12 +146,10 @@ if $(which vhostEnable);then
     fi
   done
 else
-  echo ""
-  echo "To enable the virtual host, create a symbolic link in $KIRBYAPACHECONFDIR/sites-enabled/, i.e."
-  echo "  ln -s $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST.conf $KIRBYAPACHECONFDIR/sites-enabled/"
-  echo "and restart apache with i.e."
-  echo "  sudo apache2ctl graceful"
-  echo ""
+  echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYAPACHECONFDIR/sites-enabled/, i.e.\n"
+  echo -e "  ${txtblue}ln -s $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST.conf $KIRBYAPACHECONFDIR/sites-enabled/${txtrst}"
+  echo -e "and restart apache with i.e.\n"
+  echo -e "  ${txtblue}sudo apache2ctl graceful${txtrst}\n"
 fi
 
 exit 0
