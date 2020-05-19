@@ -17,7 +17,10 @@ set -e
 case "$1" in
   install|upgrade)
     if [ -f /etc/default/kirbyrc ];then rm /etc/default/kirbyrc;fi
-    for link in kirbyDeinstall kirbyDownload kirbyInstall kirbySetup;do if [ -L /usr/bin/$link ];then rm /usr/bin/$link;fi;done
+    for link in kirbyDeinstall kirbyDownload kirbyInstall kirbySetup;do
+      if [ -L /usr/bin/$link ];then rm /usr/bin/$link;fi
+      if [ -L $HOME/bin/$link ];then rm $HOME/bin/$link;fi
+    done
   ;;
 
   abort-upgrade)
