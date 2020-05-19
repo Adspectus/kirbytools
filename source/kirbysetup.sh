@@ -148,9 +148,9 @@ if $(which vhostenable);then
     fi
   done
 else
-  echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYCONFENABLEDDIR/, i.e.\n"
-  echo -e "  ${txtblue}ln -s $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf $KIRBYCONFENABLEDDIR/${txtrst}"
-  echo -e "and restart apache with i.e.\n"
+  echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYCONFENABLEDDIR/ with:\n"
+  echo -e "  ${txtblue}ln -s $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf $KIRBYCONFENABLEDDIR/${txtrst}\n"
+  echo -e "and restart apache with:\n"
   echo -e "  ${txtblue}sudo apache2ctl graceful${txtrst}\n"
 fi
 
