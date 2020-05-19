@@ -1,3 +1,10 @@
+kirbytools (1.2ubuntu5) UNRELEASED; urgency=medium
+
+  * b9a2e4e Fixed vhostenable section
+  * 8a75799 Added copyright for debian/* files
+
+ -- Uwe Gehring <uwe@imap.cc>  Mon, 18 May 2020 21:48:44 +0200
+
 kirbytools (1.1ubuntu3) bionic; urgency=medium
 
   * 89e382e Added comments
@@ -6,20 +13,7 @@ kirbytools (1.1ubuntu3) bionic; urgency=medium
 
  -- Uwe Gehring <uwe@imap.cc>  Mon, 18 May 2020 15:49:39 +0200
 
-kirbytools (1.1) bionic; urgency=medium
-
-  * Added templates and createuser.php to dist
-
- -- Uwe Gehring <uwe@imap.cc>  Mon, 18 May 2020 12:56:31 +0200
-
-kirbytools (1.0ubuntu2) bionic; urgency=low
-
-  * Added kirbyconfigure and rebuld whole structure
-  * KIRBYAPACHECONFDIR will be created if not exist
-
- -- Uwe Gehring <uwe@imap.cc>  Mon, 18 May 2020 12:54:58 +0200
-
-kirbytools (1.0) UNRELEASED; urgency=low
+kirbytools (1.0) UNRELEASED; urgency=medium
 
   * Initial Release.
 
