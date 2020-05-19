@@ -23,7 +23,7 @@ KIRBYUSERRC="$HOME/.kirbyrc"
 if [ ! -f $KIRBYUSERRC ];then
 # Read main configuration file to get the variables to configure
 . $KIRBYRC
-  echo -e "\n${txtbld}First setup! Define your personal defaults which will be saved in $KIRBYUSERRC!${txtrst}\n"
+  echo -e "\n${txtred}First setup! Define your personal defaults which will be saved in $KIRBYUSERRC!${txtrst}\n"
 # Create KIRBYUSERRC
   echo -e "## File: $KIRBYUSERRC\n## Variables for kirby* shell scripts by Uwe Gehring <uwe@imap.cc>\n##\n## Default values in brackets\n" > $KIRBYUSERRC
 # Ask all _KIRBYDEFAULTVAR* variables and write settings into KIRBYUSERRC
