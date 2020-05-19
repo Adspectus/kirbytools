@@ -80,7 +80,7 @@ fi
 [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 
 ## Create admin account if selected and if script exist
-if [ "$KIRBYSELECTEDCREATEACCOUNT" == "Yes" -a -e $KIRBYCREATEUSERSCRIPT ];then
+if [ "$KIRBYSELECTEDCREATEACCOUNT" == "Yes" -a -f $KIRBYCREATEUSERSCRIPT ];then
   echo -n "Creating default account... "
   php $KIRBYCREATEUSERSCRIPT "$KIRBYSELECTEDVHOSTDIR" "$KIRBYADMINUSERMAIL" "$KIRBYADMINUSERNAME" "$KIRBYADMINUSERLANG" "$KIRBYADMINUSERPASS"
   [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
@@ -88,10 +88,12 @@ fi
 
 ## Enable the panel if selected
 if [ "$KIRBYSELECTEDENABLEPANEL" == "Yes" ];then
-  echo -n "Enabling the panel... "
+  echo -n "Enabling the panel "
   if [ "$KIRBYSELECTEDKIT" == "starterkit" ];then
+    echo -n "by modifying site/config/config.php..."
     sed -i.bak -e "s/\[/\[ 'panel' => \[ 'install' => true \],/" $KIRBYSELECTEDVHOSTDIR/site/config/config.php
   else
+    echo -n "by creating site/config/config.php..."
     mkdir -p $KIRBYSELECTEDVHOSTDIR/site/config
     echo -e "<?php\n\nreturn [ 'panel' => [ 'install' => true ],'debug' => true ];\n" > $KIRBYSELECTEDVHOSTDIR/site/config/config.php
   fi
@@ -101,7 +103,7 @@ fi
 ## Copying templates as .conf files to sites-available dir in KIRBYAPACHECONFDIR
 for tpl in ${_KIRBYTEMPLATES[@]};do
   TMPL="$KIRBYTEMPLATEDIR/$tpl.template"
-  CONF="$KIRBYAPACHECONFDIR/sites-available/${tpl/vhost/$KIRBYSELECTEDVHOST}.conf"
+  CONF="$KIRBYCONFAVAILABLEDIR/${tpl/vhost/$KIRBYSELECTEDVHOST}.conf"
   echo -n "Creating $(basename $CONF)... "
 
   [[ -f $CONF ]] && mv $CONF $CONF.bak
@@ -114,18 +116,18 @@ for tpl in ${_KIRBYTEMPLATES[@]};do
 done
 
 if [ "$KIRBYSELECTEDCOMBINECONF" == "Yes" ];then
-  if [ -f $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST-Redirection.conf -a -f $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST-SSL.conf ];then 
+  if [ -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf -a -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf ];then 
     echo -n "Merging redirection and ssl vhost configuration files into 1 file... "
-    cat $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST-SSL.conf > $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST.conf
-    if [ -f $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST.conf ];then
-      rm $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST-SSL.conf
+    cat $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf > $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf
+    if [ -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf ];then
+      rm $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf
     fi
     [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
   fi
 fi
 
 if $(which vhostenable);then
-  for conf in $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST*.conf;do
+  for conf in $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST*.conf;do
     echo ""
     CONF=$(basename $conf .conf)
     read -n1 -p "${txtbld}Enable Virtual Host $CONF? [y|${txtrst}${txtblue}N${txtrst}${txtbld}] ${txtrst}"
@@ -146,8 +148,8 @@ if $(which vhostenable);then
     fi
   done
 else
-  echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYAPACHECONFDIR/sites-enabled/, i.e.\n"
-  echo -e "  ${txtblue}ln -s $KIRBYAPACHECONFDIR/sites-available/$KIRBYSELECTEDVHOST.conf $KIRBYAPACHECONFDIR/sites-enabled/${txtrst}"
+  echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYCONFENABLEDDIR/, i.e.\n"
+  echo -e "  ${txtblue}ln -s $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf $KIRBYCONFENABLEDDIR/${txtrst}"
   echo -e "and restart apache with i.e.\n"
   echo -e "  ${txtblue}sudo apache2ctl graceful${txtrst}\n"
 fi
