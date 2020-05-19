@@ -11,7 +11,6 @@ if ! kirbyconfigure;then exit 1;fi
 . /etc/kirbytools/kirbyrc2
 . /etc/kirbytools/kirbyfunctions
 
-
 ## Initialize settings
 initKirbySetup
 
@@ -20,13 +19,14 @@ usage() {
   echo ""
   echo "  Usage:"
   echo ""
-  echo "  $(basename $0) [-h] [-d] [-l] [-k <starterkit|plainkit>] [-v <current|versionnumber>] [-t <targetdir>]"
+  echo "  $(basename $0) [-h] [-d] [-l] [-f] [-k <starterkit|plainkit>] [-v <current|versionnumber>] [-t <targetdir>]"
   echo ""
   echo "  -h: Show this help"
   echo "  -d: Show debug information"
-  echo "  -l: Download and extract kirby dir to $KIRBYLIBDIR"
-  echo "  -k: kit to be installed (default: ${txtbld}$KIRBYDEFAULTKIT${txtrst})"
-  echo "  -v: version to be installed (default: ${txtbld}$KIRBYDEFAULTVERSION${txtrst})"
+  echo "  -l: Download and extract kirby program directory to $KIRBYLIBDIR/[versionnumber]"
+  echo "  -f: Force download even if package is already in $KIRBYDOWNLOADDIR"
+  echo "  -k: kit to be installed (default: ${txtbld}$KIRBYKIT${txtrst})"
+  echo "  -v: version to be installed (default: ${txtbld}$KIRBYVERSION${txtrst})"
   echo "  -t: directory to be downloaded into (default: ${txtbld}$KIRBYDOWNLOADDIR${txtrst})"
   echo ""
   echo "  Current versionnumber for starterkit: ${txtbld}${_KIRBYTAGCURRENT[starterkit]}${txtrst}"
@@ -36,11 +36,12 @@ usage() {
 }
 
 ## Get commandline options
-while getopts ":dhlk:t:v:" opt;do
+while getopts ":hdlfk:t:v:" opt;do
   case "${opt}" in
-    d)  DEBUG=1;;
     h)  usage;;
+    d)  DEBUG=1;;
     l)  LINKKIRBY=1;;
+    f)  FORCEDOWNLOAD=1;;
     k)  kit=$OPTARG;;
     t)  target=$OPTARG;;
     v)  version=$OPTARG;;
@@ -51,13 +52,13 @@ done
 shift $((OPTIND -1))
 
 ## Check if kit has valid value
-kit=${kit:-$KIRBYDEFAULTKIT}
+kit=${kit:-$KIRBYKIT}
 if [[ "$kit" != "starterkit" && "$kit" != "plainkit" ]];then
   errMsg "Invalid kit $kit" && usage
 fi
 
 ## Check if version has valid value
-version=${version:-$KIRBYDEFAULTVERSION}
+version=${version:-$KIRBYVERSION}
 if ! checkValidKirbyVersion $version $kit;then
   errMsg "Invalid version $version" && usage
 fi
@@ -67,27 +68,30 @@ fi
 
 ## Check if target has valid value
 target=${target:-$KIRBYDOWNLOADDIR}
+if [ ! -d $target ];then
+  errMsg "Target directory $target does not exist" && usage
+fi
 
 ## Print info in debug mode
 [[ $DEBUG ]] && showVars
 
 ## Check first if kit is already downloaded. If not, get kit and save it
 ## in target dir and rename from version.tar.gz to kit-version.tar.gz
-if [ ! -f $target/$kit-$version.tar.gz ];then
-  [[ -z $KIRBYGITURL ]] && errMsg "KIRBYGITURL is not defined!" && exit 3
+if [[ $FORCEDOWNLOAD || ! -f $target/$kit-$version.tar.gz ]];then
+  [[ -z $KIRBYGITURL ]] && errMsg "KIRBYGITURL is not defined!" && exit 1
   sudo wget -q $KIRBYGITURL/$kit/archive/$version.tar.gz -P $target
   sudo mv $target/$version.tar.gz $target/$kit-$version.tar.gz
+  echo -e "\n${txtgreen}Kirby $kit $version downloaded to $target/$kit-$version.tar.gz${txtrst}\n"
+else
+  echo -e "\n${txtgreen}Kirby $kit $version already in $target/$kit-$version.tar.gz${txtrst}\n"
 fi
 
-## Unpack kirby directory to KIRBYLIBDIR
+## Unpack kirby program directory to KIRBYLIBDIR
 if [[ $LINKKIRBY && ! -d $KIRBYLIBDIR/$version ]];then
-  tar -xzf $target/$kit-$version.tar.gz -C $KIRBYTEMPDIR
+  sudo tar -xzf $target/$kit-$version.tar.gz -C $KIRBYTEMPDIR
   sudo mkdir -p $KIRBYLIBDIR/$version
-  sudo cp -au $KIRBYTEMPDIR/$kit-$version/kirby/. $KIRBYLIBDIR/$version
+  sudo cp -dR --preserve=mode,timestamps $KIRBYTEMPDIR/$kit-$version/kirby/. $KIRBYLIBDIR/$version
 fi
-
-## If all went right, print message and exit with code 0
-echo -e "\n${txtgreen}Kirby $kit $version downloaded to $target/$kit-$version.tar.gz${txtrst}\n"
 
 exit 0
 ## code: language=bash

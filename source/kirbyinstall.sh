@@ -11,7 +11,6 @@ if ! kirbyconfigure;then exit 1;fi
 . /etc/kirbytools/kirbyrc2
 . /etc/kirbytools/kirbyfunctions
 
-
 ## Initialize settings
 initKirbySetup
 
@@ -20,11 +19,12 @@ usage() {
   echo ""
   echo "  Usage:"
   echo ""
-  echo "  $(basename $0) [-h] [-d] [-l] [-p <package>] [-w <vhost>]"
+  echo "  $(basename $0) [-h] [-d] [-l] [-f] [-p <package>] [-w <vhost>]"
   echo ""
   echo "  -h: Show this help"
   echo "  -d: Show debug information"
-  echo "  -l: will replace kirby dir with symbolic link to $KIRBYLIBDIR"
+  echo "  -l: will replace kirby program directory with symbolic link to $KIRBYLIBDIR/[versionnumber]"
+  echo "  -f: Force download even if package is already in $KIRBYDOWNLOADDIR"
   echo "  -p: package to be installed (default: ${txtbld}$KIRBYDEFAULTPACKAGE${txtrst})"
   echo "  -w: virtual hostname to be used (default: ${txtbld}$KIRBYDEFAULTVHOST${txtrst})"
   echo ""
@@ -32,11 +32,12 @@ usage() {
 }
 
 ## Get commandline options
-while getopts ":dhlp:w:" opt;do
+while getopts ":hdlfp:w:" opt;do
   case "${opt}" in
-    d)  DEBUG=1;;
     h)  usage;;
+    d)  DEBUG=1;;
     l)  LINKKIRBY=1;;
+    f)  FORCEDOWNLOAD=1;;
     p)  package=$OPTARG;;
     w)  vhost=$OPTARG;;
     :)  errMsg "-$OPTARG requires an argument" && usage;;
@@ -45,8 +46,15 @@ while getopts ":dhlp:w:" opt;do
 done
 shift $((OPTIND -1))
 
-## Check if package has a value
+## Check if package has a valid value and if yes, split into kit and version
 package=${package:-$KIRBYDEFAULTPACKAGE}
+EXPR='^(starterkit|plainkit)-([3-9].[0-9]+.[0-9]+)$'
+if [[ $package =~ $EXPR ]];then
+  kit=${BASH_REMATCH[1]}
+  ver=${BASH_REMATCH[2]}
+else
+  errMsg "" && Usage
+fi
 
 ## Check if vhost has a value and set KIRBYVHOSTDIR
 vhost=${vhost:-$KIRBYDEFAULTVHOST}
@@ -56,31 +64,26 @@ KIRBYVHOSTLOGDIR=$(getLogDir $vhost)
 ## Print info in debug mode
 [[ $DEBUG ]] && showVars
 
-## Split package into kit and version
-KIT=$(echo $package | cut -d"-" -f1)
-VERSION=$(echo $package | cut -d"-" -f2)
-
 ## Check first if package is already downloaded. If not, download package
-if [ ! -f $KIRBYDOWNLOADDIR/$package.tar.gz ];then
-  kirbydownload -l -k $KIT -v $VERSION > /dev/null
+if [[ $FORCEDOWNLOAD || ! -f $KIRBYDOWNLOADDIR/$package.tar.gz ]];then
+  kirbydownload -f -l -k $kit -v $ver > /dev/null
   [[ $? -ne 0 ]] && errMsg "Could not download $package" && usage
 fi
 
 mkdir -p $KIRBYVHOSTDIR $KIRBYVHOSTLOGDIR
-tar -xzf $KIRBYDOWNLOADDIR/$package.tar.gz -C $KIRBYTEMPDIR
-cp -au $KIRBYTEMPDIR/$package/. $KIRBYVHOSTDIR
+sudo tar -xzf $KIRBYDOWNLOADDIR/$package.tar.gz -C $KIRBYTEMPDIR
+cp -dR --preserve=mode,timestamps $KIRBYTEMPDIR/$package/. $KIRBYVHOSTDIR
+
+echo -e "\n${txtgreen}Kirby $package installed to $KIRBYVHOSTDIR${txtrst}\n"
 
 if [ $LINKKIRBY ];then
-  if [ ! -d $KIRBYLIBDIR/$VERSION ];then
-    sudo mkdir -p $KIRBYLIBDIR/$VERSION
-    sudo cp -au $KIRBYVHOSTDIR/kirby/. $KIRBYLIBDIR/$VERSION
+  if [ ! -d $KIRBYLIBDIR/$ver ];then
+    sudo mkdir -p $KIRBYLIBDIR/$ver
+    sudo cp -dR --preserve=mode,timestamps $KIRBYVHOSTDIR/kirby/. $KIRBYLIBDIR/$ver
   fi
-  rm -rf $KIRBYVHOSTDIR/kirby && ln -fs $KIRBYLIBDIR/$VERSION $KIRBYVHOSTDIR/kirby
+  rm -rf $KIRBYVHOSTDIR/kirby && ln -fs $KIRBYLIBDIR/$ver $KIRBYVHOSTDIR/kirby
   sed -i.bak -e "s/Kirby)/Kirby\(\[ 'roots' => \[ 'index' => __DIR__ \] \]\)\)/" $KIRBYVHOSTDIR/index.php
 fi
-
-## If all went right, print message and exit with code 0
-echo -e "\n${txtgreen}Kirby $package installed to $KIRBYVHOSTDIR${txtrst}\n"
 
 exit 0
 ## code: language=bash
