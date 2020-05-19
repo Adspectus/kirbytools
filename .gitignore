@@ -1,7 +1,6 @@
 *~
-*/debian/.debhelper/
-*/debian/debhelper-build-stamp
-*/debian/files
-*/debian/kirbytools.substvars
-*/debian/kirbytools/
-/kirbytools_*
+*/.debhelper/
+*/debhelper-build-stamp
+*/files
+*/kirbytools.substvars
+*/kirbytools/
