@@ -2,12 +2,12 @@
 .\"     Title: Kirbytools
 .\"    Author: Uwe Gehring <uwe@imap.cc>
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 05/20/2020
+.\"      Date: 05/23/2020
 .\"    Manual: kirbytools User Manual
 .\"    Source: kirbytools
 .\"  Language: English
 .\"
-.TH "KIRBYTOOLS" "1" "05/20/2020" "kirbytools" "kirbytools User Manual"
+.TH "KIRBYTOOLS" "1" "05/23/2020" "kirbytools" "kirbytools User Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -28,129 +28,102 @@
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
 .SH "NAME"
-kirbytools \- program to do something
-.SH "SYNOPSIS"
-.HP \w'\fBkirbytools\fR\ 'u
-\fBkirbytools\fR \fB\-e\ \fR\fB\fIthis\fR\fR [\fB\-\-example=\fR\fBthat\fR] [{\fB\-e\fR\ |\ \fB\-\-example\fR}\ \fIthis\fR] [{\fB\-e\fR\ |\ \fB\-\-example\fR}\ {\fIthis\fR\ |\ \fIthat\fR}]
-.HP \w'\fBkirbytools\fR\ 'u
-\fBkirbytools\fR [{\fB\-h\fR\ |\ \fB\-\-help\fR} | {\fB\-v\fR\ |\ \fB\-\-version\fR}]
+kirbytools \- tools to create & manage kirby websites
 .SH "DESCRIPTION"
 .PP
 This manual page documents briefly the
-\fBkirbytools\fR
+kirbytools
+package\&.
+.PP
+The
+kirbytools
+package is a set of commandline programs which should ease and speed the installation and management of the Kirby CMS on your machine\&.
+.PP
+It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost and deinstalling it\&.
+.PP
+Currently, only Kirby 3 starterkits and plainkits and only apache2 httpd are supported\&.
+.SH "COMMANDS"
+.PP
+The package consists of the following programs which are documented in their own man page:
+.PP
+\fBkirbyconfigure\fR
+.RS 4
+Utility to create a user\-specific configuration file which will be used by the other programs in the package\&. See
+\fBkirbyconfigure\fR(1)
+for further details\&.
+.RE
+.PP
+\fBkirbydeinstall\fR
+.RS 4
+Program to delete kirby vhost (directory and configuration)\&. See
+\fBkirbydeinstall\fR(1)
+for further details\&.
+.RE
+.PP
+\fBkirbydownload\fR
+.RS 4
+Utility to select and download a Kirby kit to the local machine\&. See
+\fBkirbydownload\fR(1)
+for further details\&.
+.RE
+.PP
+\fBkirbyinstall\fR
+.RS 4
+Utility to install (unpack and transfer files) a Kirby kit to a new vhost directory\&. See
+\fBkirbyinstall\fR(1)
+for further details\&.
+.RE
+.PP
+\fBkirbysetup\fR
+.RS 4
+Program to setup a new Kirby website\&. This program will use
+\fBkirbydownload\fR
 and
-\fBbar\fR
-commands\&.
-.PP
-This manual page was written for the Debian distribution because the original program does not have a manual page\&. Instead, it has documentation in the GNU
-\fBinfo\fR(1)
-format; see below\&.
-.PP
-\fBkirbytools\fR
-is a program that\&.\&.\&.
-.SH "OPTIONS"
-.PP
-The program follows the usual GNU command line syntax, with long options starting with two dashes (`\-\*(Aq)\&. A summary of options is included below\&. For a complete description, see the
-\fBinfo\fR(1)
-files\&.
-.PP
-\fB\-e \fR\fB\fIthis\fR\fR, \fB\-\-example=\fR\fB\fIthat\fR\fR
-.RS 4
-Does this and that\&.
-.RE
-.PP
-\fB\-h\fR, \fB\-\-help\fR
-.RS 4
-Show summary of options\&.
-.RE
-.PP
-\fB\-v\fR, \fB\-\-version\fR
-.RS 4
-Show version of program\&.
+\fBkirbyinstall\fR
+if necessary\&. See
+\fBkirbysetup\fR(1)
+for further details\&.
 .RE
 .SH "FILES"
 .PP
-/etc/foo\&.conf
+/etc/kirbytools/kirbyrc
 .RS 4
 The system\-wide configuration file to control the behaviour of
-kirbytools\&. See
-\fBfoo.conf\fR(5)
-for further details\&.
+kirbytools\&.
 .RE
 .PP
-${HOME}/\&.foo\&.conf
+${HOME}/\&.kirbyrc
 .RS 4
 The per\-user configuration file to control the behaviour of
-kirbytools\&. See
-\fBfoo.conf\fR(5)
-for further details\&.
+kirbytools\&. This file will be created by the program
+\fBkirbyconfigure\fR
+(see
+\fBkirbyconfigure\fR(1)) if it does not exist\&.
 .RE
-.SH "ENVIRONMENT"
 .PP
-\fBFOO_CONF\fR
+/etc/kirbytools/kirbyfunctions
 .RS 4
-If used, the defined file is used as configuration file (see also
-the section called \(lqFILES\(rq)\&.
+Functions to be used by
+kirbytools\&.
 .RE
-.SH "DIAGNOSTICS"
-.PP
-The following diagnostics may be issued on
-stderr:
-.PP
-Bad configuration file\&. Exiting\&.
-.RS 4
-The configuration file seems to contain a broken configuration line\&. Use the
-\fB\-\-verbose\fR
-option, to get more info\&.
-.RE
-.PP
-\fBkirbytools\fR
-provides some return codes, that can be used in scripts:
-.\" line length increase to cope w/ tbl weirdness
-.ll +(\n(LLu * 62u / 100u)
-.TS
-ll.
-\fICode\fR	\fIDiagnostic\fR
-T{
-\fB0\fR
-T}	T{
-Program exited successfully\&.
-T}
-T{
-\fB1\fR
-T}	T{
-The configuration file seems to be broken\&.
-T}
-.TE
-.\" line length decrease back to previous value
-.ll -(\n(LLu * 62u / 100u)
-.sp
 .SH "BUGS"
 .PP
-The program is currently limited to only work with the
-foobar
-library\&.
+The programs are currently limited to only work with the
+apache2
+httpd\&.
 .PP
-The upstreams
-BTS
-can be found at
-\m[blue]\fB\%http://bugzilla.foo.tld\fR\m[]\&.
+Some functionality requires root (or sudo as root) access\&.
 .SH "SEE ALSO"
 .PP
-\fBbar\fR(1),
-\fBbaz\fR(1),
-\fBfoo.conf\fR(5)
-.PP
-The programs are documented fully by
-The Rise and Fall of a Fooish Bar
-available via the
-\fBinfo\fR(1)
-system\&.
+\fBkirbyconfigure\fR(1),
+\fBkirbydeinstall\fR(1),
+\fBkirbydownload\fR(1),
+\fBkirbyinstall\fR(1),
+\fBkirbysetup\fR(1)
 .SH "AUTHOR"
 .PP
 \fBUwe Gehring\fR <\&uwe@imap\&.cc\&>
 .RS 4
-Wrote this manpage for the Debian system\&.
 .RE
 .SH "COPYRIGHT"
 .br

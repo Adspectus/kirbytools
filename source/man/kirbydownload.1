@@ -2,12 +2,12 @@
 .\"     Title: Kirbydownload
 .\"    Author: Uwe Gehring <uwe@imap.cc>
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 05/20/2020
+.\"      Date: 05/23/2020
 .\"    Manual: kirbydownload User Manual
 .\"    Source: kirbydownload
 .\"  Language: English
 .\"
-.TH "KIRBYDOWNLOAD" "1" "05/20/2020" "kirbydownload" "kirbydownload User Manual"
+.TH "KIRBYDOWNLOAD" "1" "05/23/2020" "kirbydownload" "kirbydownload User Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -28,45 +28,98 @@
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
 .SH "NAME"
-kirbydownload \- program to do something
+kirbydownload \- program to select and download a Kirby kit
 .SH "SYNOPSIS"
 .HP \w'\fBkirbydownload\fR\ 'u
-\fBkirbydownload\fR \fB\-e\ \fR\fB\fIthis\fR\fR [\fB\-\-example=\fR\fBthat\fR] [{\fB\-e\fR\ |\ \fB\-\-example\fR}\ \fIthis\fR] [{\fB\-e\fR\ |\ \fB\-\-example\fR}\ {\fIthis\fR\ |\ \fIthat\fR}]
+\fBkirbydownload\fR [\fB\-d\fR] [\fB\-l\fR] [\fB\-f\fR] [\fB\-k\fR\ {\fBstarterkit\fR\ |\ \fBplainkit\fR}] [\fB\-v\fR\ {\fBcurrent\fR\ |\ \fIversionnumber\fR}] [\fB\-t\fR\ \fItargetdir\fR]
 .HP \w'\fBkirbydownload\fR\ 'u
-\fBkirbydownload\fR [{\fB\-h\fR\ |\ \fB\-\-help\fR} | {\fB\-v\fR\ |\ \fB\-\-version\fR}]
+\fBkirbydownload\fR [\fB\-h\fR]
 .SH "DESCRIPTION"
 .PP
 This manual page documents briefly the
 \fBkirbydownload\fR
-and
-\fBbar\fR
-commands\&.
-.PP
-This manual page was written for the Debian distribution because the original program does not have a manual page\&. Instead, it has documentation in the GNU
-\fBinfo\fR(1)
-format; see below\&.
+command, which is part of the
+\fBkirbytools\fR(1)
+package\&.
 .PP
 \fBkirbydownload\fR
-is a program that\&.\&.\&.
+is a program that will download a Kirby package from Github to your local machine\&. You can choose between the starterkit and the plainkit package and you can select the version which should be downloaded\&. You can also specify the directory where the package will be downloaded to\&.
+.PP
+Default values for these options will be set by the
+\fBkirbyconfigure\fR(1)
+program, which will be called upon first invocation of any of the
+kirbytools
+programs\&. The values will be saved in a file
+$HOME/\&.kirbyrc\&.
 .SH "OPTIONS"
 .PP
-The program follows the usual GNU command line syntax, with long options starting with two dashes (`\-\*(Aq)\&. A summary of options is included below\&. For a complete description, see the
-\fBinfo\fR(1)
-files\&.
+The program follows the usual GNU command line syntax, options always starting with a dash (`\-\*(Aq)\&.
 .PP
-\fB\-e \fR\fB\fIthis\fR\fR, \fB\-\-example=\fR\fB\fIthat\fR\fR
-.RS 4
-Does this and that\&.
-.RE
-.PP
-\fB\-h\fR, \fB\-\-help\fR
+\fB\-h\fR
 .RS 4
 Show summary of options\&.
 .RE
 .PP
-\fB\-v\fR, \fB\-\-version\fR
+\fB\-d\fR
 .RS 4
-Show version of program\&.
+Show debugging information\&.
+.RE
+.PP
+\fB\-l\fR
+.RS 4
+Extract the kirby program directory of the kit to a defined location\&. The location defaults to the value of
+\fBKIRBYLIBDIR\fR
+(appended with the versionnumber), which has been configured by the
+\fBkirbyconfigure\fR(1)
+program and which is saved in the file
+$HOME/\&.kirbyrc\&.
+.sp
+This makes sense if you would like to create multiple virtual hosts which are based on one Kirby version\&. The kirby program directory will then only be linked into the virtual host folder\&. See
+https://getkirby\&.com/docs/cookbook/setup/multisite\-variant
+for further details\&.
+.RE
+.PP
+\fB\-f\fR
+.RS 4
+Force download even if the package is already downloaded\&.
+.RE
+.PP
+\fB\-k \fR\fB\fBstarterkit\fR\fR\fB|\fR\fB\fBplainkit\fR\fR
+.RS 4
+Specify which Kirby
+\fIkit\fR
+to download\&. Defaults to the value of
+\fBKIRBYKIT\fR, which has been configured by the
+\fBkirbyconfigure\fR(1)
+program and which is saved in the file
+$HOME/\&.kirbyrc\&.
+.RE
+.PP
+\fB\-v \fR\fB\fBcurrent\fR\fR\fB|\fR\fB\fIversionnumber\fR\fR
+.RS 4
+Specify which Kirby
+\fIversion\fR
+to download\&. Defaults to value of
+\fBKIRBYVERSION\fR, which has been configured by the
+\fBkirbyconfigure\fR(1)
+program and which is saved in the file
+$HOME/\&.kirbyrc\&.
+.sp
+If
+\fBcurrent\fR
+is selected, always the most recent version is downloaded\&. Otherwise a valid versionnumber has to be specified\&.
+.RE
+.PP
+\fB\-t \fR\fB\fItargetdir\fR\fR
+.RS 4
+Specify the directory where downloads will be saved\&. Defaults to the value of
+\fBKIRBYDOWNLOADDIR\fR, which has been configured by the
+\fBkirbyconfigure\fR(1)
+program and which is saved in the file
+$HOME/\&.kirbyrc\&.
+.sp
+The downloaded package is named
+\fIpackage\fR\-\fIversion\fR\&.tar\&.gz\&.
 .RE
 .SH "FILES"
 .PP
@@ -150,7 +203,6 @@ system\&.
 .PP
 \fBUwe Gehring\fR <\&uwe@imap\&.cc\&>
 .RS 4
-Wrote this manpage for the Debian system\&.
 .RE
 .SH "COPYRIGHT"
 .br

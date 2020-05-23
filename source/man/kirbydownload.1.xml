@@ -1,49 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
-"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-
-<!--
-
-`xsltproc -''-nonet \
-          -''-param man.charmap.use.subset "0" \
-          -''-param make.year.ranges "1" \
-          -''-param make.single.year.ranges "1" \
-          /usr/share/xml/docbook/stylesheet/docbook-xsl/manpages/docbook.xsl \
-          manpage.xml'
-
-A manual page <package>.<section> will be generated. You may view the
-manual page with: nroff -man <package>.<section> | less'. A typical entry
-in a Makefile or Makefile.am is:
-
-DB2MAN = /usr/share/sgml/docbook/stylesheet/xsl/docbook-xsl/manpages/docbook.xsl
-XP     = xsltproc -''-nonet -''-param man.charmap.use.subset "0"
-
-manpage.1: manpage.xml
-        $(XP) $(DB2MAN) $<
-
-The xsltproc binary is found in the xsltproc package. The XSL files are in
-docbook-xsl. A description of the parameters you can use can be found in the
-docbook-xsl-doc-* packages. Please remember that if you create the nroff
-version in one of the debian/rules file targets (such as build), you will need
-to include xsltproc and docbook-xsl in your Build-Depends control field.
-Alternatively use the xmlto command/package. That will also automatically
-pull in xsltproc and docbook-xsl.
-
-Notes for using docbook2x: docbook2x-man does not automatically create the
-AUTHOR(S) and COPYRIGHT sections. In this case, please add them manually as
-<refsect1> ... </refsect1>.
-
-To disable the automatic creation of the AUTHOR(S) and COPYRIGHT sections
-read /usr/share/doc/docbook-xsl/doc/manpages/authors.html. This file can be
-found in the docbook-xsl-doc-html package.
-
-Validation can be done using: `xmllint -''-noout -''-valid manpage.xml`
-
-General documentation about man-pages and man-page-formatting:
-man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
-
--->
-
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
   <!-- Fill in your name for FIRSTNAME and SURNAME. -->
   <!ENTITY dhfirstname "Uwe">
   <!ENTITY dhsurname   "Gehring">
@@ -69,7 +25,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
       <author>
        <firstname>&dhfirstname;</firstname>
         <surname>&dhsurname;</surname>
-        <contrib>Wrote this manpage for the Debian system.</contrib>
+        <contrib></contrib>
         <address>
           <email>&dhemail;</email>
         </address>
@@ -80,15 +36,9 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
       <holder>&dhusername;</holder>
     </copyright>
     <legalnotice>
-      <para>This manual page was written for the Debian system
-        (and may be used by others).</para>
-      <para>Permission is granted to copy, distribute and/or modify this
-        document under the terms of the GNU General Public License,
-        Version 2 or (at your option) any later version published by
-        the Free Software Foundation.</para>
-      <para>On Debian systems, the complete text of the GNU General Public
-        License can be found in
-        <filename>/usr/share/common-licenses/GPL</filename>.</para>
+      <para>This manual page was written for the Debian system (and may be used by others).</para>
+      <para>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License, Version 2 or (at your option) any later version published by the Free Software Foundation.</para>
+      <para>On Debian systems, the complete text of the GNU General Public License can be found in <filename>/usr/share/common-licenses/GPL</filename>.</para>
     </legalnotice>
   </refentryinfo>
   <refmeta>
@@ -97,97 +47,90 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   </refmeta>
   <refnamediv>
     <refname>&dhpackage;</refname>
-    <refpurpose>program to do something</refpurpose>
+    <refpurpose>program to select and download a Kirby kit</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
       <command>&dhpackage;</command>
-      <!-- These are several examples, how syntaxes could look -->
-      <arg choice="plain"><option>-e <replaceable>this</replaceable></option></arg>
-      <arg choice="opt"><option>--example=<parameter>that</parameter></option></arg>
-      <arg choice="opt">
+      <arg choice="opt"><option>-d</option></arg>
+      <arg choice="opt"><option>-l</option></arg>
+      <arg choice="opt"><option>-f</option></arg>
+      <arg choice="opt"><option>-k</option>
         <group choice="req">
-          <arg choice="plain"><option>-e</option></arg>
-          <arg choice="plain"><option>--example</option></arg>
+          <arg choice="plain"><option>starterkit</option></arg>
+          <arg choice="plain"><option>plainkit</option></arg>
         </group>
-        <replaceable class="option">this</replaceable>
       </arg>
-      <arg choice="opt">
+      <arg choice="opt"><option>-v</option>
         <group choice="req">
-          <arg choice="plain"><option>-e</option></arg>
-          <arg choice="plain"><option>--example</option></arg>
+          <arg choice="plain"><option>current</option></arg>
+          <arg choice="plain"><replaceable>versionnumber</replaceable></arg>
         </group>
-        <group choice="req">
-          <arg choice="plain"><replaceable>this</replaceable></arg>
-          <arg choice="plain"><replaceable>that</replaceable></arg>
-        </group>
+      </arg>
+      <arg choice="opt"><option>-t</option>
+        <arg choice="plain"><replaceable>targetdir</replaceable></arg>
       </arg>
     </cmdsynopsis>
     <cmdsynopsis>
       <command>&dhpackage;</command>
-      <!-- Normally the help and version options make the programs stop
-           right after outputting the requested information. -->
-      <group choice="opt">
-        <arg choice="plain">
-          <group choice="req">
-            <arg choice="plain"><option>-h</option></arg>
-            <arg choice="plain"><option>--help</option></arg>
-          </group>
-        </arg>
-        <arg choice="plain">
-          <group choice="req">
-            <arg choice="plain"><option>-v</option></arg>
-            <arg choice="plain"><option>--version</option></arg>
-          </group>
-        </arg>
-      </group>
+      <arg choice="opt"><option>-h</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1 id="description">
     <title>DESCRIPTION</title>
-    <para>This manual page documents briefly the
-      <command>&dhpackage;</command> and <command>bar</command>
-      commands.</para>
-    <para>This manual page was written for the Debian distribution
-      because the original program does not have a manual page.
-      Instead, it has documentation in the GNU <citerefentry>
-        <refentrytitle>info</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry> format; see below.</para>
-    <para><command>&dhpackage;</command> is a program that...</para>
+    <para>This manual page documents briefly the <command>&dhpackage;</command> command, which is part of the <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry> package.</para>
+    <para><command>&dhpackage;</command> is a program that will download a Kirby package from Github to your local machine. You can choose between the starterkit and the plainkit package and you can select the version which should be downloaded. You can also specify the directory where the package will be downloaded to.</para>
+    <para>Default values for these options will be set by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> program, which will be called upon first invocation of any of the <package>kirbytools</package> programs. The values will be saved in a file <filename>$HOME/.kirbyrc</filename>.</para>
   </refsect1>
+
   <refsect1 id="options">
     <title>OPTIONS</title>
-    <para>The program follows the usual GNU command line syntax,
-      with long options starting with two dashes (`-').  A summary of
-      options is included below.  For a complete description, see the
-      <citerefentry>
-        <refentrytitle>info</refentrytitle>
-        <manvolnum>1</manvolnum>
-      </citerefentry> files.</para>
+    <para>The program follows the usual GNU command line syntax, options always starting with a dash (`-').</para>
     <variablelist>
-      <!-- Use the variablelist.term.separator and the
-           variablelist.term.break.after parameters to
-           control the term elements. -->
-      <varlistentry>
-        <term><option>-e <replaceable>this</replaceable></option></term>
-        <term><option>--example=<replaceable>that</replaceable></option></term>
-        <listitem>
-          <para>Does this and that.</para>
-        </listitem>
-      </varlistentry>
       <varlistentry>
         <term><option>-h</option></term>
-        <term><option>--help</option></term>
         <listitem>
           <para>Show summary of options.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>-v</option></term>
-        <term><option>--version</option></term>
+        <term><option>-d</option></term>
         <listitem>
-          <para>Show version of program.</para>
+          <para>Show debugging information.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-l</option></term>
+        <listitem>
+          <para>Extract the kirby program directory of the kit to a defined location. The location defaults to the value of <envar>KIRBYLIBDIR</envar> (appended with the versionnumber), which has been configured by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> program and which is saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
+          <para>This makes sense if you would like to create multiple virtual hosts which are based on one Kirby version. The kirby program directory will then only be linked into the virtual host folder. See <uri>https://getkirby.com/docs/cookbook/setup/multisite-variant</uri> for further details.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-f</option></term>
+        <listitem>
+          <para>Force download even if the package is already downloaded.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-k  <option>starterkit</option>|<option>plainkit</option></option></term>
+        <listitem>
+          <para>Specify which Kirby <emphasis>kit</emphasis> to download. Defaults to the value of <envar>KIRBYKIT</envar>, which has been configured by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> program and which is saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-v  <option>current</option>|<replaceable>versionnumber</replaceable></option></term>
+        <listitem>
+          <para>Specify which Kirby <emphasis>version</emphasis> to download. Defaults to value of <envar>KIRBYVERSION</envar>, which has been configured by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> program and which is saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
+          <para>If <option>current</option> is selected, always the most recent version is downloaded. Otherwise a valid versionnumber has to be specified.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-t <replaceable>targetdir</replaceable></option>
+        </term>
+        <listitem>
+          <para>Specify the directory where downloads will be saved. Defaults to the value of <envar>KIRBYDOWNLOADDIR</envar>, which has been configured by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> program and which is saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
+          <para>The downloaded package is named <filename><replaceable>package</replaceable>-<replaceable>version</replaceable>.tar.gz</filename>.</para>
         </listitem>
       </varlistentry>
     </variablelist>
