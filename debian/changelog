@@ -1,4 +1,10 @@
-kirbytools (1.2.10) bionic; urgency=medium
+kirbytools (1.3) UNRELEASED; urgency=medium
+
+  * Added documentation (manpages)
+
+ -- Uwe Gehring <uwe@imap.cc>  Wed, 20 May 2020 19:29:16 +0200
+
+kirbytools (1.2.10) unstable; urgency=medium
 
   * b9a2e4e Fixed vhostenable section
   * 8a75799 Added copyright for debian/* files
@@ -13,7 +19,7 @@ kirbytools (1.2.10) bionic; urgency=medium
 
  -- Uwe Gehring <uwe@imap.cc>  Tue, 19 May 2020 18:19:40 +0200
 
-kirbytools (1.1.3) bionic; urgency=medium
+kirbytools (1.1.3) unstable; urgency=medium
 
   * 89e382e Added comments
   * 16d9179 Fixed permissions when creating link (run as sudo)
