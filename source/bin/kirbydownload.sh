@@ -23,7 +23,7 @@ usage() {
   echo ""
   echo "  -h: Show this help"
   echo "  -d: Show debug information"
-  echo "  -l: Download and extract kirby program directory to $KIRBYLIBDIR/[versionnumber]"
+  echo "  -l: Extract the kirby program directory to $KIRBYLIBDIR/[versionnumber]"
   echo "  -f: Force download even if package is already in $KIRBYDOWNLOADDIR"
   echo "  -k: kit to be installed (default: ${txtbld}$KIRBYKIT${txtrst})"
   echo "  -v: version to be installed (default: ${txtbld}$KIRBYVERSION${txtrst})"
