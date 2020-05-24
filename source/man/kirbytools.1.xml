@@ -1,17 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-  <!-- Fill in your name for FIRSTNAME and SURNAME. -->
   <!ENTITY dhfirstname "Uwe">
   <!ENTITY dhsurname   "Gehring">
-  <!-- dhusername could also be set to "&dhfirstname; &dhsurname;". -->
-  <!ENTITY dhusername  "Uwe Gehring">
-  <!ENTITY dhemail     "uwe@imap.cc">
-  <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
-       allowed: see man(7), man(1) and
-       http://www.tldp.org/HOWTO/Man-Page/q2.html. -->
+  <!ENTITY dhusername  "&dhfirstname; &dhsurname;">
+  <!ENTITY dhemail     "adspectus@fastmail.com">
   <!ENTITY dhsection   "1">
-  <!-- TITLE should be something like "User commands" or similar (see
-       http://www.tldp.org/HOWTO/Man-Page/q2.html). -->
   <!ENTITY dhtitle     "kirbytools User Manual">
   <!ENTITY dhucpackage "Kirbytools">
   <!ENTITY dhpackage   "kirbytools">
@@ -47,47 +40,46 @@
   </refmeta>
   <refnamediv>
     <refname>&dhpackage;</refname>
-    <refpurpose>tools to create &amp; manage kirby websites</refpurpose>
+    <refpurpose>Tools to create &amp; manage Kirby websites</refpurpose>
   </refnamediv>
   <refsect1 id="description">
     <title>DESCRIPTION</title>
     <para>This manual page documents briefly the <package>&dhpackage;</package> package.</para>
-    <para>The <package>&dhpackage;</package> package is a set of commandline programs which should ease and speed the installation and management of the Kirby CMS on your machine.</para>
-    <para>It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost and deinstalling it.</para>
-    <para>Currently, only Kirby 3 starterkits and plainkits and only apache2 httpd are supported.</para>
+    <para>The <package>&dhpackage;</package> package is a collection of shell scripts which should ease and speed the installation and management of the Kirby CMS on your machine.</para>
+    <para>It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost, and eventually deinstalling it.</para>
   </refsect1>
   <refsect1 id="commands">
     <title>COMMANDS</title>
-    <para>The package consists of the following programs which are documented in their own man page:</para>
+    <para>The package consists of the following scripts which are documented in their own man page:</para>
     <variablelist>
       <varlistentry>
         <term><command>kirbyconfigure</command></term>
         <listitem>
-          <para>Utility to create a user-specific configuration file which will be used by the other programs in the package. See <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>Script to create a user-specific configuration file which will be used by the other programs in the package. See <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><command>kirbydeinstall</command></term>
         <listitem>
-          <para>Program to delete kirby vhost (directory and configuration). See <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>Script to delete a Kirby vhost (directory and configuration). See <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><command>kirbydownload</command></term>
         <listitem>
-          <para>Utility to select and download a Kirby kit to the local machine. See <citerefentry><refentrytitle>kirbydownload</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>Script to select and download a Kirby kit to the local machine. See <citerefentry><refentrytitle>kirbydownload</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><command>kirbyinstall</command></term>
         <listitem>
-          <para>Utility to install (unpack and transfer files) a Kirby kit to a new vhost directory. See <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>Script to install (unpack and transfer files) a Kirby kit to a new vhost directory. See <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><command>kirbysetup</command></term>
         <listitem>
-          <para>Program to setup a new Kirby website. This program will use <command>kirbydownload</command> and <command>kirbyinstall</command> if necessary. See <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>Script to setup a new Kirby website. This program will use <command>kirbydownload</command> and <command>kirbyinstall</command> if necessary. See <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -105,7 +97,7 @@
       <varlistentry>
         <term><filename>${HOME}/.kirbyrc</filename></term>
         <listitem>
-          <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the program <command>kirbyconfigure</command> (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>) if it does not exist.</para>
+          <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the <command>kirbyconfigure</command> script (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>) if it does not exist.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -116,11 +108,14 @@
       </varlistentry>
     </variablelist>
   </refsect1>
+
   <refsect1 id="bugs">
     <title>BUGS</title>
-    <para>The programs are currently limited to only work with the <package>apache2</package> httpd.</para>
+    <para>Currently, only Kirby 3 starterkits and plainkits are supported.</para>
+    <para>The programs are currently limited to work with the <package>apache2</package> httpd.</para>
     <para>Some functionality requires root (or sudo as root) access.</para>
   </refsect1>
+
   <refsect1 id="see_also">
     <title>SEE ALSO</title>
     <para>

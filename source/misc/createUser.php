@@ -1,7 +1,7 @@
 <?php
 // createUser.php to create a kirby panel admin user
 // Usage: php createUser.php DOCROOT EMAIL NAME LANG PASSWORD
-// Example: php createUser.php '/srv/www/vhost/kirby-test/htdocs' 'uwe@imap.cc' 'Uwe Gehring' 'en' 'secret'
+// Example: php createUser.php '/srv/www/vhost/kirby-test/htdocs' 'adspectus@fastmail.com' 'Uwe Gehring' 'en' 'secret'
 
 require $argv[1] . '/kirby/bootstrap.php';
 

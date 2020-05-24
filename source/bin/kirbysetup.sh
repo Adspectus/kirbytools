@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# kirbysetup by Uwe Gehring <uwe@imap.cc>
+# kirbysetup by Uwe Gehring <adspectus@fastmail.com>
 
 ## Read settings and make sure all config files exist
 if ! kirbyconfigure;then exit 1;fi

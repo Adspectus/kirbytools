@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# kirbydeinstall by Uwe Gehring <uwe@imap.cc>
+# kirbydeinstall by Uwe Gehring <adspectus@fastmail.com>
 
 ## Read settings and make sure all config files exist
 if ! kirbyconfigure;then exit 1;fi

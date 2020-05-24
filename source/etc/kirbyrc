@@ -1,5 +1,5 @@
 ## File: /etc/kirbytools/kirbyrc
-## Variables for kirby* shell scripts by Uwe Gehring <uwe@imap.cc>
+## Variables for kirby* shell scripts by Uwe Gehring <adspectus@fastmail.com>
 ##
 ## Do not change this file! Put your changes in $HOME/.kirbyrc. If $HOME/.kirbyrc
 ## does not exists, it will be created and you can change all *DEFAULT* variables

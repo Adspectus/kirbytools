@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# kirbyconfigure by Uwe Gehring <uwe@imap.cc>
+# kirbyconfigure by Uwe Gehring <adspectus@fastmail.com>
 #
 # This script checks and reads the configuration files.
 # If $HOME/.kirbyrc file already exists, it will be left untouched.
@@ -25,7 +25,7 @@ if [ ! -f $KIRBYUSERRC ];then
 . $KIRBYRC
   echo -e "\n${txtred}First setup! Define your personal defaults which will be saved in $KIRBYUSERRC!${txtrst}\n"
 # Create KIRBYUSERRC
-  echo -e "## File: $KIRBYUSERRC\n## Variables for kirby* shell scripts by Uwe Gehring <uwe@imap.cc>\n##\n## Default values in brackets\n" > $KIRBYUSERRC
+  echo -e "## File: $KIRBYUSERRC\n## Variables for kirby* shell scripts by Uwe Gehring <adspectus@fastmail.com>\n##\n## Default values in brackets\n" > $KIRBYUSERRC
 # Ask all _KIRBYDEFAULTVAR* variables and write settings into KIRBYUSERRC
   for var in ${!_KIRBYDEFAULTVAR[@]};do
     read -p "${txtbld}${_KIRBYDEFAULTVARTXT[$var]} [${txtrst}${txtblue}${_KIRBYDEFAULTVAR[$var]}${txtrst}${txtbld}] ${txtrst}"

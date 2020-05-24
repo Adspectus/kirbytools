@@ -1,13 +1,13 @@
 '\" t
 .\"     Title: Kirbydownload
-.\"    Author: Uwe Gehring <uwe@imap.cc>
+.\"    Author: Uwe Gehring <adspectus@fastmail.com>
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 05/23/2020
+.\"      Date: 05/24/2020
 .\"    Manual: kirbydownload User Manual
 .\"    Source: kirbydownload
 .\"  Language: English
 .\"
-.TH "KIRBYDOWNLOAD" "1" "05/23/2020" "kirbydownload" "kirbydownload User Manual"
+.TH "KIRBYDOWNLOAD" "1" "05/24/2020" "kirbydownload" "kirbydownload User Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -28,7 +28,7 @@
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
 .SH "NAME"
-kirbydownload \- program to select and download a Kirby kit
+kirbydownload \- Script to select and download a Kirby kit
 .SH "SYNOPSIS"
 .HP \w'\fBkirbydownload\fR\ 'u
 \fBkirbydownload\fR [\fB\-d\fR] [\fB\-l\fR] [\fB\-f\fR] [\fB\-k\fR\ {\fBstarterkit\fR\ |\ \fBplainkit\fR}] [\fB\-v\fR\ {\fBcurrent\fR\ |\ \fIversionnumber\fR}] [\fB\-t\fR\ \fItargetdir\fR]
@@ -43,17 +43,17 @@ command, which is part of the
 package\&.
 .PP
 \fBkirbydownload\fR
-is a program that will download a Kirby package from Github to your local machine\&. You can choose between the starterkit and the plainkit package and you can select the version which should be downloaded\&. You can also specify the directory where the package will be downloaded to\&.
+is a script that will download a Kirby package from Github to your local machine\&. You can choose between the starterkit and the plainkit package and you can select the version which should be downloaded\&. You can also specify the directory where the package will be downloaded to\&.
 .PP
 Default values for these options will be set by the
 \fBkirbyconfigure\fR(1)
-program, which will be called upon first invocation of any of the
+script, which will be called upon first invocation of any of the
 kirbytools
-programs\&. The values will be saved in a file
+scripts\&. The values will be saved in a file
 $HOME/\&.kirbyrc\&.
 .SH "OPTIONS"
 .PP
-The program follows the usual GNU command line syntax, options always starting with a dash (`\-\*(Aq)\&.
+The script follows the usual GNU command line syntax, options always starting with a dash (`\-\*(Aq)\&.
 .PP
 \fB\-h\fR
 .RS 4
@@ -67,15 +67,19 @@ Show debugging information\&.
 .PP
 \fB\-l\fR
 .RS 4
-Extract the kirby program directory of the kit to a defined location\&. The location defaults to the value of
+Extract the
+kirby
+program directory of the downloaded kit to a defined location\&. The location defaults to the value of
 \fBKIRBYLIBDIR\fR
 (appended with the versionnumber), which has been configured by the
 \fBkirbyconfigure\fR(1)
-program and which is saved in the file
+script and which is saved in the file
 $HOME/\&.kirbyrc\&.
 .sp
-This makes sense if you would like to create multiple virtual hosts which are based on one Kirby version\&. The kirby program directory will then only be linked into the virtual host folder\&. See
-https://getkirby\&.com/docs/cookbook/setup/multisite\-variant
+This makes sense if you would like to create multiple virtual hosts which are based on the same Kirby version\&. The
+kirby
+program directory will then only be linked into the virtual host folder\&. See
+\m[blue]\fBthis Kirby cookbook recipe\fR\m[]\&\s-2\u[1]\d\s+2
 for further details\&.
 .RE
 .PP
@@ -91,7 +95,7 @@ Specify which Kirby
 to download\&. Defaults to the value of
 \fBKIRBYKIT\fR, which has been configured by the
 \fBkirbyconfigure\fR(1)
-program and which is saved in the file
+script and which is saved in the file
 $HOME/\&.kirbyrc\&.
 .RE
 .PP
@@ -99,10 +103,10 @@ $HOME/\&.kirbyrc\&.
 .RS 4
 Specify which Kirby
 \fIversion\fR
-to download\&. Defaults to value of
+to download\&. Defaults to the value of
 \fBKIRBYVERSION\fR, which has been configured by the
 \fBkirbyconfigure\fR(1)
-program and which is saved in the file
+script and which is saved in the file
 $HOME/\&.kirbyrc\&.
 .sp
 If
@@ -115,7 +119,7 @@ is selected, always the most recent version is downloaded\&. Otherwise a valid v
 Specify the directory where downloads will be saved\&. Defaults to the value of
 \fBKIRBYDOWNLOADDIR\fR, which has been configured by the
 \fBkirbyconfigure\fR(1)
-program and which is saved in the file
+script and which is saved in the file
 $HOME/\&.kirbyrc\&.
 .sp
 The downloaded package is named
@@ -123,85 +127,45 @@ The downloaded package is named
 .RE
 .SH "FILES"
 .PP
-/etc/foo\&.conf
+/etc/kirbytools/kirbyrc
 .RS 4
 The system\-wide configuration file to control the behaviour of
-kirbydownload\&. See
-\fBfoo.conf\fR(5)
-for further details\&.
+kirbydownload\&.
 .RE
 .PP
-${HOME}/\&.foo\&.conf
+${HOME}/\&.kirbyrc
 .RS 4
 The per\-user configuration file to control the behaviour of
-kirbydownload\&. See
-\fBfoo.conf\fR(5)
-for further details\&.
+kirbydownload\&. This file will be created by the
+\fBkirbyconfigure\fR
+script (see
+\fBkirbyconfigure\fR(1)) if it does not exist\&.
 .RE
-.SH "ENVIRONMENT"
 .PP
-\fBFOO_CONF\fR
+/etc/kirbytools/kirbyfunctions
 .RS 4
-If used, the defined file is used as configuration file (see also
-the section called \(lqFILES\(rq)\&.
+Functions to be used by
+kirbydownload\&.
 .RE
-.SH "DIAGNOSTICS"
-.PP
-The following diagnostics may be issued on
-stderr:
-.PP
-Bad configuration file\&. Exiting\&.
-.RS 4
-The configuration file seems to contain a broken configuration line\&. Use the
-\fB\-\-verbose\fR
-option, to get more info\&.
-.RE
-.PP
-\fBkirbydownload\fR
-provides some return codes, that can be used in scripts:
-.\" line length increase to cope w/ tbl weirdness
-.ll +(\n(LLu * 62u / 100u)
-.TS
-ll.
-\fICode\fR	\fIDiagnostic\fR
-T{
-\fB0\fR
-T}	T{
-Program exited successfully\&.
-T}
-T{
-\fB1\fR
-T}	T{
-The configuration file seems to be broken\&.
-T}
-.TE
-.\" line length decrease back to previous value
-.ll -(\n(LLu * 62u / 100u)
-.sp
 .SH "BUGS"
 .PP
-The program is currently limited to only work with the
-foobar
-library\&.
+Currently, only Kirby 3 starterkits and plainkits are supported\&.
 .PP
-The upstreams
-BTS
-can be found at
-\m[blue]\fB\%http://bugzilla.foo.tld\fR\m[]\&.
+The programs are currently limited to work with the
+apache2
+httpd\&.
+.PP
+Some functionality requires root (or sudo as root) access\&.
 .SH "SEE ALSO"
 .PP
-\fBbar\fR(1),
-\fBbaz\fR(1),
-\fBfoo.conf\fR(5)
-.PP
-The programs are documented fully by
-The Rise and Fall of a Fooish Bar
-available via the
-\fBinfo\fR(1)
-system\&.
+\fBkirbyconfigure\fR(1),
+\fBkirbydeinstall\fR(1),
+\fBkirbyinstall\fR(1),
+\fBkirbysetup\fR(1)
+\fBkirbyttols\fR(1),
 .SH "AUTHOR"
 .PP
-\fBUwe Gehring\fR <\&uwe@imap\&.cc\&>
+\fBUwe Gehring\fR <\&adspectus@fastmail\&.com\&>
 .RS 4
 .RE
 .SH "COPYRIGHT"
@@ -216,3 +180,9 @@ Permission is granted to copy, distribute and/or modify this document under the 
 On Debian systems, the complete text of the GNU General Public License can be found in
 /usr/share/common\-licenses/GPL\&.
 .sp
+.SH "NOTES"
+.IP " 1." 4
+this Kirby cookbook recipe
+.RS 4
+\%https://getkirby.com/docs/cookbook/setup/multisite-variant
+.RE

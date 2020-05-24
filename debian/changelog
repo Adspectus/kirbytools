@@ -4,7 +4,7 @@ kirbytools (1.3.2) UNRELEASED; urgency=medium
   * 3353e15 Prepare manpages and reorg source files
   * 4ab179e Initial versions of manpages
 
- -- Uwe Gehring <uwe@imap.cc>  Sat, 23 May 2020 20:36:38 +0200
+ -- Uwe Gehring <adspectus@fastmail.com>  Sat, 23 May 2020 20:36:38 +0200
 
 kirbytools (1.2.10) unstable; urgency=medium
 
@@ -19,7 +19,7 @@ kirbytools (1.2.10) unstable; urgency=medium
   * aed02b3 kirbytools.links replaced postinst and postrm
   * 475a92b Added option -f and make kirbylib owned by root
 
- -- Uwe Gehring <uwe@imap.cc>  Tue, 19 May 2020 18:19:40 +0200
+ -- Uwe Gehring <adspectus@fastmail.com>  Tue, 19 May 2020 18:19:40 +0200
 
 kirbytools (1.1.3) unstable; urgency=medium
 
@@ -27,10 +27,10 @@ kirbytools (1.1.3) unstable; urgency=medium
   * 16d9179 Fixed permissions when creating link (run as sudo)
   * 77ea277 Copy templates to templatedir
 
- -- Uwe Gehring <uwe@imap.cc>  Mon, 18 May 2020 15:49:39 +0200
+ -- Uwe Gehring <adspectus@fastmail.com>  Mon, 18 May 2020 15:49:39 +0200
 
 kirbytools (1.0.0) UNRELEASED; urgency=medium
 
   * Initial Release.
 
- -- Uwe Gehring <uwe@imap.cc>  Fri, 15 May 2020 12:25:04 +0200
+ -- Uwe Gehring <adspectus@fastmail.com>  Fri, 15 May 2020 12:25:04 +0200
