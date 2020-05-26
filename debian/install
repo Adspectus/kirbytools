@@ -1,8 +1,6 @@
 /source/etc/kirbyrc /etc/kirbytools
-/source/etc/kirbyrc2 /etc/kirbytools
 /source/etc/kirbyfunctions /etc/kirbytools
 /source/etc/kirbytools /usr/share/bash-completion/completions
-/source/bin/kirbyconfigure.sh /usr/share/kirbytools
 /source/bin/kirbysetup.sh /usr/share/kirbytools
 /source/bin/kirbydownload.sh /usr/share/kirbytools
 /source/bin/kirbyinstall.sh /usr/share/kirbytools
