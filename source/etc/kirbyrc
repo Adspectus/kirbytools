@@ -1,46 +1,68 @@
 ## File: /etc/kirbytools/kirbyrc
-## Variables for kirby* shell scripts by Uwe Gehring <adspectus@fastmail.com>
+## Configuration for kirbytools scripts by Uwe Gehring <adspectus@fastmail.com>
+## code: language=bash
 ##
 ## Do not change this file! Put your changes in $HOME/.kirbyrc. If $HOME/.kirbyrc
 ## does not exists, it will be created and you can change all *DEFAULT* variables
 ## interactively or leave them at their default values. Anything else can be
-## overridden by defining it in $HOME/.kirbyrc which will be loaded after this
-## file if it exists.
-KIRBYTOOLSVERSION="1.1"
+## overridden by defining it in $HOME/.kirbyrc which will be loaded at the end of
+## this file.
+KIRBYTOOLSVERSION="1.3"
+KIRBYTOOLSPACKAGEDIR="/usr/share/kirbytools"
 
-## Default values for custom variables
-##
-## These variables are likely to be changed in $HOME/.kirbyrc or set by kirbyconfigure
-#
+# The personal configuration file which will be created if it does not exist
+KIRBYUSERRC="$HOME/.kirbyrc"
+
+# The functions file
+KIRBYFUNCTIONS="/etc/kirbytools/kirbyfunctions"
+
+# Read the functions or exit with error
+[[ ! -f $KIRBYFUNCTIONS ]] && echo "File $KIRBYFUNCTIONS not found!" && exit 1
+. $KIRBYFUNCTIONS
+
+# Default values for custom variables
+# These variables will be set in $HOME/.kirbyrc by configureWizard
+declare -a _KIRBYDEFAULT=("KIRBYKIT" "KIRBYVERSION" "KIRBYDOWNLOADDIR" "KIRBYLIBDIR" "KIRBYVHOSTROOT" "KIRBYAPACHECONFDIR" "KIRBYCREATEUSERSCRIPT" "KIRBYADMINUSERNAME" "KIRBYADMINUSERMAIL" "KIRBYADMINUSERPASS" "KIRBYADMINUSERLANG")
+
 declare -A _KIRBYDEFAULTVARTXT=(
   ["KIRBYKIT"]="The default kit to be downloaded/installed"
   ["KIRBYVERSION"]="The default version to be downloaded/installed"
   ["KIRBYVHOSTROOT"]="The root directory of your personal virtual hosts"
   ["KIRBYAPACHECONFDIR"]="The root directory of your personal apache2 configuration files"
-  ["KIRBYPREFIX"]="The prefix to be used for other directories and filenames"
   ["KIRBYADMINUSERMAIL"]="The email addres of the default panel admin user"
   ["KIRBYADMINUSERNAME"]="The name of the default panel admin user"
   ["KIRBYADMINUSERLANG"]="The language of the default panel admin user"
   ["KIRBYADMINUSERPASS"]="The password of the default panel admin user"
   ["KIRBYCREATEUSERSCRIPT"]="The php script to be used for creating the default panel admin user"
+  ["KIRBYDOWNLOADDIR"]="The base directory where Kirby packages will be downloaded to"
+  ["KIRBYLIBDIR"]="The base directory where the /kirby program folder will be placed for use in vhost-symlinks"
 )
 
 declare -A _KIRBYDEFAULTVAR=(
   ["KIRBYKIT"]="starterkit"
   ["KIRBYVERSION"]="current"
-  ["KIRBYVHOSTROOT"]="$HOME/vhosts"
   ["KIRBYAPACHECONFDIR"]="$HOME/apache2"
-  ["KIRBYPREFIX"]="kirby"
   ["KIRBYADMINUSERMAIL"]=""
   ["KIRBYADMINUSERNAME"]=""
   ["KIRBYADMINUSERLANG"]="en"
   ["KIRBYADMINUSERPASS"]=""
-  ["KIRBYCREATEUSERSCRIPT"]="/usr/share/kirbytools/createUser.php"
+  ["KIRBYCREATEUSERSCRIPT"]="$KIRBYTOOLSPACKAGEDIR/createUser.php"
 )
 
+declare -A _KIRBYDEFAULTVARTYPE=(
+  ["KIRBYKIT"]="regex^(starterkit|plainkit)$"
+  ["KIRBYVERSION"]="regex^(current|other|[3-9].[0-9]+.[0-9]+)$"
+  ["KIRBYVHOSTROOT"]="dir"
+  ["KIRBYAPACHECONFDIR"]="dir"
+  ["KIRBYADMINUSERMAIL"]="regex^(|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})$"
+  ["KIRBYADMINUSERNAME"]="string"
+  ["KIRBYADMINUSERLANG"]="regex^(bg|ca|cs|da|de|el|en|es_419|es_ES|fa|fi|fr|hu|id|it|ko|lt|nb|nl|pl|pt_BR|pt_PT|ru|sk|sv_SE|tr)$"
+  ["KIRBYADMINUSERPASS"]="string"
+  ["KIRBYCREATEUSERSCRIPT"]="file"
+  ["KIRBYDOWNLOADDIR"]="dir"
+  ["KIRBYLIBDIR"]="dir"
+)
 
-## Other variables which will likely not be changed
-#
 # The Github URL where we can find kirby packages to download
 KIRBYGITURL="https://github.com/getkirby"
 # The Github API URL where we can find information about releases (tags)
@@ -61,18 +83,24 @@ declare -A _KIRBYTAGCURRENT
 declare -A _KIRBYTAGRECENT
 declare -A _KIRBYTAGSOTHERS
 
-# Variables used to create a RFC2822 date to be used in HTTP If-Modified-Since header
+# Variables used to create a RFC2822 conform date to be used in HTTP If-Modified-Since header
+# Unfortunately, the date command is not able to do this
 declare -A MONTHNAME=( ["01"]="Jan" ["02"]="Feb" ["03"]="Mar" ["04"]="Apr" ["05"]="May" ["06"]="Jun" ["07"]="Jul" ["08"]="Aug" ["09"]="Sep" ["10"]="Oct" ["11"]="Nov" ["12"]="Dec" )
 declare -A DAYNAME=( ["1"]="Mon" ["2"]="Tue" ["3"]="Wed" ["4"]="Thu" ["5"]="Fri" ["6"]="Sat" ["7"]="Sun" )
 
-
-## Add colored output if tput program is installed
+# Add colored output if tput program is installed
 if [ ! -z $(which tput) ];then
   txtbld=$(tput -Txterm-256color bold)
   txtrst=$(tput -Txterm-256color sgr0)
   txtred=${txtbld}$(tput -Txterm-256color setaf 1)
   txtgreen=${txtbld}$(tput -Txterm-256color setaf 2)
+  txtyellow=${txtbld}$(tput -Txterm-256color setaf 3)
   txtblue=${txtbld}$(tput -Txterm-256color setaf 4)
+  txtmagenta=${txtbld}$(tput -Txterm-256color setaf 5)
+  txtcyan=${txtbld}$(tput -Txterm-256color setaf 6)
+  txtwhite=${txtbld}$(tput -Txterm-256color setaf 7)
 fi
 
-## code: language=bash
+# Read the personal configuration file and create it if it does not exist
+if [ ! -f $KIRBYUSERRC ];then configureWizard;fi
+. $KIRBYUSERRC

@@ -3,13 +3,10 @@
 # kirbyinstall by Uwe Gehring <adspectus@fastmail.com>
 
 ## Read settings and make sure all config files exist
-if ! kirbyconfigure;then exit 1;fi
-
-## Source the configuration files
+[[ ! -f /etc/kirbytools/kirbyrc ]] && echo "File /etc/kirbytools/kirbyrc not found!" && exit 1
 . /etc/kirbytools/kirbyrc
-. $HOME/.kirbyrc
-. /etc/kirbytools/kirbyrc2
-. /etc/kirbytools/kirbyfunctions
+
+debMsg "Starting $(basename $0)"
 
 ## Initialize settings
 initKirbySetup
@@ -32,6 +29,7 @@ usage() {
 }
 
 ## Get commandline options
+debMsg "Get commandline options"
 while getopts ":hdlfp:w:" opt;do
   case "${opt}" in
     h)  usage;;
@@ -47,13 +45,14 @@ done
 shift $((OPTIND -1))
 
 ## Check if package has a valid value and if yes, split into kit and version
+debMsg "Check if package has a valid value and if yes, split into kit and version"
 package=${package:-$KIRBYDEFAULTPACKAGE}
 EXPR='^(starterkit|plainkit)-([3-9].[0-9]+.[0-9]+)$'
 if [[ $package =~ $EXPR ]];then
   kit=${BASH_REMATCH[1]}
   ver=${BASH_REMATCH[2]}
 else
-  errMsg "" && Usage
+  errMsg "Package $package ist not a valid package" && usage
 fi
 
 ## Check if vhost has a value and set KIRBYVHOSTDIR
@@ -70,20 +69,24 @@ if [[ $FORCEDOWNLOAD || ! -f $KIRBYDOWNLOADDIR/$package.tar.gz ]];then
   [[ $? -ne 0 ]] && errMsg "Could not download $package" && usage
 fi
 
-mkdir -p $KIRBYVHOSTDIR $KIRBYVHOSTLOGDIR
-sudo tar -xzf $KIRBYDOWNLOADDIR/$package.tar.gz -C $KIRBYTEMPDIR
-cp -dR --preserve=mode,timestamps $KIRBYTEMPDIR/$package/. $KIRBYVHOSTDIR
+save_mkdir "$KIRBYVHOSTDIR"
+save_mkdir "$KIRBYVHOSTLOGDIR"
+tar -xzf $KIRBYDOWNLOADDIR/$package.tar.gz -C "$KIRBYTEMPDIR"
+save_cp "$KIRBYTEMPDIR/$package/." "$KIRBYVHOSTDIR"
 
 echo -e "\n${txtgreen}Kirby $package installed to $KIRBYVHOSTDIR${txtrst}\n"
 
 if [ $LINKKIRBY ];then
   if [ ! -d $KIRBYLIBDIR/$ver ];then
-    sudo mkdir -p $KIRBYLIBDIR/$ver
-    sudo cp -dR --preserve=mode,timestamps $KIRBYVHOSTDIR/kirby/. $KIRBYLIBDIR/$ver
+    save_mkdir "$KIRBYLIBDIR/$ver"
+    save_cp "$KIRBYVHOSTDIR/kirby/." "$KIRBYLIBDIR/$ver"
   fi
-  rm -rf $KIRBYVHOSTDIR/kirby && ln -fs $KIRBYLIBDIR/$ver $KIRBYVHOSTDIR/kirby
+  save_rm "$KIRBYVHOSTDIR/kirby"
+  save_ln "$KIRBYLIBDIR/$ver" "$KIRBYVHOSTDIR/kirby"
   sed -i.bak -e "s/Kirby)/Kirby\(\[ 'roots' => \[ 'index' => __DIR__ \] \]\)\)/" $KIRBYVHOSTDIR/index.php
 fi
+
+debMsg "Script $(basename $0) finished successfully"
 
 exit 0
 ## code: language=bash

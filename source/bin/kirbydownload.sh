@@ -3,13 +3,10 @@
 # kirbydownload by Uwe Gehring <adspectus@fastmail.com>
 
 ## Read settings and make sure all config files exist
-if ! kirbyconfigure;then exit 1;fi
-
-## Source the configuration files
+[[ ! -f /etc/kirbytools/kirbyrc ]] && echo "File /etc/kirbytools/kirbyrc not found!" && exit 1
 . /etc/kirbytools/kirbyrc
-. $HOME/.kirbyrc
-. /etc/kirbytools/kirbyrc2
-. /etc/kirbytools/kirbyfunctions
+
+debMsg "Starting $(basename $0)"
 
 ## Initialize settings
 initKirbySetup
@@ -36,6 +33,7 @@ usage() {
 }
 
 ## Get commandline options
+debMsg "Get commandline options"
 while getopts ":hdlfk:t:v:" opt;do
   case "${opt}" in
     h)  usage;;
@@ -52,14 +50,16 @@ done
 shift $((OPTIND -1))
 
 ## Check if kit has valid value
+debMsg "Check if kit has valid value"
 kit=${kit:-$KIRBYKIT}
 if [[ "$kit" != "starterkit" && "$kit" != "plainkit" ]];then
   errMsg "Invalid kit $kit" && usage
 fi
 
 ## Check if version has valid value
+debMsg "Check if version has valid value"
 version=${version:-$KIRBYVERSION}
-if ! checkValidKirbyVersion $version $kit;then
+if ! isValidKirbyVersion $version $kit;then
   errMsg "Invalid version $version" && usage
 fi
 if [ "$version" == "current" ];then
@@ -67,10 +67,12 @@ if [ "$version" == "current" ];then
 fi
 
 ## Check if target has valid value
+debMsg "Check if target has valid value"
 target=${target:-$KIRBYDOWNLOADDIR}
 if [ ! -d $target ];then
   errMsg "Target directory $target does not exist" && usage
 fi
+target=$(realpath $target)
 
 ## Print info in debug mode
 [[ $DEBUG ]] && showVars
@@ -79,8 +81,10 @@ fi
 ## in target dir and rename from version.tar.gz to kit-version.tar.gz
 if [[ $FORCEDOWNLOAD || ! -f $target/$kit-$version.tar.gz ]];then
   [[ -z $KIRBYGITURL ]] && errMsg "KIRBYGITURL is not defined!" && exit 1
-  sudo wget -q $KIRBYGITURL/$kit/archive/$version.tar.gz -P $target
-  sudo mv $target/$version.tar.gz $target/$kit-$version.tar.gz
+  debMsg "wget -q $KIRBYGITURL/$kit/archive/$version.tar.gz -P $KIRBYTEMPDIR"
+  wget -q $KIRBYGITURL/$kit/archive/$version.tar.gz -P "$KIRBYTEMPDIR"
+  debMsg "save_cp $KIRBYTEMPDIR/$version.tar.gz $target/$kit-$version.tar.gz"
+  save_cp "$KIRBYTEMPDIR/$version.tar.gz" "$target/$kit-$version.tar.gz"
   echo -e "\n${txtgreen}Kirby $kit $version downloaded to $target/$kit-$version.tar.gz${txtrst}\n"
 else
   echo -e "\n${txtgreen}Kirby $kit $version already in $target/$kit-$version.tar.gz${txtrst}\n"
@@ -88,10 +92,15 @@ fi
 
 ## Unpack kirby program directory to KIRBYLIBDIR
 if [[ $LINKKIRBY && ! -d $KIRBYLIBDIR/$version ]];then
-  sudo tar -xzf $target/$kit-$version.tar.gz -C $KIRBYTEMPDIR
-  sudo mkdir -p $KIRBYLIBDIR/$version
-  sudo cp -dR --preserve=mode,timestamps $KIRBYTEMPDIR/$kit-$version/kirby/. $KIRBYLIBDIR/$version
+  debMsg "tar -xzf $target/$kit-$version.tar.gz -C $KIRBYTEMPDIR"
+  tar -xzf "$target/$kit-$version.tar.gz" -C "$KIRBYTEMPDIR"
+  debMsg "save_mkdir $KIRBYLIBDIR/$version"
+  save_mkdir "$KIRBYLIBDIR/$version"
+  debMsg "save_cp $KIRBYTEMPDIR/$kit-$version/kirby/. $KIRBYLIBDIR/$version"
+  save_cp "$KIRBYTEMPDIR/$kit-$version/kirby/." "$KIRBYLIBDIR/$version"
 fi
+
+debMsg "Script $(basename $0) finished successfully"
 
 exit 0
 ## code: language=bash

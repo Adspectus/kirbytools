@@ -1,41 +1,101 @@
 ## File: /etc/kirbytools/kirbyfunctions
-## Functions for kirby* shell scripts by Uwe Gehring <adspectus@fastmail.com>
+## Functions for kirbytools scripts by Uwe Gehring <adspectus@fastmail.com>
+## code: language=bash
 ##
-## Do not change this file! Put your changes in $HOME/.kirbyfunctions
+## Do not change this file!
 ##
-## Functions can be overridden by settings in $HOME/.kirbyfunctions which will be
-## loaded after this file if it exists.
+
+## Configuration wizard
+function configureWizard {
+  debMsg "Entering function $FUNCNAME"
+  echo -e "\n${txtbld}First setup! Define your personal defaults which will be saved in $KIRBYUSERRC!${txtrst}\n"
+# Create KIRBYUSERRC
+  echo -e "## File: $KIRBYUSERRC\n## Variables for kirbytools scripts by Uwe Gehring <adspectus@fastmail.com>\n##\n## Default values in brackets\n" > $KIRBYUSERRC
+# Ask first the KIRBYSUFFIX because it will be used in other variables
+  local regex='^[A-Za-z0-9._%+-]+$'
+  while true;do
+    read -p "${txtbld}The suffix \$KIRBYSUFFIX to be used for directories and filenames [${txtrst}${txtblue}kirby${txtrst}${txtbld}] ${txtrst}"
+    local SEL=${REPLY:-kirby}
+    if [[ $SEL =~ $regex ]];then break;else errMsg "Invalid input: $SEL";fi
+  done
+  echo "# The suffix to be used for directories and filenames [kirby]" >> $KIRBYUSERRC
+  KIRBYSUFFIX=${REPLY:-kirby}
+  echo -e "KIRBYSUFFIX=\"$KIRBYSUFFIX\"\n" >> $KIRBYUSERRC
+# Add additional variables which depend on this prefix/suffix to the default array
+  _KIRBYDEFAULTVAR["KIRBYDOWNLOADDIR"]="/usr/local/src/\$KIRBYSUFFIX"
+  _KIRBYDEFAULTVAR["KIRBYLIBDIR"]="/usr/local/lib/\$KIRBYSUFFIX"
+  _KIRBYDEFAULTVAR["KIRBYVHOSTROOT"]="$HOME/vhosts-\$KIRBYSUFFIX"
+# Ask all _KIRBYDEFAULTVAR* variables and write settings into KIRBYUSERRC
+  for var in ${_KIRBYDEFAULT[@]};do
+    while true;do
+      read -p "${txtbld}${_KIRBYDEFAULTVARTXT[$var]} [${txtrst}${txtblue}${_KIRBYDEFAULTVAR[$var]}${txtrst}${txtbld}] ${txtrst}"
+      local SEL=${REPLY:-${_KIRBYDEFAULTVAR[$var]}}
+      case "${_KIRBYDEFAULTVARTYPE[$var]}" in
+        dir)
+          if isValidDir "$SEL";then break;else errMsg "Invalid input: $SEL";fi
+        ;;
+        regex*)
+          REGEX=${_KIRBYDEFAULTVARTYPE[$var]/regex/}
+          if [[ $SEL =~ $REGEX ]];then break;else errMsg "Invalid input: $SEL";fi
+        ;;
+        *)
+          break
+        ;;
+      esac
+    done
+    echo "# ${_KIRBYDEFAULTVARTXT[$var]} [${_KIRBYDEFAULTVAR[$var]}]" >> $KIRBYUSERRC
+    echo -e "$var=\"${REPLY:-${_KIRBYDEFAULTVAR[$var]}}\"\n" >> $KIRBYUSERRC
+  done
+
+  echo "# The directory where templates for configuration will be found [\$KIRBYAPACHECONFDIR/templates]" >> $KIRBYUSERRC
+  echo -e "KIRBYTEMPLATEDIR=\"\$KIRBYAPACHECONFDIR/templates\"\n" >> $KIRBYUSERRC
+  echo "# The directory where apache vhost configuration files will be placed [\$KIRBYAPACHECONFDIR/sites-available]" >> $KIRBYUSERRC
+  echo -e "KIRBYCONFAVAILABLEDIR=\"\$KIRBYAPACHECONFDIR/sites-available\"\n" >> $KIRBYUSERRC
+  echo "# The directory where apache vhost configuration files will be linked [\$KIRBYAPACHECONFDIR/sites-enabled]" >> $KIRBYUSERRC
+  echo -e "KIRBYCONFENABLEDDIR=\"\$KIRBYAPACHECONFDIR/sites-enabled\"\n" >> $KIRBYUSERRC
+  echo "# Temporary directory where files will be unpacked [/tmp/\$KIRBYSUFFIX]" >> $KIRBYUSERRC
+  echo -e "KIRBYTEMPDIR=\"/tmp/\$KIRBYSUFFIX\"\n" >> $KIRBYUSERRC
+
+  echo ""
+  read -n1 -p "${txtbld}Are you satisfied with above settings to continue? [y|${txtrst}${txtblue}N${txtrst}${txtbld}] ${txtrst}"
+  [[ -z $REPLY ]] || echo ""
+  SEL=${REPLY:-n}
+  if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
+    echo -e "\n${txtgreen}First setup finished! Delete $KIRBYUSERRC if you would like to run this wizard again.${txtrst}\n"
+  else
+    debMsg "Removing $KIRBYUSERRC and finish script"
+    rm $KIRBYUSERRC
+    exit 0
+  fi
+  debMsg "Leaving function $FUNCNAME"
+}
 
 
 ## Initialisation of all settings
 function initKirbySetup {
+  debMsg "Entering function $FUNCNAME"
   # Check if needed programs are installed
-  for prg in kirbydownload kirbyinstall cat cp curl head jq ln ls mkdir mv php rm sed sudo tar tr wget;do
+  for prg in kirbydownload kirbyinstall basename cat cp curl dirname head jq ln ls mkdir mv pathchk php realpath rm sed sudo tar tr wget;do
     [[ ! $(which $prg) ]] && errMsg "Program '$prg' is not installed" && exit 1
   done
 
-  # The download and lib directory will be created if they do not exist (sudo necessary when using system directories, which is the default)
-  sudo mkdir -p $KIRBYDOWNLOADDIR $KIRBYLIBDIR
-
-  # The temporary directory will be created if it does not exist
-  mkdir -p $KIRBYTEMPDIR
-
-  # The personal apache dirs will be created if they do not exist
-  mkdir -p $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYVHOSTROOT
-
-  ## TODO: Check if KIRBYVHOSTROOT is owned by running user/group and is 775
+  # Create directories if not exist
+  for dir in $KIRBYDOWNLOADDIR $KIRBYLIBDIR $KIRBYTEMPDIR $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYVHOSTROOT;do
+    save_mkdir "$dir"
+  done
 
   # Copy the template files into KIRBYTEMPLATEDIR
-  for tpl in ${_KIRBYTEMPLATES[@]};do cp /usr/share/kirbytools/$tpl.template $KIRBYTEMPLATEDIR;done
+  for tpl in ${_KIRBYTEMPLATES[@]};do cp $KIRBYTOOLSPACKAGEDIR/$tpl.template $KIRBYTEMPLATEDIR;done
 
-  # Get existing tags (versions)
+  # Get existing tags (versions) from Github or from cache
   getKirbyTags
 
   # The default package is the combination of default kit and current version of this kit
   KIRBYDEFAULTPACKAGE="$KIRBYKIT-${_KIRBYTAGCURRENT[$KIRBYKIT]}"
 
-  # The default virtual host directory is generated randomly (and later prefixed by "KIRBYPREFIX-")
+  # The default virtual host directory is generated randomly (and later prefixed by "KIRBYSUFFIX-")
   KIRBYDEFAULTVHOST=$(getRandomVHost)
+  debMsg "Leaving function $FUNCNAME"
 }
 
 
@@ -46,13 +106,18 @@ function initKirbySetup {
 ## _KIRBYTAGRECENT contains the previous version number for the kit, i.e '3.3.5'
 ## _KIRBYTAGSOTHERS contains the list of all remaining versions, i.e. '3.3.4 3.3.3 ... 3.0.0'
 function getKirbyTags {
+  debMsg "Entering function $FUNCNAME"
   EXPR='^<(.*)>(.*)<(.*)>(.*)$'
   for _kit in ${_KIRBYKITS[@]};do
     if [ -f $HOME/.kirby-$_kit-tags.json ];then
+      debMsg "$HOME/.kirby-$_kit-tags.json exists"
       [[ $(date -u "+<%u>, %d <%m> %Y %T GMT" -r $HOME/.kirby-$_kit-tags.json) =~ $EXPR ]] && DATE=${DAYNAME[${BASH_REMATCH[1]}]}${BASH_REMATCH[2]}${MONTHNAME[${BASH_REMATCH[3]}]}${BASH_REMATCH[4]}
+      debMsg "curl --netrc-optional -s $KIRBYGITAPIURL/$_kit/tags -H \"If-Modified-Since: $DATE\""
       TAGS=$(curl --netrc-optional -s $KIRBYGITAPIURL/$_kit/tags -H "If-Modified-Since: $DATE")
       [[ ! -z $TAGS ]] && echo $TAGS > $HOME/.kirby-$_kit-tags.json
     else
+      debMsg "$HOME/.kirby-$_kit-tags.json missing"
+      debMsg "curl --netrc-optional -s $KIRBYGITAPIURL/$_kit/tags > $HOME/.kirby-$_kit-tags.json"
       curl --netrc-optional -s $KIRBYGITAPIURL/$_kit/tags > $HOME/.kirby-$_kit-tags.json
     fi
     declare -a _taglist=( $(jq -r '.[] | .name' $HOME/.kirby-$_kit-tags.json) )
@@ -60,35 +125,43 @@ function getKirbyTags {
     _KIRBYTAGRECENT[$_kit]=${_taglist[1]}
     _KIRBYTAGSOTHERS[$_kit]=${_taglist[@]:2}
   done
+  debMsg "Leaving function $FUNCNAME"
 }
 
-## Generates a random string with 8 characters a-z appended to KIRBYPREFIX
+## Generates a random string with 8 characters a-z appended to KIRBYSUFFIX
 function getRandomVHost {
+  debMsg "Entering function $FUNCNAME"
   while true;do
     RANDOMCODE=$(cat /dev/urandom | tr -cd 'a-z' | head -c 8)
-    KIRBYVHOST="$KIRBYPREFIX-$RANDOMCODE"
+    KIRBYVHOST="$KIRBYSUFFIX-$RANDOMCODE"
     [[ ! -d $KIRBYVHOSTROOT/$KIRBYVHOST ]] && echo "$KIRBYVHOST" && break
   done
+  debMsg "Leaving function $FUNCNAME"
 }
 
 ## Creates the name of VHOST directory dependent of HTDOCSDIR value
 function getVHostDir {
+  debMsg "Entering function $FUNCNAME"
   local VHOSTDIR="$KIRBYVHOSTROOT/$1"
   [[ ! -z $KIRBYHTDOCSDIR ]] && VHOSTDIR=$VHOSTDIR/$KIRBYHTDOCSDIR
   [[ -d $VHOSTDIR ]] && errMsg "$VHOSTDIR already exists" && usage
   echo $VHOSTDIR
+  debMsg "Leaving function $FUNCNAME"
 }
 
 ## Creates the name of LOG directory dependent of HTDOCSDIR value
 function getLogDir {
+  debMsg "Entering function $FUNCNAME"
   local LOGDIR="$KIRBYVHOSTROOT/$1"
   [[ ! -z $KIRBYHTDOCSDIR ]] && LOGDIR=$LOGDIR/$KIRBYLOGDIR
   [[ -d $LOGDIR ]] && errMsg "$LOGDIR already exists" && usage
   echo $LOGDIR
+  debMsg "Leaving function $FUNCNAME"
 }
 
 ## Ask which kit to install (default: KIRBYKIT)
 function askKit {
+  debMsg "Entering function $FUNCNAME"
   while true;do
     read -n1 -p "${txtbld}Which kit to install? Choose (p)lainkit or (s)tarterkit [${txtrst}${txtblue}$KIRBYKIT${txtrst}${txtbld}] ${txtrst}"
     [[ -z $REPLY ]] || echo ""
@@ -96,10 +169,12 @@ function askKit {
     [[ "$SEL" == "p" || "$SEL" == "s" ]] && KIRBYSELECTEDKIT=${_KIRBYKITS[$SEL]} && break
     echo "${txtred}You need to specify either of \"(p)lainkit\" or \"(s)tarterkit\"!${txtrst}"
   done
+  debMsg "Leaving function $FUNCNAME"
 }
 
 ## Ask which version to install (default: current version of selected kit)
 function askVersion {
+  debMsg "Entering function $FUNCNAME"
   while true;do
     read -n1 -p "${txtbld}Which Version to install? Choose (c)urrent or (o)ther [${txtrst}${txtblue}$KIRBYVERSION (${_KIRBYTAGCURRENT[$KIRBYSELECTEDKIT]})${txtrst}${txtbld}] ${txtrst}"
     [[ -z $REPLY ]] || echo ""
@@ -109,31 +184,37 @@ function askVersion {
     [[ "$SEL" == "o" ]] && askTag && break
     echo "${txtred}You need to specify either of \"(c)urrent\" or \"(o)ther\"!${txtrst}"
   done
+  debMsg "Leaving function $FUNCNAME"
 }
 
-## Ask which version to install if not current version (default: version before current version)
+## Ask which version to install if not current version (default: previous version)
 function askTag {
+  debMsg "Entering function $FUNCNAME"
   echo "These Versions are available:"
   echo ${_KIRBYTAGRECENT[$KIRBYSELECTEDKIT]} ${_KIRBYTAGSOTHERS[$KIRBYSELECTEDKIT]}
   while true;do
     read -p "${txtbld}Which Version to install? [${txtrst}${txtblue}${_KIRBYTAGRECENT[$KIRBYSELECTEDKIT]}${txtrst}${txtbld}] ${txtrst}"
     SEL=${REPLY:-${_KIRBYTAGRECENT[$KIRBYSELECTEDKIT]}}
-    if checkValidKirbyVersion $SEL $KIRBYSELECTEDKIT;then KIRBYSELECTEDVERSION=$SEL && break;fi
+    if isValidKirbyVersion $SEL $KIRBYSELECTEDKIT;then KIRBYSELECTEDVERSION=$SEL && break;fi
     echo "${txtred}Version $SEL does not exist. Please specify a correct version number!${txtrst}"
   done
+  debMsg "Leaving function $FUNCNAME"
 }
 
 ## Checks if a valid version number has been selected (returns 1 if not and 0 if yes!)
-function checkValidKirbyVersion {
+function isValidKirbyVersion {
+  debMsg "Entering function $FUNCNAME"
   [[ "$1" == "current" ]] && return 0
   for _version in ${_KIRBYTAGCURRENT[$2]} ${_KIRBYTAGRECENT[$2]} ${_KIRBYTAGSOTHERS[$2]};do
     [[ "$1" == "$_version" ]] && return 0
   done
   return 1
+  debMsg "Leaving function $FUNCNAME"
 }
 
 ## Ask the name of virtual host (default: KIRBYDEFAULTVHOST which has been rendomly generated in initKirbySetup)
 function askVHost {
+  debMsg "Entering function $FUNCNAME"
   while true;do
     read -p "${txtbld}Virtual Host Name? [${txtrst}${txtblue}$KIRBYDEFAULTVHOST${txtrst}${txtbld}] ${txtrst}"
     SEL=${REPLY:-$KIRBYDEFAULTVHOST}
@@ -148,10 +229,12 @@ function askVHost {
   SEL=${REPLY:-$KIRBYDEFAULTVHOSTNAME}
   KIRBYSELECTEDVHOSTNAME=$SEL
   read -p "${txtbld}Description (optional)? [] ${txtrst}" KIRBYSELECTEDVHOSTDESC
+  debMsg "Leaving function $FUNCNAME"
 }
 
 ## Add default admin user account (default: Yes)?
 function askAccount {
+  debMsg "Entering function $FUNCNAME"
   KIRBYSELECTEDCREATEACCOUNT="No"
 #  if [ "$KIRBYSELECTEDKIT" == "starterkit" ];then
     read -n1 -p "${txtbld}Adding your default admin account? [${txtrst}${txtblue}Y${txtrst}${txtbld}|n] ${txtrst}"
@@ -159,10 +242,12 @@ function askAccount {
     SEL=${REPLY:-y}
     [[ "$SEL" == "y" || "$SEL" == "Y" ]] && KIRBYSELECTEDCREATEACCOUNT="Yes"
 #  fi
+  debMsg "Leaving function $FUNCNAME"
 }
 
-# Enabling the panel? Only asked if admin user account is NOT created (default: Yes)
+## Enabling the panel? Only asked if admin user account is NOT created (default: Yes)
 function askPanel {
+  debMsg "Entering function $FUNCNAME"
   KIRBYSELECTEDENABLEPANEL="No"
   if [ "$KIRBYSELECTEDCREATEACCOUNT" != "Yes" ];then
     read -n1 -p "${txtbld}Enable the Panel Installation? [${txtrst}${txtblue}Y${txtrst}${txtbld}|n] ${txtrst}"
@@ -170,24 +255,29 @@ function askPanel {
     SEL=${REPLY:-y}
     [[ "$SEL" == "y" || "$SEL" == "Y" ]] && KIRBYSELECTEDENABLEPANEL="Yes"
   fi
+  debMsg "Leaving function $FUNCNAME"
 }
 
-# Replace kirby folder in Virtual Host Dir with symbolic link (default: Yes)?
+## Replace kirby folder in Virtual Host Dir with symbolic link (default: Yes)?
 function askLink {
+  debMsg "Entering function $FUNCNAME"
   KIRBYSELECTEDKIRBYLINK="No"
   read -n1 -p "${txtbld}Replace the kirby folder with a symbolic link pointing to the folder in $KIRBYLIBDIR? [${txtrst}${txtblue}Y${txtrst}${txtbld}|n] ${txtrst}"
   [[ -z $REPLY ]] || echo ""
   SEL=${REPLY:-y}
   [[ "$SEL" == "y" || "$SEL" == "Y" ]] && KIRBYSELECTEDKIRBYLINK="Yes"
+  debMsg "Leaving function $FUNCNAME"
 }
 
-# Combine redirection and ssl confs into one file (default: Yes)?
+## Combine redirection and ssl confs into one file (default: Yes)?
 function askConf {
+  debMsg "Entering function $FUNCNAME"
   KIRBYSELECTEDCOMBINECONF="No"
   read -n1 -p "${txtbld}Combine redirection and ssl vhost configuration files into 1 file? [${txtrst}${txtblue}Y${txtrst}${txtbld}|n] ${txtrst}"
   [[ -z $REPLY ]] || echo ""
   SEL=${REPLY:-y}
   [[ "$SEL" == "y" || "$SEL" == "Y" ]] && KIRBYSELECTEDCOMBINECONF="Yes"
+  debMsg "Leaving function $FUNCNAME"
 }
 
 ## Show selected settings
@@ -221,7 +311,118 @@ function errMsg {
   echo "${txtred}Error: $1!${txtrst}" 1>&2
 }
 
-## Source user kirby_functions file if it exists
-[[ -f $HOME/.kirby_functions ]] && . $HOME/.kirby_functions
+## Output a debug message
+function debMsg {
+  [[ $DEBUG ]] && echo "${txtmagenta}Debug: $1${txtrst}" 1>&2
+}
 
-## code: language=bash
+## Custom mkdir which will check if sudo is necessary
+function save_mkdir { # $1=targetdir
+  debMsg "Entering function $FUNCNAME with arg '$1'"
+  if isValidDir "$1";then DIR="$1";else errMsg "Invalid path: $1" && exit 1;fi
+  TARGETDIR="$1"
+  # Look for the first existing directory in tree upwards
+  while true;do
+    if [ -d "$DIR" ];then break;fi
+    DIR=$(dirname "$DIR")
+  done
+  DIR=$(realpath "$DIR")
+  # Return if the requested directory already exist
+  if [ -d "$TARGETDIR" ];then
+    debMsg "$TARGETDIR already exists"
+    debMsg "Leaving function $FUNCNAME with return code 0"
+    return 0
+  fi
+  # Check permissions of the base dir and create with sudo if necessary
+  if [ -x "$DIR" -a -w "$DIR" ];then
+    debMsg "mkdir -p $TARGETDIR"
+    mkdir -p "$TARGETDIR"
+  else
+    debMsg "sudo mkdir -p $TARGETDIR"
+    sudo mkdir -p "$TARGETDIR"
+  fi
+  debMsg "Leaving function $FUNCNAME"
+}
+
+function isValidDir {
+  debMsg "Entering function $FUNCNAME with arg '$1'"
+  if [ "$1" == "/" ];then debMsg "Invalid path: $1" && return 1;fi
+  local PATHNAME=$(dirname "$1")
+  if [ "$PATHNAME" == "." ];then PATHNAME=$(realpath .);fi
+  local FILENAME=$(basename "$1")
+  if [ "$PATHNAME" == "/" ];then DIR="/$FILENAME";else DIR="$PATHNAME/$FILENAME";fi
+  ! pathchk "$DIR" && debMsg "Invalid path (pathchk): $DIR" && return 1
+  [[ "$DIR" == "/" || "$DIR" == "." ]] && debMsg "Invalid path (/|.): $DIR" && return 1
+  for dir in /bin /boot /cdrom /dev /etc /lib /lib64 /lost+found /media /proc /run /sbin /snap /sys;do
+    if [[ "$DIR" =~ ^$dir.* ]];then
+      debMsg "Invalid path (starts with $dir): $DIR"
+      return 1
+    fi
+  done
+  debMsg "Leaving function $FUNCNAME with returncode 0"
+  return 0
+}
+
+function save_mv { # $1=sourcefile $2=targetfile or targetdir
+  debMsg "Entering function $FUNCNAME with arg '$1' and '$2'"
+  SOURCE="$1"
+  TARGET="$2"
+  TARGETDIR=$(dirname "$TARGET")
+  # Check permissions of the target dir and move with sudo if necessary
+  if [ -x "$TARGETDIR" -a -w "$TARGETDIR" ];then
+    debMsg "mv $SOURCE $TARGET"
+    mv "$SOURCE" "$TARGET"
+  else
+    debMsg "sudo mv $SOURCE $TARGET"
+    sudo mv "$SOURCE" "$TARGET"
+  fi
+  debMsg "Leaving function $FUNCNAME"
+}
+
+function save_cp { # $1=sourcefile $2=targetfile or targetdir
+  debMsg "Entering function $FUNCNAME with arg '$1' and '$2'"
+  SOURCE="$1"
+  TARGET="$2"
+  TARGETDIR=$(dirname "$TARGET")
+  # Check permissions of the target dir and copy with sudo if necessary
+  if [ -x "$TARGETDIR" -a -w "$TARGETDIR" ];then
+    debMsg "cp -dR --preserve=mode,timestamps $SOURCE $TARGET"
+    cp -dR --preserve=mode,timestamps "$SOURCE" "$TARGET"
+  else
+    debMsg "sudo cp -dR --preserve=mode,timestamps $SOURCE $TARGET"
+    sudo cp -dR --preserve=mode,timestamps "$SOURCE" "$TARGET"
+  fi
+  debMsg "Leaving function $FUNCNAME"
+}
+
+function save_rm { # $1=source
+  debMsg "Entering function $FUNCNAME with arg '$1'"
+  if isValidDir "$1";then TARGET="$1";else errMsg "Invalid path: $1" && exit 1;fi
+  PARENTDIR=$(dirname "$TARGET")
+  # Check permissions of the target dir and rm with sudo if necessary
+  if [ -w "$PARENTDIR" -a -w "$TARGET" ];then
+    debMsg "rm -rf $TARGET"
+    rm -rf "$TARGET"
+  else
+    debMsg "sudo rm -rf $TARGET"
+    sudo rm -rf "$TARGET"
+  fi
+  debMsg "Leaving function $FUNCNAME"
+}
+
+function save_ln { # $1=sourcefile $2=targetfile or targetdir
+  debMsg "Entering function $FUNCNAME with arg '$1' and '$2'"
+  SOURCE="$1"
+  TARGET="$2"
+  TARGETDIR=$(dirname "$TARGET")
+  # Check permissions of the target dir and ln with sudo if necessary
+  if [ -x "$TARGETDIR" -a -w "$TARGETDIR" ];then
+    debMsg "ln -fs $SOURCE $TARGET"
+    ln -fs "$SOURCE" "$TARGET"
+  else
+    debMsg "sudo ln -fs $SOURCE $TARGET"
+    sudo ln -fs "$SOURCE" "$TARGET"
+  fi
+  debMsg "Leaving function $FUNCNAME"
+}
+
