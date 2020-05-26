@@ -28,7 +28,7 @@
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
 .SH "NAME"
-kirbytools \- tools to create & manage kirby websites
+kirbytools \- Tools to create & manage Kirby websites
 .SH "DESCRIPTION"
 .PP
 This manual page documents briefly the
@@ -37,46 +37,44 @@ package\&.
 .PP
 The
 kirbytools
-package is a set of commandline programs which should ease and speed the installation and management of the Kirby CMS on your machine\&.
+package is a collection of shell scripts which should ease and speed the installation and management of the Kirby CMS on your machine\&.
 .PP
-It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost and deinstalling it\&.
-.PP
-Currently, only Kirby 3 starterkits and plainkits and only apache2 httpd are supported\&.
+It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost, and eventually deinstalling it\&.
 .SH "COMMANDS"
 .PP
-The package consists of the following programs which are documented in their own man page:
+The package consists of the following scripts which are documented in their own man page:
 .PP
 \fBkirbyconfigure\fR
 .RS 4
-Utility to create a user\-specific configuration file which will be used by the other programs in the package\&. See
+Script to create a user\-specific configuration file which will be used by the other programs in the package\&. See
 \fBkirbyconfigure\fR(1)
 for further details\&.
 .RE
 .PP
 \fBkirbydeinstall\fR
 .RS 4
-Program to delete kirby vhost (directory and configuration)\&. See
+Script to delete a Kirby vhost (directory and configuration)\&. See
 \fBkirbydeinstall\fR(1)
 for further details\&.
 .RE
 .PP
 \fBkirbydownload\fR
 .RS 4
-Utility to select and download a Kirby kit to the local machine\&. See
+Script to select and download a Kirby kit to the local machine\&. See
 \fBkirbydownload\fR(1)
 for further details\&.
 .RE
 .PP
 \fBkirbyinstall\fR
 .RS 4
-Utility to install (unpack and transfer files) a Kirby kit to a new vhost directory\&. See
+Script to install (unpack and transfer files) a Kirby kit to a new vhost directory\&. See
 \fBkirbyinstall\fR(1)
 for further details\&.
 .RE
 .PP
 \fBkirbysetup\fR
 .RS 4
-Program to setup a new Kirby website\&. This program will use
+Script to setup a new Kirby website\&. This program will use
 \fBkirbydownload\fR
 and
 \fBkirbyinstall\fR
@@ -95,9 +93,9 @@ kirbytools\&.
 ${HOME}/\&.kirbyrc
 .RS 4
 The per\-user configuration file to control the behaviour of
-kirbytools\&. This file will be created by the program
+kirbytools\&. This file will be created by the
 \fBkirbyconfigure\fR
-(see
+script (see
 \fBkirbyconfigure\fR(1)) if it does not exist\&.
 .RE
 .PP
@@ -108,7 +106,9 @@ kirbytools\&.
 .RE
 .SH "BUGS"
 .PP
-The programs are currently limited to only work with the
+Currently, only Kirby 3 starterkits and plainkits are supported\&.
+.PP
+The programs are currently limited to work with the
 apache2
 httpd\&.
 .PP
@@ -122,7 +122,7 @@ Some functionality requires root (or sudo as root) access\&.
 \fBkirbysetup\fR(1)
 .SH "AUTHOR"
 .PP
-\fBUwe Gehring\fR <\&uwe@imap\&.cc\&>
+\fBUwe Gehring\fR <\&adspectus@fastmail\&.com\&>
 .RS 4
 .RE
 .SH "COPYRIGHT"
