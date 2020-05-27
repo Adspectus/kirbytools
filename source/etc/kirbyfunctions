@@ -34,8 +34,8 @@ function configureWizard {
         dir)
           if isValidDir "$SEL";then break;else errMsg "Invalid input: $SEL";fi
         ;;
-        regex*)
-          REGEX=${_KIRBYDEFAULTVARTYPE[$var]/regex/}
+        regex)
+          REGEX=${_KIRBYDEFAULTVARREGEX[$var]}
           if [[ $SEL =~ $REGEX ]];then break;else errMsg "Invalid input: $SEL";fi
         ;;
         *)
@@ -47,6 +47,7 @@ function configureWizard {
     echo -e "$var=\"${REPLY:-${_KIRBYDEFAULTVAR[$var]}}\"\n" >> $KIRBYUSERRC
   done
 
+# Add more variables
   echo "# The directory where templates for configuration will be found [\$KIRBYAPACHECONFDIR/templates]" >> $KIRBYUSERRC
   echo -e "KIRBYTEMPLATEDIR=\"\$KIRBYAPACHECONFDIR/templates\"\n" >> $KIRBYUSERRC
   echo "# The directory where apache vhost configuration files will be placed [\$KIRBYAPACHECONFDIR/sites-available]" >> $KIRBYUSERRC
