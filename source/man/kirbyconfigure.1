@@ -1,0 +1,139 @@
+'\" t
+.\"     Title: Kirbyconfigure
+.\"    Author: Uwe Gehring <adspectus@fastmail.com>
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 05/23/2020
+.\"    Manual: kirbyconfigure User Manual
+.\"    Source: kirbyconfigure
+.\"  Language: English
+.\"
+.TH "KIRBYCONFIGURE" "1" "05/23/2020" "kirbyconfigure" "kirbyconfigure User Manual"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+kirbyconfigure \- Tools to create & manage Kirby websites
+.SH "DESCRIPTION"
+.PP
+This manual page documents briefly the
+kirbyconfigure
+package\&.
+.PP
+The
+kirbyconfigure
+package is a collection of shell scripts which should ease and speed the installation and management of the Kirby CMS on your machine\&.
+.PP
+It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost, and eventually deinstalling it\&.
+.SH "COMMANDS"
+.PP
+The package consists of the following scripts which are documented in their own man page:
+.PP
+\fBkirbyconfigure\fR
+.RS 4
+Script to create a user\-specific configuration file which will be used by the other programs in the package\&. See
+\fBkirbyconfigure\fR(1)
+for further details\&.
+.RE
+.PP
+\fBkirbydeinstall\fR
+.RS 4
+Script to delete a Kirby vhost (directory and configuration)\&. See
+\fBkirbydeinstall\fR(1)
+for further details\&.
+.RE
+.PP
+\fBkirbydownload\fR
+.RS 4
+Script to select and download a Kirby kit to the local machine\&. See
+\fBkirbydownload\fR(1)
+for further details\&.
+.RE
+.PP
+\fBkirbyinstall\fR
+.RS 4
+Script to install (unpack and transfer files) a Kirby kit to a new vhost directory\&. See
+\fBkirbyinstall\fR(1)
+for further details\&.
+.RE
+.PP
+\fBkirbysetup\fR
+.RS 4
+Script to setup a new Kirby website\&. This program will use
+\fBkirbydownload\fR
+and
+\fBkirbyinstall\fR
+if necessary\&. See
+\fBkirbysetup\fR(1)
+for further details\&.
+.RE
+.SH "FILES"
+.PP
+/etc/kirbytools/kirbyrc
+.RS 4
+The system\-wide configuration file to control the behaviour of
+kirbyconfigure\&.
+.RE
+.PP
+${HOME}/\&.kirbyrc
+.RS 4
+The per\-user configuration file to control the behaviour of
+kirbyconfigure\&. This file will be created by the
+\fBkirbyconfigure\fR
+script (see
+\fBkirbyconfigure\fR(1)) if it does not exist\&.
+.RE
+.PP
+/etc/kirbytools/kirbyfunctions
+.RS 4
+Functions to be used by
+kirbyconfigure\&.
+.RE
+.SH "BUGS"
+.PP
+Currently, only Kirby 3 starterkits and plainkits are supported\&.
+.PP
+The programs are currently limited to work with the
+apache2
+httpd\&.
+.PP
+Some functionality requires root (or sudo as root) access\&.
+.SH "SEE ALSO"
+.PP
+\fBkirbyconfigure\fR(1),
+\fBkirbydeinstall\fR(1),
+\fBkirbydownload\fR(1),
+\fBkirbyinstall\fR(1),
+\fBkirbysetup\fR(1)
+.SH "AUTHOR"
+.PP
+\fBUwe Gehring\fR <\&adspectus@fastmail\&.com\&>
+.RS 4
+.RE
+.SH "COPYRIGHT"
+.br
+Copyright \(co 2020 Uwe Gehring
+.br
+.PP
+This manual page was written for the Debian system (and may be used by others)\&.
+.PP
+Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License, Version 2 or (at your option) any later version published by the Free Software Foundation\&.
+.PP
+On Debian systems, the complete text of the GNU General Public License can be found in
+/usr/share/common\-licenses/GPL\&.
+.sp

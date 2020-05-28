@@ -3,14 +3,12 @@
 # kirbydeinstall by Uwe Gehring <adspectus@fastmail.com>
 
 ## Read settings and make sure all config files exist
-if ! kirbyconfigure;then exit 1;fi
-
-## Source the configuration files
+[[ ! -f /etc/kirbytools/kirbyrc ]] && echo "File /etc/kirbytools/kirbyrc not found!" && exit 1
 . /etc/kirbytools/kirbyrc
-. $HOME/.kirbyrc
-. /etc/kirbytools/kirbyrc2
-. /etc/kirbytools/kirbyfunctions
 
+[[ ! -f $KIRBYUSERRC ]] && errMsg "File $KIRBYUSERRC not found! Run 'kirbyconfigure' to define default values for kirbytools in $KIRBYUSERRC!" && exit 1
+
+debMsg "Starting $(basename $0)"
 
 ## Initialize settings
 initKirbySetup
@@ -31,10 +29,11 @@ usage() {
 }
 
 ## Get commandline options
+debMsg "Get commandline options"
 while getopts ":dhlw:" opt;do
   case "${opt}" in
-    d)  DEBUG=1;;
     h)  usage;;
+    d)  DEBUG=1;;
     l)  LINKKIRBY=1;;
     w)  vhost=$OPTARG;;
     :)  errMsg "-$OPTARG requires an argument" && usage;;

@@ -6,6 +6,8 @@
 [[ ! -f /etc/kirbytools/kirbyrc ]] && echo "File /etc/kirbytools/kirbyrc not found!" && exit 1
 . /etc/kirbytools/kirbyrc
 
+[[ ! -f $KIRBYUSERRC ]] && errMsg "File $KIRBYUSERRC not found! Run 'kirbyconfigure' to define default values for kirbytools in $KIRBYUSERRC!" && exit 1
+
 debMsg "Starting $(basename $0)"
 
 ## Initialize settings
@@ -58,7 +60,7 @@ fi
 ## Check if vhost has a value and set KIRBYVHOSTDIR
 vhost=${vhost:-$KIRBYDEFAULTVHOST}
 KIRBYVHOSTDIR=$(getVHostDir $vhost)
-KIRBYVHOSTLOGDIR=$(getLogDir $vhost)
+#KIRBYVHOSTLOGDIR=$(getLogDir $vhost)
 
 ## Print info in debug mode
 [[ $DEBUG ]] && showVars
@@ -83,7 +85,11 @@ if [ $LINKKIRBY ];then
   fi
   save_rm "$KIRBYVHOSTDIR/kirby"
   save_ln "$KIRBYLIBDIR/$ver" "$KIRBYVHOSTDIR/kirby"
-  sed -i.bak -e "s/Kirby)/Kirby\(\[ 'roots' => \[ 'index' => __DIR__ \] \]\)\)/" $KIRBYVHOSTDIR/index.php
+  if [ -w "$KIRBYVHOSTDIR/index.php" ];then
+    sed -i.bak -e "s/Kirby)/Kirby\(\[ 'roots' => \[ 'index' => __DIR__ \] \]\)\)/" $KIRBYVHOSTDIR/index.php
+  else
+    sudo sed -i.bak -e "s/Kirby)/Kirby\(\[ 'roots' => \[ 'index' => __DIR__ \] \]\)\)/" $KIRBYVHOSTDIR/index.php
+  fi
 fi
 
 debMsg "Script $(basename $0) finished successfully"

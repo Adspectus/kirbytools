@@ -3,13 +3,12 @@
 # kirbysetup by Uwe Gehring <adspectus@fastmail.com>
 
 ## Read settings and make sure all config files exist
-if ! kirbyconfigure;then exit 1;fi
-
-## Source the configuration files
+[[ ! -f /etc/kirbytools/kirbyrc ]] && echo "File /etc/kirbytools/kirbyrc not found!" && exit 1
 . /etc/kirbytools/kirbyrc
-. $HOME/.kirbyrc
-. /etc/kirbytools/kirbyrc2
-. /etc/kirbytools/kirbyfunctions
+
+[[ ! -f $KIRBYUSERRC ]] && errMsg "File $KIRBYUSERRC not found! Run 'kirbyconfigure' to define default values for kirbytools in $KIRBYUSERRC!" && exit 1
+
+debMsg "Starting $(basename $0)"
 
 ## Initialize settings
 initKirbySetup
@@ -25,16 +24,17 @@ usage() {
   echo "  -d: Show debug information"
   echo ""
   echo "  $(basename $0) will ask for all settings and can be exited before"
-  echo "  doing anything in the system. Run with ${txtbld}-d${txtrst} to see all settings."
+  echo "  doing anything in the system."
   echo ""
   exit 1
 }
 
 ## Get commandline options
+debMsg "Get commandline options"
 while getopts ":dh" opt;do
   case "${opt}" in
-    d)  DEBUG=1;;
     h)  usage;;
+    d)  DEBUG=1;;
     :)  errMsg "-$OPTARG requires an argument" && usage;;
     *)  errMsg "Invalid option $OPTARG" && usage;;
   esac
@@ -48,10 +48,10 @@ askVHost
 askLink
 askAccount
 askPanel
-askConf
+#askConf
 
 KIRBYSELECTEDVHOSTDIR=$(getVHostDir $KIRBYSELECTEDVHOST)
-KIRBYSELECTEDVHOSTLOGDIR=$(getLogDir $KIRBYSELECTEDVHOST)
+#KIRBYSELECTEDVHOSTLOGDIR=$(getLogDir $KIRBYSELECTEDVHOST)
 
 ## Show all variables (in debug mode) and all settings
 [[ $DEBUG ]] && showVars
@@ -80,9 +80,15 @@ fi
 [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 
 ## Create admin account if selected and if script exist
-if [ "$KIRBYSELECTEDCREATEACCOUNT" == "Yes" -a -f $KIRBYCREATEUSERSCRIPT ];then
-  echo -n "Creating default account... "
-  php $KIRBYCREATEUSERSCRIPT "$KIRBYSELECTEDVHOSTDIR" "$KIRBYADMINUSERMAIL" "$KIRBYADMINUSERNAME" "$KIRBYADMINUSERLANG" "$KIRBYADMINUSERPASS"
+if [ "$KIRBYSELECTEDCREATEACCOUNT" == "Yes" -a -f $KIRBYCREATEUSERSCRIPT -a ! -z $KIRBYADMINUSERMAIL ];then
+  echo -n "Creating default admin account... "
+  if [ -x $KIRBYSELECTEDVHOSTDIR/site -a -w $KIRBYSELECTEDVHOSTDIR/site ];then
+    debMsg "php $KIRBYCREATEUSERSCRIPT ..."
+    php $KIRBYCREATEUSERSCRIPT "$KIRBYSELECTEDVHOSTDIR" "$KIRBYADMINUSERMAIL" "$KIRBYADMINUSERNAME" "$KIRBYADMINUSERLANG" "$KIRBYADMINUSERPASS"
+  else
+    debMsg "sudo php $KIRBYCREATEUSERSCRIPT ..."
+    sudo php $KIRBYCREATEUSERSCRIPT "$KIRBYSELECTEDVHOSTDIR" "$KIRBYADMINUSERMAIL" "$KIRBYADMINUSERNAME" "$KIRBYADMINUSERLANG" "$KIRBYADMINUSERPASS"
+  fi
   [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 fi
 
@@ -91,40 +97,56 @@ if [ "$KIRBYSELECTEDENABLEPANEL" == "Yes" ];then
   echo -n "Enabling the panel "
   if [ "$KIRBYSELECTEDKIT" == "starterkit" ];then
     echo -n "by modifying site/config/config.php..."
-    sed -i.bak -e "s/\[/\[ 'panel' => \[ 'install' => true \],/" $KIRBYSELECTEDVHOSTDIR/site/config/config.php
+    if [ -w $KIRBYSELECTEDVHOSTDIR/site/config/config.php ];then
+      debMsg "sed $KIRBYSELECTEDVHOSTDIR/site/config/config.php"
+      sed -i.bak -e "s/\[/\[ 'panel' => \[ 'install' => true \],/" $KIRBYSELECTEDVHOSTDIR/site/config/config.php
+    else
+      debMsg "sudo sed $KIRBYSELECTEDVHOSTDIR/site/config/config.php"
+      sudo sed -i.bak -e "s/\[/\[ 'panel' => \[ 'install' => true \],/" $KIRBYSELECTEDVHOSTDIR/site/config/config.php
+    fi
   else
     echo -n "by creating site/config/config.php..."
-    mkdir -p $KIRBYSELECTEDVHOSTDIR/site/config
-    echo -e "<?php\n\nreturn [ 'panel' => [ 'install' => true ],'debug' => true ];\n" > $KIRBYSELECTEDVHOSTDIR/site/config/config.php
+    if [ -x $KIRBYSELECTEDVHOSTDIR/site -a -w $KIRBYSELECTEDVHOSTDIR/site ];then
+      debMsg "mkdir $KIRBYSELECTEDVHOSTDIR/site/config and create $KIRBYSELECTEDVHOSTDIR/site/config/config.php"
+      save_mkdir "$KIRBYSELECTEDVHOSTDIR/site/config"
+      echo -e "<?php\n\nreturn [ 'panel' => [ 'install' => true ],'debug' => true ];\n" > $KIRBYSELECTEDVHOSTDIR/site/config/config.php
+    else
+      debMsg "sudo mkdir $KIRBYSELECTEDVHOSTDIR/site/config and sudo create $KIRBYSELECTEDVHOSTDIR/site/config/config.php"
+      save_mkdir "$KIRBYSELECTEDVHOSTDIR/site/config"
+      sudo echo -e "<?php\n\nreturn [ 'panel' => [ 'install' => true ],'debug' => true ];\n" > $KIRBYSELECTEDVHOSTDIR/site/config/config.php
+    fi
   fi
   [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 fi
 
-## Copying templates as .conf files to sites-available dir in KIRBYAPACHECONFDIR
-for tpl in ${_KIRBYTEMPLATES[@]};do
-  TMPL="$KIRBYTEMPLATEDIR/$tpl.template"
-  CONF="$KIRBYCONFAVAILABLEDIR/${tpl/vhost/$KIRBYSELECTEDVHOST}.conf"
-  echo -n "Creating $(basename $CONF)... "
+## Copying kirby vhost templates as .conf files to sites-available dir in KIRBYAPACHECONFDIR
+for tpl in $KIRBYTEMPLATEDIR/$KIRBYSUFFIX-vhost-*.template;do
+  debMsg "$tpl"
+  TEMPLATE=$(basename $tpl .template)
+  CONFFILE="$KIRBYCONFAVAILABLEDIR/${TEMPLATE/vhost/$KIRBYSELECTEDVHOST}.conf"
+  echo -n "Creating $(basename $CONFFILE)... "
 
-  [[ -f $CONF ]] && mv $CONF $CONF.bak
+  [[ -f $CONFFILE ]] && save_mv "$CONFFILE" "$CONFFILE.bak"
 
-  echo -e "# Virtual Host ${tpl/vhost-/} Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONF
-  cat $TMPL >> $CONF
-
-  sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" $CONF
+  if [ -w $KIRBYCONFAVAILABLEDIR ];then
+    echo -e "# Virtual Host ${TEMPLATE/vhost/$KIRBYSELECTEDVHOST} Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
+    cat $tpl >> $CONFFILE
+    sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" $CONFFILE
+  else
+  fi
   [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 done
 
-if [ "$KIRBYSELECTEDCOMBINECONF" == "Yes" ];then
-  if [ -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf -a -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf ];then 
-    echo -n "Merging redirection and ssl vhost configuration files into 1 file... "
-    cat $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf > $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf
-    if [ -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf ];then
-      rm $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf
-    fi
-    [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
-  fi
-fi
+#if [ "$KIRBYSELECTEDCOMBINECONF" == "Yes" ];then
+#  if [ -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf -a -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf ];then 
+#    echo -n "Merging redirection and ssl vhost configuration files into 1 file... "
+#    cat $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf > $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf
+#    if [ -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf ];then
+#      rm $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf
+#    fi
+#    [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
+#  fi
+#fi
 
 if $(which vhostenable);then
   for conf in $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST*.conf;do
@@ -153,6 +175,8 @@ else
   echo -e "and restart apache with:\n"
   echo -e "  ${txtblue}sudo apache2ctl graceful${txtrst}\n"
 fi
+
+debMsg "Script $(basename $0) finished successfully"
 
 exit 0
 ## code: language=bash

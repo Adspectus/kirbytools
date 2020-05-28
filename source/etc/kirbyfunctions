@@ -5,88 +5,12 @@
 ## Do not change this file!
 ##
 
-## Configuration wizard
-function configureWizard {
-  debMsg "Entering function $FUNCNAME"
-  echo -e "\n${txtbld}First setup! Define your personal defaults which will be saved in $KIRBYUSERRC!${txtrst}\n"
-# Create KIRBYUSERRC
-  echo -e "## File: $KIRBYUSERRC\n## Variables for kirbytools scripts by Uwe Gehring <adspectus@fastmail.com>\n##\n## Default values in brackets\n" > $KIRBYUSERRC
-# Ask first the KIRBYSUFFIX because it will be used in other variables
-  local regex='^[A-Za-z0-9._%+-]+$'
-  while true;do
-    read -p "${txtbld}The suffix \$KIRBYSUFFIX to be used for directories and filenames [${txtrst}${txtblue}kirby${txtrst}${txtbld}] ${txtrst}"
-    local SEL=${REPLY:-kirby}
-    if [[ $SEL =~ $regex ]];then break;else errMsg "Invalid input: $SEL";fi
-  done
-  echo "# The suffix to be used for directories and filenames [kirby]" >> $KIRBYUSERRC
-  KIRBYSUFFIX=${REPLY:-kirby}
-  echo -e "KIRBYSUFFIX=\"$KIRBYSUFFIX\"\n" >> $KIRBYUSERRC
-# Add additional variables which depend on this prefix/suffix to the default array
-  _KIRBYDEFAULTVAR["KIRBYDOWNLOADDIR"]="/usr/local/src/\$KIRBYSUFFIX"
-  _KIRBYDEFAULTVAR["KIRBYLIBDIR"]="/usr/local/lib/\$KIRBYSUFFIX"
-  _KIRBYDEFAULTVAR["KIRBYVHOSTROOT"]="$HOME/vhosts-\$KIRBYSUFFIX"
-# Ask all _KIRBYDEFAULTVAR* variables and write settings into KIRBYUSERRC
-  for var in ${_KIRBYDEFAULT[@]};do
-    while true;do
-      read -p "${txtbld}${_KIRBYDEFAULTVARTXT[$var]} [${txtrst}${txtblue}${_KIRBYDEFAULTVAR[$var]}${txtrst}${txtbld}] ${txtrst}"
-      local SEL=${REPLY:-${_KIRBYDEFAULTVAR[$var]}}
-      case "${_KIRBYDEFAULTVARTYPE[$var]}" in
-        dir)
-          if isValidDir "$SEL";then break;else errMsg "Invalid input: $SEL";fi
-        ;;
-        regex)
-          REGEX=${_KIRBYDEFAULTVARREGEX[$var]}
-          if [[ $SEL =~ $REGEX ]];then break;else errMsg "Invalid input: $SEL";fi
-        ;;
-        *)
-          break
-        ;;
-      esac
-    done
-    echo "# ${_KIRBYDEFAULTVARTXT[$var]} [${_KIRBYDEFAULTVAR[$var]}]" >> $KIRBYUSERRC
-    echo -e "$var=\"${REPLY:-${_KIRBYDEFAULTVAR[$var]}}\"\n" >> $KIRBYUSERRC
-  done
-
-# Add more variables
-  echo "# The directory where templates for configuration will be found [\$KIRBYAPACHECONFDIR/templates]" >> $KIRBYUSERRC
-  echo -e "KIRBYTEMPLATEDIR=\"\$KIRBYAPACHECONFDIR/templates\"\n" >> $KIRBYUSERRC
-  echo "# The directory where apache vhost configuration files will be placed [\$KIRBYAPACHECONFDIR/sites-available]" >> $KIRBYUSERRC
-  echo -e "KIRBYCONFAVAILABLEDIR=\"\$KIRBYAPACHECONFDIR/sites-available\"\n" >> $KIRBYUSERRC
-  echo "# The directory where apache vhost configuration files will be linked [\$KIRBYAPACHECONFDIR/sites-enabled]" >> $KIRBYUSERRC
-  echo -e "KIRBYCONFENABLEDDIR=\"\$KIRBYAPACHECONFDIR/sites-enabled\"\n" >> $KIRBYUSERRC
-  echo "# Temporary directory where files will be unpacked [/tmp/\$KIRBYSUFFIX]" >> $KIRBYUSERRC
-  echo -e "KIRBYTEMPDIR=\"/tmp/\$KIRBYSUFFIX\"\n" >> $KIRBYUSERRC
-
-  echo ""
-  read -n1 -p "${txtbld}Are you satisfied with above settings to continue? [y|${txtrst}${txtblue}N${txtrst}${txtbld}] ${txtrst}"
-  [[ -z $REPLY ]] || echo ""
-  SEL=${REPLY:-n}
-  if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
-    echo -e "\n${txtgreen}First setup finished! Delete $KIRBYUSERRC if you would like to run this wizard again.${txtrst}\n"
-  else
-    debMsg "Removing $KIRBYUSERRC and finish script"
-    rm $KIRBYUSERRC
-    exit 0
-  fi
-  debMsg "Leaving function $FUNCNAME"
-}
-
-
 ## Initialisation of all settings
 function initKirbySetup {
   debMsg "Entering function $FUNCNAME"
-  # Check if needed programs are installed
-  for prg in kirbydownload kirbyinstall basename cat cp curl dirname head jq ln ls mkdir mv pathchk php realpath rm sed sudo tar tr wget;do
-    [[ ! $(which $prg) ]] && errMsg "Program '$prg' is not installed" && exit 1
-  done
-
-  # Create directories if not exist
-  for dir in $KIRBYDOWNLOADDIR $KIRBYLIBDIR $KIRBYTEMPDIR $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYVHOSTROOT;do
-    save_mkdir "$dir"
-  done
 
   # Copy the template files into KIRBYTEMPLATEDIR
-  for tpl in ${_KIRBYTEMPLATES[@]};do cp $KIRBYTOOLSPACKAGEDIR/$tpl.template $KIRBYTEMPLATEDIR;done
+  #for tpl in ${_KIRBYTEMPLATES[@]};do save_cp "$KIRBYTOOLSPACKAGEDIR/$tpl.template" "$KIRBYTEMPLATEDIR";done
 
   # Get existing tags (versions) from Github or from cache
   getKirbyTags

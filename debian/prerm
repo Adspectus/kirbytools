@@ -20,7 +20,7 @@ set -e
 case "$1" in
     remove)
       echo ""
-      echo "Files in KIRBYDOWNLOADDIR and KIRBYLIBDIR will not be removed!"
+      echo "NOTE: Files in KIRBYDOWNLOADDIR and KIRBYLIBDIR (defined in \$HOME/.kirbyrc) will NOT be removed!"
       echo ""
     ;;
     upgrade|deconfigure)

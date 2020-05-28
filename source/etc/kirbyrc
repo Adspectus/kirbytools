@@ -8,25 +8,27 @@
 KIRBYTOOLSVERSION="1.3"
 KIRBYTOOLSPACKAGEDIR="/usr/share/kirbytools"
 
-# The personal configuration file which will be created if it does not exist
-KIRBYUSERRC="$HOME/.kirbyrc"
+# The Github URL where we can find kirby packages to download [https://github.com/getkirby]
+KIRBYGITURL="https://github.com/getkirby"
+
+# The Github API URL where we can find information about releases (tags) [https://api.github.com/repos/getkirby]
+KIRBYGITAPIURL="https://api.github.com/repos/getkirby"
 
 # The functions file
 KIRBYFUNCTIONS="/etc/kirbytools/kirbyfunctions"
 
-# Read the functions or exit with error
-[[ ! -f $KIRBYFUNCTIONS ]] && echo "File $KIRBYFUNCTIONS not found!" && exit 1
-. $KIRBYFUNCTIONS
+# The personal configuration file
+KIRBYUSERRC="$HOME/.kirbyrc"
 
 # Default values for custom variables
 # These variables will be set in $HOME/.kirbyrc by configureWizard
-declare -a _KIRBYDEFAULT=("KIRBYKIT" "KIRBYVERSION" "KIRBYDOWNLOADDIR" "KIRBYLIBDIR" "KIRBYVHOSTROOT" "KIRBYAPACHECONFDIR" "KIRBYCREATEUSERSCRIPT" "KIRBYADMINUSERNAME" "KIRBYADMINUSERMAIL" "KIRBYADMINUSERPASS" "KIRBYADMINUSERLANG")
+declare -a _KIRBYDEFAULT=("KIRBYKIT" "KIRBYVERSION" "KIRBYDOWNLOADDIR" "KIRBYLIBDIR" "KIRBYVHOSTROOT" "KIRBYCREATEUSERSCRIPT" "KIRBYADMINUSERNAME" "KIRBYADMINUSERMAIL" "KIRBYADMINUSERPASS" "KIRBYADMINUSERLANG" "KIRBYAPACHECONFDIR")
 
 declare -A _KIRBYDEFAULTVARTXT=(
   ["KIRBYKIT"]="The default kit to be downloaded/installed"
   ["KIRBYVERSION"]="The default version to be downloaded/installed"
-  ["KIRBYVHOSTROOT"]="The root directory of your personal virtual hosts"
-  ["KIRBYAPACHECONFDIR"]="The root directory of your personal apache2 configuration files"
+  ["KIRBYVHOSTROOT"]="The root directory of your virtual hosts"
+  ["KIRBYAPACHECONFDIR"]="The root directory of your apache2 configuration files"
   ["KIRBYADMINUSERMAIL"]="The email addres of the default panel admin user"
   ["KIRBYADMINUSERNAME"]="The name of the default panel admin user"
   ["KIRBYADMINUSERLANG"]="The language of the default panel admin user"
@@ -67,15 +69,6 @@ declare -A _KIRBYDEFAULTVARREGEX=(
   ["KIRBYADMINUSERLANG"]="^(bg|ca|cs|da|de|el|en|es_419|es_ES|fa|fi|fr|hu|id|it|ko|lt|nb|nl|pl|pt_BR|pt_PT|ru|sk|sv_SE|tr)$"
 )
 
-# The Github URL where we can find kirby packages to download
-KIRBYGITURL="https://github.com/getkirby"
-# The Github API URL where we can find information about releases (tags)
-KIRBYGITAPIURL="https://api.github.com/repos/getkirby"
-# The vhost subdirectory where the document root will be
-KIRBYHTDOCSDIR="htdocs"
-# The vhost subdirectory where logfiles can be placed (if not /var/log/apache2)
-KIRBYLOGDIR="logs"
-
 # An array of configuration templates to be used (extension .template is appended)
 declare -a _KIRBYTEMPLATES=("vhost-Remote" "vhost-Redirection" "vhost-SSL")
 # An associative array of kits and their abbreviation
@@ -95,16 +88,20 @@ declare -A DAYNAME=( ["1"]="Mon" ["2"]="Tue" ["3"]="Wed" ["4"]="Thu" ["5"]="Fri"
 # Add colored output if tput program is installed
 if [ ! -z $(which tput) ];then
   txtbld=$(tput -Txterm-256color bold)
+  txtbld=
   txtrst=$(tput -Txterm-256color sgr0)
-  txtred=${txtbld}$(tput -Txterm-256color setaf 1)
+  txtred=$(tput -Txterm-256color bold)$(tput -Txterm-256color setaf 1)
   txtgreen=${txtbld}$(tput -Txterm-256color setaf 2)
   txtyellow=${txtbld}$(tput -Txterm-256color setaf 3)
-  txtblue=${txtbld}$(tput -Txterm-256color setaf 4)
+  txtblue=$(tput -Txterm-256color bold)$(tput -Txterm-256color setaf 4)
   txtmagenta=${txtbld}$(tput -Txterm-256color setaf 5)
   txtcyan=${txtbld}$(tput -Txterm-256color setaf 6)
   txtwhite=${txtbld}$(tput -Txterm-256color setaf 7)
 fi
 
+# Read the functions or exit with error
+[[ ! -f $KIRBYFUNCTIONS ]] && echo "File $KIRBYFUNCTIONS not found!" && exit 1
+. $KIRBYFUNCTIONS
+
 # Read the personal configuration file and create it if it does not exist
-if [ ! -f $KIRBYUSERRC ];then configureWizard;fi
-. $KIRBYUSERRC
+[[ -f $KIRBYUSERRC ]] && . $KIRBYUSERRC

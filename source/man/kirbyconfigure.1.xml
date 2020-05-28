@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY dhfirstname "Uwe">
+  <!ENTITY dhsurname   "Gehring">
+  <!ENTITY dhusername  "&dhfirstname; &dhsurname;">
+  <!ENTITY dhemail     "adspectus@fastmail.com">
+  <!ENTITY dhsection   "1">
+  <!ENTITY dhtitle     "kirbyconfigure User Manual">
+  <!ENTITY dhucpackage "Kirbyconfigure">
+  <!ENTITY dhpackage   "kirbyconfigure">
+]>
+
+<refentry>
+  <refentryinfo>
+    <title>&dhtitle;</title>
+    <productname>&dhpackage;</productname>
+    <authorgroup>
+      <author>
+       <firstname>&dhfirstname;</firstname>
+        <surname>&dhsurname;</surname>
+        <contrib></contrib>
+        <address>
+          <email>&dhemail;</email>
+        </address>
+      </author>
+    </authorgroup>
+    <copyright>
+      <year>2020</year>
+      <holder>&dhusername;</holder>
+    </copyright>
+    <legalnotice>
+      <para>This manual page was written for the Debian system (and may be used by others).</para>
+      <para>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License, Version 2 or (at your option) any later version published by the Free Software Foundation.</para>
+      <para>On Debian systems, the complete text of the GNU General Public License can be found in <filename>/usr/share/common-licenses/GPL</filename>.</para>
+    </legalnotice>
+  </refentryinfo>
+  <refmeta>
+    <refentrytitle>&dhucpackage;</refentrytitle>
+    <manvolnum>&dhsection;</manvolnum>
+  </refmeta>
+  <refnamediv>
+    <refname>&dhpackage;</refname>
+    <refpurpose>Tools to create &amp; manage Kirby websites</refpurpose>
+  </refnamediv>
+  <refsect1 id="description">
+    <title>DESCRIPTION</title>
+    <para>This manual page documents briefly the <package>&dhpackage;</package> package.</para>
+    <para>The <package>&dhpackage;</package> package is a collection of shell scripts which should ease and speed the installation and management of the Kirby CMS on your machine.</para>
+    <para>It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost, and eventually deinstalling it.</para>
+  </refsect1>
+  <refsect1 id="commands">
+    <title>COMMANDS</title>
+    <para>The package consists of the following scripts which are documented in their own man page:</para>
+    <variablelist>
+      <varlistentry>
+        <term><command>kirbyconfigure</command></term>
+        <listitem>
+          <para>Script to create a user-specific configuration file which will be used by the other programs in the package. See <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><command>kirbydeinstall</command></term>
+        <listitem>
+          <para>Script to delete a Kirby vhost (directory and configuration). See <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><command>kirbydownload</command></term>
+        <listitem>
+          <para>Script to select and download a Kirby kit to the local machine. See <citerefentry><refentrytitle>kirbydownload</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><command>kirbyinstall</command></term>
+        <listitem>
+          <para>Script to install (unpack and transfer files) a Kirby kit to a new vhost directory. See <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><command>kirbysetup</command></term>
+        <listitem>
+          <para>Script to setup a new Kirby website. This program will use <command>kirbydownload</command> and <command>kirbyinstall</command> if necessary. See <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1 id="files">
+    <title>FILES</title>
+    <variablelist>
+      <varlistentry>
+        <term><filename>/etc/kirbytools/kirbyrc</filename></term>
+        <listitem>
+          <para>The system-wide configuration file to control the behaviour of <application>&dhpackage;</application>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><filename>${HOME}/.kirbyrc</filename></term>
+        <listitem>
+          <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the <command>kirbyconfigure</command> script (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>) if it does not exist.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><filename>/etc/kirbytools/kirbyfunctions</filename></term>
+        <listitem>
+          <para>Functions to be used by <application>&dhpackage;</application>.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1 id="bugs">
+    <title>BUGS</title>
+    <para>Currently, only Kirby 3 starterkits and plainkits are supported.</para>
+    <para>The programs are currently limited to work with the <package>apache2</package> httpd.</para>
+    <para>Some functionality requires root (or sudo as root) access.</para>
+  </refsect1>
+
+  <refsect1 id="see_also">
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbydownload</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+    </para>
+  </refsect1>
+</refentry>
