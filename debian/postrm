@@ -21,9 +21,10 @@ set -e
 
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
-      echo ""
-      echo "NOTE: The files .kirbyrc, .kirby-starterkit-tags.json, and .kirby-plainkit-tags.json in your \$HOME directory will NOT be removed!"
-      echo ""
+      if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+        . /usr/share/apache2/apache2-maintscript-helper
+        apache2_invoke disconf kirbytools.conf || exit $?
+      fi
     ;;
 
     *)
