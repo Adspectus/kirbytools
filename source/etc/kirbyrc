@@ -25,17 +25,17 @@ KIRBYUSERRC="$HOME/.kirbyrc"
 declare -a _KIRBYDEFAULT=("KIRBYKIT" "KIRBYVERSION" "KIRBYDOWNLOADDIR" "KIRBYLIBDIR" "KIRBYVHOSTROOT" "KIRBYCREATEUSERSCRIPT" "KIRBYADMINUSERNAME" "KIRBYADMINUSERMAIL" "KIRBYADMINUSERPASS" "KIRBYADMINUSERLANG" "KIRBYAPACHECONFDIR")
 
 declare -A _KIRBYDEFAULTVARTXT=(
-  ["KIRBYKIT"]="The default kit to be downloaded/installed"
-  ["KIRBYVERSION"]="The default version to be downloaded/installed"
-  ["KIRBYVHOSTROOT"]="The root directory of your virtual hosts"
-  ["KIRBYAPACHECONFDIR"]="The root directory of your apache2 configuration files"
-  ["KIRBYADMINUSERMAIL"]="The email addres of the default panel admin user"
-  ["KIRBYADMINUSERNAME"]="The name of the default panel admin user"
-  ["KIRBYADMINUSERLANG"]="The language of the default panel admin user"
-  ["KIRBYADMINUSERPASS"]="The password of the default panel admin user"
-  ["KIRBYCREATEUSERSCRIPT"]="The php script to be used for creating the default panel admin user"
-  ["KIRBYDOWNLOADDIR"]="The base directory where Kirby packages will be downloaded to"
-  ["KIRBYLIBDIR"]="The base directory where the /kirby program folder will be placed for use in vhost-symlinks"
+  ["KIRBYKIT"]="The default kit to be downloaded/installed (required)"
+  ["KIRBYVERSION"]="The default version to be downloaded/installed (required)"
+  ["KIRBYVHOSTROOT"]="The root directory of your virtual hosts (required)"
+  ["KIRBYAPACHECONFDIR"]="The root directory of your apache2 configuration files (required)"
+  ["KIRBYADMINUSERMAIL"]="The email addres of the default panel admin user (optional)"
+  ["KIRBYADMINUSERNAME"]="The name of the default panel admin user (optional)"
+  ["KIRBYADMINUSERLANG"]="The language of the default panel admin user (optional)"
+  ["KIRBYADMINUSERPASS"]="The password of the default panel admin user (optional)"
+  ["KIRBYCREATEUSERSCRIPT"]="The php script to be used for creating the default panel admin user (optional)"
+  ["KIRBYDOWNLOADDIR"]="The base directory where Kirby packages will be downloaded to (required)"
+  ["KIRBYLIBDIR"]="The base directory where the /kirby program folder will be placed for use in vhost-symlinks (optional)"
 )
 
 declare -A _KIRBYDEFAULTVAR=(
@@ -63,14 +63,14 @@ declare -A _KIRBYDEFAULTVARTYPE=(
   ["KIRBYLIBDIR"]="dir"
 )
 declare -A _KIRBYDEFAULTVARREGEX=(
-  ["KIRBYKIT"]="^(starterkit|plainkit)$"
+  ["KIRBYKIT"]="^(starter|plain)kit$"
   ["KIRBYVERSION"]="^(current|other|[3-9].[0-9]+.[0-9]+)$"
   ["KIRBYADMINUSERMAIL"]="^(|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})$"
   ["KIRBYADMINUSERLANG"]="^(bg|ca|cs|da|de|el|en|es_419|es_ES|fa|fi|fr|hu|id|it|ko|lt|nb|nl|pl|pt_BR|pt_PT|ru|sk|sv_SE|tr)$"
 )
 
 # An array of configuration templates to be used (extension .template is appended)
-declare -a _KIRBYTEMPLATES=("vhost-Remote" "vhost-Redirection" "vhost-SSL")
+#declare -a _KIRBYTEMPLATES=("vhost-Remote" "vhost-Redirection" "vhost-SSL")
 # An associative array of kits and their abbreviation
 declare -A _KIRBYKITS=( ["p"]="plainkit" ["s"]="starterkit" )
 # An associative array of versions and their abbreviation
