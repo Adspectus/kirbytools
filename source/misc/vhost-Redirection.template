@@ -1,4 +1,4 @@
 <VirtualHost ${APACHE_IP}:80>
-  ServerName <VHOST>.home.uwe-gehring.de
-  RedirectPermanent / https://<VHOST>.home.uwe-gehring.de/
+  ServerName <VHOST>.${DOMAIN}
+  RedirectPermanent / https://<VHOST>.${DOMAIN}/
 </VirtualHost>

@@ -1,22 +1,23 @@
 <VirtualHost localhost:80>
-  ServerName <VHOST>.home.uwe-gehring.de
+  ServerName <VHOST>.${DOMAIN}
 
-  Define VIRTUAL_ROOT /srv/www/vhosts/<VHOST>
+  Define VIRTUAL_ROOT <VHOSTROOT>/<VHOST>
 
-  CustomLog ${VIRTUAL_ROOT}/logs/access.log combined
-  ErrorLog ${VIRTUAL_ROOT}/logs/error.log
+  CustomLog /var/log/apache2/<VHOST>.${DOMAIN}-access.log combined
+  ErrorLog /var/log/apache2/<VHOST>.${DOMAIN}-error.log
 
-  DocumentRoot "${VIRTUAL_ROOT}/htdocs"
+  DocumentRoot "${VIRTUAL_ROOT}/<HTDOCSDIR>"
 
-  <Directory "${VIRTUAL_ROOT}/htdocs">
+  <Directory "${VIRTUAL_ROOT}/<HTDOCSDIR>">
     AllowOverride All
   </Directory>
 
 #  <Location "/">
-#    AuthName "Caboto"
+#    AuthName "Restricted"
 #    AuthType Basic
-#    AuthUserFile "/home/uwe/.apache2/htpasswd"
+#    AuthUserFile "<APACHECONFDIR>/htpasswd"
 #    Require valid-user
 #  </Location>
 
+  UnDefine VIRTUAL_ROOT
 </VirtualHost>
