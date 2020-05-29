@@ -9,8 +9,16 @@
 function initKirbySetup {
   debMsg "Entering function $FUNCNAME"
 
-  # Copy the template files into KIRBYTEMPLATEDIR
-  #for tpl in ${_KIRBYTEMPLATES[@]};do save_cp "$KIRBYTOOLSPACKAGEDIR/$tpl.template" "$KIRBYTEMPLATEDIR";done
+  # Check if needed programs are installed
+  #for prg in basename cat cp curl dirname head jq ln ls mkdir mv pathchk php realpath rm sed sudo tar tr wget;do
+  #  [[ ! $(which $prg) ]] && errMsg "Program '$prg' is not installed! Make sure to install it before using kirbytools!" && exit 1
+  #done
+
+  # Create directories if not exist
+  for dir in $KIRBYDOWNLOADDIR $KIRBYLIBDIR $KIRBYTEMPDIR $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYVHOSTROOT;do
+    debMsg "save_mkdir $dir"
+    save_mkdir "$dir"
+  done
 
   # Get existing tags (versions) from Github or from cache
   getKirbyTags
@@ -194,17 +202,6 @@ function askLink {
   debMsg "Leaving function $FUNCNAME"
 }
 
-## Combine redirection and ssl confs into one file (default: Yes)?
-function askConf {
-  debMsg "Entering function $FUNCNAME"
-  KIRBYSELECTEDCOMBINECONF="No"
-  read -n1 -p "${txtbld}Combine redirection and ssl vhost configuration files into 1 file? [${txtrst}${txtblue}Y${txtrst}${txtbld}|n] ${txtrst}"
-  [[ -z $REPLY ]] || echo ""
-  SEL=${REPLY:-y}
-  [[ "$SEL" == "y" || "$SEL" == "Y" ]] && KIRBYSELECTEDCOMBINECONF="Yes"
-  debMsg "Leaving function $FUNCNAME"
-}
-
 ## Show selected settings
 function showSettings {
   format="%-25s = ${txtblue}%s${txtrst}\n"
@@ -241,7 +238,7 @@ function debMsg {
   [[ $DEBUG ]] && echo "${txtmagenta}Debug: $1${txtrst}" 1>&2
 }
 
-## Custom mkdir which will check if sudo is necessary
+## Custom mkdir which will run sudo if necessary
 function save_mkdir { # $1=targetdir
   debMsg "Entering function $FUNCNAME with arg '$1'"
   if isValidDir "$1";then DIR="$1";else errMsg "Invalid path: $1" && exit 1;fi
@@ -269,6 +266,7 @@ function save_mkdir { # $1=targetdir
   debMsg "Leaving function $FUNCNAME"
 }
 
+## Check if dir is valid
 function isValidDir {
   debMsg "Entering function $FUNCNAME with arg '$1'"
   if [ "$1" == "/" ];then debMsg "Invalid path: $1" && return 1;fi
@@ -288,6 +286,7 @@ function isValidDir {
   return 0
 }
 
+## Custom mv which will run sudo if necessary
 function save_mv { # $1=sourcefile $2=targetfile or targetdir
   debMsg "Entering function $FUNCNAME with arg '$1' and '$2'"
   SOURCE="$1"
@@ -304,6 +303,7 @@ function save_mv { # $1=sourcefile $2=targetfile or targetdir
   debMsg "Leaving function $FUNCNAME"
 }
 
+## Custom cp which will run sudo if necessary
 function save_cp { # $1=sourcefile $2=targetfile or targetdir
   debMsg "Entering function $FUNCNAME with arg '$1' and '$2'"
   SOURCE="$1"
@@ -320,6 +320,7 @@ function save_cp { # $1=sourcefile $2=targetfile or targetdir
   debMsg "Leaving function $FUNCNAME"
 }
 
+## Custom rm which will run sudo if necessary
 function save_rm { # $1=source
   debMsg "Entering function $FUNCNAME with arg '$1'"
   if isValidDir "$1";then TARGET="$1";else errMsg "Invalid path: $1" && exit 1;fi
@@ -335,6 +336,7 @@ function save_rm { # $1=source
   debMsg "Leaving function $FUNCNAME"
 }
 
+## Custom ln which will run sudo if necessary
 function save_ln { # $1=sourcefile $2=targetfile or targetdir
   debMsg "Entering function $FUNCNAME with arg '$1' and '$2'"
   SOURCE="$1"
@@ -350,4 +352,3 @@ function save_ln { # $1=sourcefile $2=targetfile or targetdir
   fi
   debMsg "Leaving function $FUNCNAME"
 }
-

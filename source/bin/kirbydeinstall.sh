@@ -22,7 +22,7 @@ usage() {
   echo ""
   echo "  -h: Show this help"
   echo "  -d: Show debug information"
-  echo "  -l: will remove linked kirby dir from $KIRBYLIBDIR as well (not implemented)"
+  echo "  -l: will remove linked kirby dir from $KIRBYLIBDIR as well (not yet implemented)"
   echo "  -w: virtual hostname(s) to be removed (wildcards ok)"
   echo ""
   exit 1
@@ -44,21 +44,30 @@ shift $((OPTIND -1))
 
 [[ $DEBUG ]] && showVars
 
-for vh in ${vhost[*]};do
-  [[ -d $KIRBYVHOSTROOT/$vh ]] && read -n1 -p "Remove directory $KIRBYVHOSTROOT/$vh and all subdirectories [y|N] "
+for vh in $KIRBYVHOSTROOT/${vhost[*]};do
+  debMsg "Remove dir $vh?"
+  [[ -d $vh ]] && read -n1 -p "Remove directory $vh and all subdirectories [y|${txtblue}N${txtrst}] "
   [[ -z $REPLY ]] || echo ""
   SEL=${REPLY:-n}
   if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
     # First disable the site if it is enabled
-    if $(which vhostDisable);then
-      [[ -f $KIRBYAPACHECONFDIR/sites-enabled/$vh.conf ]] && vhostDisable $vh* > /dev/null
-    else
-      rm $KIRBYAPACHECONFDIR/sites-enabled/$vh*.conf
-    fi
+    for file in $KIRBYAPACHECONFDIR/sites-enabled/$(basename $vh)*.conf;do
+      if [ $(which vhostdisable) ];then
+        debMsg "Disable $file with vhostdisable $(basename $file)"
+        [[ -L $file ]] && vhostdisable $(basename $file) > /dev/null
+      else
+        debMsg "Disable $file with save_rm $file"
+        [[ -L $file ]] && save_rm "$file"
+      fi
+    done
     # Then remove vhost directory
-    rm -rf $KIRBYVHOSTROOT/$vh
+    debMsg "save_rm $vh"
+    save_rm "$vh"
     # Finally remove all confs from sites-available
-    [[ -f $KIRBYAPACHECONFDIR/sites-available/$vh.conf ]] && rm $KIRBYAPACHECONFDIR/sites-available/$vh*.conf
+#    for file in $KIRBYAPACHECONFDIR/sites-available/$(basename $vh)*.conf;do
+#      debMsg "save_rm $file"
+#      [[ -f $file ]] && save_rm "$file"
+#    done
   fi
 done
 

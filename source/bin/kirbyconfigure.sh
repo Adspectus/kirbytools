@@ -8,15 +8,25 @@
 
 debMsg "Starting $(basename $0)"
 
-echo -e "\n${txtbld}$(basename $0) - Define default values for kirbytools in $KIRBYUSERRC${txtrst}\n"
+echo -e "\n$(basename $0) - Define default values for kirbytools in $KIRBYUSERRC\n"
 
-# Create KIRBYUSERRC. If it exists, it will be overwritten
+# Create KIRBYUSERRC. If it exists, ask for confirmation to overwrite it
+if [ -f $KIRBYUSERRC ];then
+  read -n1 -p "File $KIRBYUSERRC exists! Do you want to delete it and create a new one? [${txtblue}Y${txtrst}|n] "
+  [[ -z $REPLY ]] || echo ""
+  SEL=${REPLY:-y}
+  if [ "$SEL" != "y" -a "$SEL" != "Y" ];then
+    exit 0
+  fi
+fi
+
+# Create KIRBYUSERRC
 echo -e "## File: $KIRBYUSERRC\n## Variables for kirbytools scripts by Uwe Gehring <adspectus@fastmail.com>\n##\n## Default values in brackets\n" > $KIRBYUSERRC
 
 # Ask first the KIRBYSUFFIX because it will be used in other variables
 REGEX='^[A-Za-z0-9._%+-]+$'
 while true;do
-  read -p "${txtbld}The suffix \$KIRBYSUFFIX to be used for directories and filenames [${txtrst}${txtblue}kirby${txtrst}${txtbld}] ${txtrst}"
+  read -p "The suffix \$KIRBYSUFFIX to be used for directories and filenames [${txtblue}kirby${txtrst}] "
   SEL=${REPLY:-kirby}
   if [[ $SEL =~ $REGEX ]];then break;else errMsg "Invalid input: $SEL";fi
 done
@@ -32,7 +42,7 @@ _KIRBYDEFAULTVAR["KIRBYVHOSTROOT"]="$HOME/vhosts"
 # Ask all _KIRBYDEFAULTVAR* variables and write settings into KIRBYUSERRC
 for var in ${_KIRBYDEFAULT[@]};do
   while true;do
-    read -p "${txtbld}${_KIRBYDEFAULTVARTXT[$var]} [${txtrst}${txtblue}${_KIRBYDEFAULTVAR[$var]}${txtrst}${txtbld}] ${txtrst}"
+    read -p "${_KIRBYDEFAULTVARTXT[$var]} [${txtblue}${_KIRBYDEFAULTVAR[$var]}${txtrst}] "
     SEL=${REPLY:-${_KIRBYDEFAULTVAR[$var]}}
     case "${_KIRBYDEFAULTVARTYPE[$var]}" in
       dir)
@@ -67,9 +77,6 @@ KIRBYTEMPDIR="/tmp/\$KIRBYSUFFIX"
 
 # The vhost subdirectory where the document root will be [htdocs]
 KIRBYHTDOCSDIR="htdocs"
-
-# The vhost subdirectory where logfiles can be placed (if not /var/log/apache2) [logs]
-#KIRBYLOGDIR="logs"
 EOB
 
 echo ""
@@ -78,22 +85,15 @@ read -n1 -p "${txtbld}Are you satisfied with above settings? [${txtrst}${txtblue
 SEL=${REPLY:-y}
 if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
   echo -e "\n${txtgreen}Configuration finished! Run '$(basename $0)' again if you wish to define new default values.${txtrst}\n"
-
-  # Check if needed programs are installed
-  for prg in basename cat cp curl dirname head jq ln ls mkdir mv pathchk php realpath rm sed sudo tar tr wget;do
-    [[ ! $(which $prg) ]] && errMsg "Program '$prg' is not installed! Make sure to install it before using kirbytools!"
-  done
-
-  . $KIRBYUSERRC
-
-  # Create directories if not exist
-  for dir in $KIRBYDOWNLOADDIR $KIRBYLIBDIR $KIRBYTEMPDIR $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYVHOSTROOT;do
-    debMsg "save_mkdir $dir"
-    save_mkdir "$dir"
-  done
-
+  echo "  If you would like kirbytools to create virtual host configuration file(s) for you, add"
+  echo "  template files in $KIRBYAPACHECONFDIR/templates with file names corresponding to the pattern"
+  echo "  '$KIRBYSUFFIX-vhost-SOMETHING.template'. The kirbysetup script will pick up any template in"
+  echo "  this directory, rename it to 'KIRBYVHOST-SOMETHING.conf', replace any placeholder to its"
+  echo "  actual value and save the file in $KIRBYCONFAVAILABLEDIR."
+  echo "  See kirbysetup(1) and the file README.templates in $KIRBYTOOLSPACKAGEDIR/examples"
+  echo "  for further details."
 else
-  echo -e "\n${txtred}Configuration aborted! Run '$(basename $0)' again to define default values for kirbytools."
+  echo -e "\n${txtred}Configuration aborted! Run '$(basename $0)' again to define default values for kirbytools.${txtrst}"
   debMsg "Removing $KIRBYUSERRC and finish script"
   rm $KIRBYUSERRC
 fi

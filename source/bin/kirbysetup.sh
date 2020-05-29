@@ -58,7 +58,7 @@ KIRBYSELECTEDVHOSTDIR=$(getVHostDir $KIRBYSELECTEDVHOST)
 showSettings
 
 ## Allow to stop here without doing anything (default: continue)
-read -n1 -p "${txtbld}If you are satisfied with above settings, continue? [${txtrst}${txtblue}Y${txtrst}${txtbld}|n] ${txtrst}"
+read -n1 -p "${txtbld}Are you satisfied with above settings? [${txtrst}${txtblue}Y${txtrst}${txtbld}|n] ${txtrst}"
 [[ -z $REPLY ]] || echo ""
 SEL=${REPLY:-y}
 [[ "$SEL" == "y" || "$SEL" == "Y" ]] || exit 0
@@ -80,7 +80,7 @@ fi
 [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 
 ## Create admin account if selected and if script exist
-if [ "$KIRBYSELECTEDCREATEACCOUNT" == "Yes" -a -f $KIRBYCREATEUSERSCRIPT -a ! -z $KIRBYADMINUSERMAIL ];then
+if [ "$KIRBYSELECTEDCREATEACCOUNT" == "Yes" -a -f $KIRBYCREATEUSERSCRIPT -a -n "$KIRBYADMINUSERMAIL" ];then
   echo -n "Creating default admin account... "
   if [ -x $KIRBYSELECTEDVHOSTDIR/site -a -w $KIRBYSELECTEDVHOSTDIR/site ];then
     debMsg "php $KIRBYCREATEUSERSCRIPT ..."
@@ -121,18 +121,21 @@ fi
 
 ## Copying kirby vhost templates as .conf files to sites-available dir in KIRBYAPACHECONFDIR
 for tpl in $KIRBYTEMPLATEDIR/$KIRBYSUFFIX-vhost-*.template;do
-  debMsg "$tpl"
+  debMsg "Working on vhost template $tpl"
   TEMPLATE=$(basename $tpl .template)
-  CONFFILE="$KIRBYCONFAVAILABLEDIR/${TEMPLATE/vhost/$KIRBYSELECTEDVHOST}.conf"
+  CONFFILE="$KIRBYCONFAVAILABLEDIR/${TEMPLATE/kirby-vhost/$KIRBYSELECTEDVHOST}.conf"
   echo -n "Creating $(basename $CONFFILE)... "
 
   [[ -f $CONFFILE ]] && save_mv "$CONFFILE" "$CONFFILE.bak"
 
   if [ -w $KIRBYCONFAVAILABLEDIR ];then
-    echo -e "# Virtual Host ${TEMPLATE/vhost/$KIRBYSELECTEDVHOST} Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
+    echo -e "# Virtual Host ${TEMPLATE/kirby-vhost/$KIRBYSELECTEDVHOST}\n# Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
     cat $tpl >> $CONFFILE
-    sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" $CONFFILE
+    sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" -e "s|<VHOSTROOT>|$KIRBYVHOSTROOT|g" -e "s|<HTDOCSDIR>|$KIRBYHTDOCSDIR|g" $CONFFILE
   else
+    sudo echo -e "# Virtual Host ${TEMPLATE/vhost/$KIRBYSELECTEDVHOST} Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
+    sudo cat $tpl >> $CONFFILE
+    sudo sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" -e "s|<VHOSTROOT>|$KIRBYVHOSTROOT|g" -e "s|<HTDOCSDIR>|$KIRBYHTDOCSDIR|g" $CONFFILE
   fi
   [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 done
@@ -148,7 +151,7 @@ done
 #  fi
 #fi
 
-if $(which vhostenable);then
+if [ $(which vhostenable) ];then
   for conf in $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST*.conf;do
     echo ""
     CONF=$(basename $conf .conf)
