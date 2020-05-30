@@ -88,7 +88,7 @@ if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
   echo "  If you would like kirbytools to create virtual host configuration file(s) for you, add"
   echo "  template files in $KIRBYAPACHECONFDIR/templates with file names corresponding to the pattern"
   echo "  '$KIRBYSUFFIX-vhost-SOMETHING.template'. The kirbysetup script will pick up any template in"
-  echo "  this directory, rename it to 'KIRBYVHOST-SOMETHING.conf', replace any placeholder to its"
+  echo "  this directory, rename it to 'KIRBYVHOST-SOMETHING.conf', substitute any placeholder within to its"
   echo "  actual value and save the file in $KIRBYCONFAVAILABLEDIR."
   echo "  See kirbysetup(1) and the file README.templates in $KIRBYTOOLSPACKAGEDIR/examples"
   echo "  for further details."
