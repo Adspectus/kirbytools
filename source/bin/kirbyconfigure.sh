@@ -2,6 +2,9 @@
 #
 # kirbyconfigure by Uwe Gehring <adspectus@fastmail.com>
 
+## TODO
+## Create temp file first, then move to real file or delete it
+
 ## Read settings and make sure all config files exist
 [[ ! -f /etc/kirbytools/kirbyrc ]] && echo "File /etc/kirbytools/kirbyrc not found!" && exit 1
 . /etc/kirbytools/kirbyrc
@@ -21,7 +24,7 @@ if [ -f $KIRBYUSERRC ];then
 fi
 
 # Create KIRBYUSERRC
-echo -e "## File: $KIRBYUSERRC\n## Variables for kirbytools scripts by Uwe Gehring <adspectus@fastmail.com>\n##\n## Default values in brackets\n" > $KIRBYUSERRC
+echo -e "## File: $KIRBYUSERRC\n## Variables for kirbytools scripts by Uwe Gehring <adspectus@fastmail.com>\n##\n## Default values in brackets\n" > $KIRBYUSERRC.tmp
 
 # Ask first the KIRBYSUFFIX because it will be used in other variables
 REGEX='^[A-Za-z0-9._%+-]+$'
@@ -30,9 +33,9 @@ while true;do
   SEL=${REPLY:-kirby}
   if [[ $SEL =~ $REGEX ]];then break;else errMsg "Invalid input: $SEL";fi
 done
-echo "# The suffix to be used for directories and filenames [kirby]" >> $KIRBYUSERRC
+echo "# The suffix to be used for directories and filenames [kirby]" >> $KIRBYUSERRC.tmp
 KIRBYSUFFIX=${REPLY:-kirby}
-echo -e "KIRBYSUFFIX=\"$KIRBYSUFFIX\"\n" >> $KIRBYUSERRC
+echo -e "KIRBYSUFFIX=\"$KIRBYSUFFIX\"\n" >> $KIRBYUSERRC.tmp
 
 # Add additional variables which depend on this prefix/suffix to the default array
 _KIRBYDEFAULTVAR["KIRBYDOWNLOADDIR"]="/usr/local/src/\$KIRBYSUFFIX"
@@ -57,12 +60,12 @@ for var in ${_KIRBYDEFAULT[@]};do
       ;;
     esac
   done
-  echo "# ${_KIRBYDEFAULTVARTXT[$var]} [${_KIRBYDEFAULTVAR[$var]}]" >> $KIRBYUSERRC
-  echo -e "$var=\"${REPLY:-${_KIRBYDEFAULTVAR[$var]}}\"\n" >> $KIRBYUSERRC
+  echo "# ${_KIRBYDEFAULTVARTXT[$var]} [${_KIRBYDEFAULTVAR[$var]}]" >> $KIRBYUSERRC.tmp
+  echo -e "$var=\"${REPLY:-${_KIRBYDEFAULTVAR[$var]}}\"\n" >> $KIRBYUSERRC.tmp
 done
 
 # Add more variables
-cat << EOB >> $KIRBYUSERRC
+cat << EOB >> $KIRBYUSERRC.tmp
 # The directory where templates for configuration will be found [\$KIRBYAPACHECONFDIR/templates]
 KIRBYTEMPLATEDIR="\$KIRBYAPACHECONFDIR/templates"
 
@@ -84,6 +87,7 @@ read -n1 -p "${txtbld}Are you satisfied with above settings? [${txtrst}${txtblue
 [[ -z $REPLY ]] || echo ""
 SEL=${REPLY:-y}
 if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
+  mv $KIRBYUSERRC.tmp $KIRBYUSERRC
   echo -e "\n${txtgreen}Configuration finished! Run '$(basename $0)' again if you wish to define new default values.${txtrst}\n"
   echo "  If you would like kirbytools to create virtual host configuration file(s) for you, add"
   echo "  template files in $KIRBYAPACHECONFDIR/templates with file names corresponding to the pattern"
@@ -94,8 +98,8 @@ if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
   echo "  for further details."
 else
   echo -e "\n${txtred}Configuration aborted! Run '$(basename $0)' again to define default values for kirbytools.${txtrst}"
-  debMsg "Removing $KIRBYUSERRC and finish script"
-  rm $KIRBYUSERRC
+  debMsg "Removing $KIRBYUSERRC.tmp and finish script"
+  rm $KIRBYUSERRC.tmp
 fi
 
 exit 0
