@@ -18,11 +18,10 @@ usage() {
   echo ""
   echo "  Usage:"
   echo ""
-  echo "  $(basename $0) [-h] [-d] [-l] [-w <vhost>]"
+  echo "  $(basename $0) [-h] [-d] [-w <vhost>]"
   echo ""
   echo "  -h: Show this help"
   echo "  -d: Show debug information"
-  echo "  -l: will remove linked kirby dir from $KIRBYLIBDIR as well (not yet implemented)"
   echo "  -w: virtual hostname(s) to be removed (wildcards ok)"
   echo ""
   exit 1
@@ -34,7 +33,6 @@ while getopts ":dhlw:" opt;do
   case "${opt}" in
     h)  usage;;
     d)  DEBUG=1;;
-    l)  LINKKIRBY=1;;
     w)  vhost=$OPTARG;;
     :)  errMsg "-$OPTARG requires an argument" && usage;;
     *)  errMsg "Invalid option $OPTARG" && usage;;
@@ -51,23 +49,33 @@ for vh in $KIRBYVHOSTROOT/${vhost[*]};do
   SEL=${REPLY:-n}
   if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
     # First disable the site if it is enabled
-    for file in $KIRBYAPACHECONFDIR/sites-enabled/$(basename $vh)*.conf;do
-      if [ $(which vhostdisable) ];then
-        debMsg "Disable $file with vhostdisable $(basename $file)"
-        [[ -L $file ]] && vhostdisable $(basename $file) > /dev/null
+    for file in $KIRBYSITEENABLEDDIR/$(basename $vh)*.conf;do
+      if [ $(which vhostdissite) ];then
+        debMsg "Disable $file with vhostdissite $(basename $file)"
+        [[ -L $file ]] && vhostdissite $(basename $file) > /dev/null
       else
         debMsg "Disable $file with save_rm $file"
         [[ -L $file ]] && save_rm "$file"
       fi
     done
-    # Then remove vhost directory
-    debMsg "save_rm $vh"
-    save_rm "$vh"
+    # Then remove vhost directory. Use sudo here because it might be that the webserver has written
+    # some dirs/files and if the user has no write and execute permisson, the removal will fail.
+    if isValidDir "$vh";then
+      debMsg "sudo rm -rf $vh"
+      sudo rm -rf "$vh"
+    else
+      errMsg "Could not remove directory $vh!"
+    fi
     # Finally remove all confs from sites-available
-#    for file in $KIRBYAPACHECONFDIR/sites-available/$(basename $vh)*.conf;do
-#      debMsg "save_rm $file"
-#      [[ -f $file ]] && save_rm "$file"
-#    done
+    for file in $KIRBYSITEAVAILABLEDIR/$(basename $vh)*.conf;do
+      read -n1 -p "Remove configuration file $(basename $file) [y|${txtblue}N${txtrst}] "
+      [[ -z $REPLY ]] || echo ""
+      SEL=${REPLY:-n}
+      if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
+        debMsg "save_rm $file"
+        [[ -f $file ]] && save_rm "$file"
+      fi
+    done
   fi
 done
 
