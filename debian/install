@@ -1,7 +1,6 @@
 /source/etc/kirbyrc /etc/kirbytools
 /source/etc/kirbyfunctions /etc/kirbytools
 /source/etc/kirbytools /usr/share/bash-completion/completions
-/source/etc/kirbytools.conf /etc/apache2/conf-available
 /source/bin/kirbyconfigure.sh /usr/share/kirbytools
 /source/bin/kirbysetup.sh /usr/share/kirbytools
 /source/bin/kirbydownload.sh /usr/share/kirbytools
@@ -11,4 +10,5 @@
 /source/misc/vhost-Remote.template /usr/share/kirbytools/examples
 /source/misc/vhost-SSL.template /usr/share/kirbytools/examples
 /source/misc/README.templates /usr/share/kirbytools/examples
+/source/misc/kirbytools.conf /usr/share/kirbytools/examples
 /source/misc/createUser.php /usr/share/kirbytools
