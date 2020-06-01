@@ -40,7 +40,6 @@ echo -e "KIRBYSUFFIX=\"$KIRBYSUFFIX\"\n" >> $KIRBYUSERRC.tmp
 # Add additional variables which depend on this prefix/suffix to the default array
 _KIRBYDEFAULTVAR["KIRBYDOWNLOADDIR"]="/usr/local/src/\$KIRBYSUFFIX"
 _KIRBYDEFAULTVAR["KIRBYLIBDIR"]="/usr/local/lib/\$KIRBYSUFFIX"
-_KIRBYDEFAULTVAR["KIRBYVHOSTROOT"]="$HOME/vhosts"
 
 # Ask all _KIRBYDEFAULTVAR* variables and write settings into KIRBYUSERRC
 for var in ${_KIRBYDEFAULT[@]};do
@@ -69,11 +68,17 @@ cat << EOB >> $KIRBYUSERRC.tmp
 # The directory where templates for configuration will be found [\$KIRBYAPACHECONFDIR/templates]
 KIRBYTEMPLATEDIR="\$KIRBYAPACHECONFDIR/templates"
 
+# The directory where apache configuration files will be placed [\$KIRBYAPACHECONFDIR/conf-available]
+KIRBYCONFAVAILABLEDIR="\$KIRBYAPACHECONFDIR/conf-available"
+
+# The directory where apache configuration files will be linked [\$KIRBYAPACHECONFDIR/conf-enabled]
+KIRBYCONFENABLEDDIR="\$KIRBYAPACHECONFDIR/conf-enabled"
+
 # The directory where apache vhost configuration files will be placed [\$KIRBYAPACHECONFDIR/sites-available]
-KIRBYCONFAVAILABLEDIR="\$KIRBYAPACHECONFDIR/sites-available"
+KIRBYSITEAVAILABLEDIR="\$KIRBYAPACHECONFDIR/sites-available"
 
 # The directory where apache vhost configuration files will be linked [\$KIRBYAPACHECONFDIR/sites-enabled]
-KIRBYCONFENABLEDDIR="\$KIRBYAPACHECONFDIR/sites-enabled"
+KIRBYSITEENABLEDDIR="\$KIRBYAPACHECONFDIR/sites-enabled"
 
 # Temporary directory where files will be unpacked [/tmp/\$KIRBYSUFFIX]
 KIRBYTEMPDIR="/tmp/\$KIRBYSUFFIX"
@@ -88,16 +93,22 @@ read -n1 -p "${txtbld}Are you satisfied with above settings? [${txtrst}${txtblue
 SEL=${REPLY:-y}
 if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
   mv $KIRBYUSERRC.tmp $KIRBYUSERRC
-  echo -e "\n${txtgreen}Configuration finished! Run '$(basename $0)' again if you wish to define new default values.${txtrst}\n"
+  chmod 600 $KIRBYUSERRC
+  . $KIRBYUSERRC
+  echo -e "\n${txtgreen}Configuration finished! Run '$(basename $0)' again if you would like to define new default values.${txtrst}\n"
+#  echo "  Restart your webserver if you changed the values for the root directory of your virtual hosts"
+#  echo "  or the root directory of your apache2 configuration files."
+#  echo ""
   echo "  If you would like kirbytools to create virtual host configuration file(s) for you, add"
   echo "  template files in $KIRBYAPACHECONFDIR/templates with file names corresponding to the pattern"
-  echo "  '$KIRBYSUFFIX-vhost-SOMETHING.template'. The kirbysetup script will pick up any template in"
-  echo "  this directory, rename it to 'KIRBYVHOST-SOMETHING.conf', substitute any placeholder within to its"
-  echo "  actual value and save the file in $KIRBYCONFAVAILABLEDIR."
-  echo "  See kirbysetup(1) and the file README.templates in $KIRBYTOOLSPACKAGEDIR/examples"
-  echo "  for further details."
+  echo "  '$KIRBYSUFFIX-vhost-SOMETHING.template'. The kirbysetup script will pick up any template in this"
+  echo "  directory, rename it to 'KIRBYVHOST-SOMETHING.conf', substitute any placeholder within to its"
+  echo "  actual value, and save the file in $KIRBYSITEAVAILABLEDIR."
+  echo ""
+  echo "  See kirbysetup(1) and $KIRBYTOOLSPACKAGEDIR/examples/README.templates for further details."
+  echo ""
 else
-  echo -e "\n${txtred}Configuration aborted! Run '$(basename $0)' again to define default values for kirbytools.${txtrst}"
+  echo -e "\n${txtred}Configuration aborted! Run '$(basename $0)' again to define default values for kirbytools.${txtrst}\n"
   debMsg "Removing $KIRBYUSERRC.tmp and finish script"
   rm $KIRBYUSERRC.tmp
 fi
