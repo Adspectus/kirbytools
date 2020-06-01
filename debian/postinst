@@ -20,17 +20,6 @@ set -e
 
 case "$1" in
     configure)
-      a2conf=/etc/apache2/conf-available/kirbytools.conf
-      if [ -f $a2conf ];then
-        ip=$(hostname -I)
-        domain=$(dnsdomainname)
-        if [ ! -z $ip ];then sed -i -e "s/<IP>/$ip/g" $a2conf;fi
-        if [ ! -z $domain ];then sed -i -e "s/<DOMAIN>/$domain/g" $a2conf;fi
-      fi
-      if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
-        . /usr/share/apache2/apache2-maintscript-helper
-        apache2_invoke enconf kirbytools.conf || exit $?
-      fi
       echo ""
       echo "NOTE: Run 'kirbyconfigure' as user to define default values for kirbytools in \$HOME/.kirbyrc!"
       echo ""

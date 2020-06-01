@@ -19,10 +19,8 @@ case "$1" in
     # Removes any previous files before creating this package
     if [ -f /etc/default/kirbyrc ];then rm /etc/default/kirbyrc;fi
     for file in kirbyDeinstall kirbyDownload kirbyInstall kirbySetup;do
-      find /usr /home -name $file -type l -print
-      find /usr /home -name $file.sh -type f -print
-#      if [ -L /usr/bin/$link ];then rm /usr/bin/$link;fi
-#      if [ -L $HOME/bin/$link ];then rm $HOME/bin/$link;fi
+      find /usr /home -name $file -type l -delete
+      find /usr /home -name $file.sh -type f -delete
     done
   ;;
 
