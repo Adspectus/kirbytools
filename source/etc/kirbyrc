@@ -35,13 +35,14 @@ declare -A _KIRBYDEFAULTVARTXT=(
   ["KIRBYADMINUSERPASS"]="The password of the default panel admin user (optional)"
   ["KIRBYCREATEUSERSCRIPT"]="The php script to be used for creating the default panel admin user (optional)"
   ["KIRBYDOWNLOADDIR"]="The base directory where Kirby packages will be downloaded to (required)"
-  ["KIRBYLIBDIR"]="The base directory where the /kirby program folder will be placed for use in vhost-symlinks (optional)"
+  ["KIRBYLIBDIR"]="The base directory where the /kirby program folder will be unpacked to (optional)"
 )
 
 declare -A _KIRBYDEFAULTVAR=(
   ["KIRBYKIT"]="starterkit"
   ["KIRBYVERSION"]="current"
-  ["KIRBYAPACHECONFDIR"]="$HOME/apache2"
+  ["KIRBYVHOSTROOT"]="\$HOME/vhosts"
+  ["KIRBYAPACHECONFDIR"]="\$HOME/apache2"
   ["KIRBYADMINUSERMAIL"]=""
   ["KIRBYADMINUSERNAME"]=""
   ["KIRBYADMINUSERLANG"]="en"
@@ -103,5 +104,5 @@ fi
 [[ ! -f $KIRBYFUNCTIONS ]] && echo "File $KIRBYFUNCTIONS not found!" && exit 1
 . $KIRBYFUNCTIONS
 
-# Read the personal configuration file and create it if it does not exist
+# Read the personal configuration file if it exists
 [[ -f $KIRBYUSERRC ]] && . $KIRBYUSERRC

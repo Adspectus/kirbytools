@@ -6,7 +6,7 @@ _kirbydeinstall() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts="-h -d -l -w"
+  opts="-h -d -w"
 #  set -o noglob
 #  local cur=${COMP_WORDS[COMP_CWORD]}
 #  COMPREPLY=( $( cd $KIRBYVHOSTROOT && compgen -d -- "$cur" ) )
