@@ -28,59 +28,311 @@
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
 .SH "NAME"
-kirbyconfigure \- Tools to create & manage Kirby websites
+kirbyconfigure \- Script to create a user\-specific configuration file for use with other kirbytools scripts
+.SH "SYNOPSIS"
+.HP \w'\fBkirbyconfigure\fR\ 'u
+\fBkirbyconfigure\fR
 .SH "DESCRIPTION"
 .PP
 This manual page documents briefly the
-kirbyconfigure
+\fBkirbyconfigure\fR
+command, which is part of the
+\fBkirbytools\fR(1)
 package\&.
 .PP
 The
-kirbyconfigure
-package is a collection of shell scripts which should ease and speed the installation and management of the Kirby CMS on your machine\&.
-.PP
-It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost, and eventually deinstalling it\&.
-.SH "COMMANDS"
-.PP
-The package consists of the following scripts which are documented in their own man page:
-.PP
 \fBkirbyconfigure\fR
-.RS 4
-Script to create a user\-specific configuration file which will be used by the other programs in the package\&. See
-\fBkirbyconfigure\fR(1)
-for further details\&.
-.RE
-.PP
-\fBkirbydeinstall\fR
-.RS 4
-Script to delete a Kirby vhost (directory and configuration)\&. See
-\fBkirbydeinstall\fR(1)
-for further details\&.
-.RE
-.PP
-\fBkirbydownload\fR
-.RS 4
-Script to select and download a Kirby kit to the local machine\&. See
-\fBkirbydownload\fR(1)
-for further details\&.
-.RE
-.PP
-\fBkirbyinstall\fR
-.RS 4
-Script to install (unpack and transfer files) a Kirby kit to a new vhost directory\&. See
-\fBkirbyinstall\fR(1)
-for further details\&.
-.RE
-.PP
+command is a bash script which should be run by user before any other scripts of the package\&. It will create a user specific configuration file $HOME/\&.kirbyrc with necessary settings and default values which will be used by
+\fBkirbydeinstall\fR,
+\fBkirbydownload\fR,
+\fBkirbyinstall\fR, and
 \fBkirbysetup\fR
+commands\&.
+.PP
+Upon invocation, the script first checks if the file
+$HOME/\&.kirbyrc
+already exists and if so, asks for confirmation to overwrite it\&.
+.PP
+Then, the user will be presented with a couple of questions about settings and default values of environment variables which will be described below\&.
+.PP
+Many questions will be presented with a reasonable default value in blue, which can be accepted by hitting return\&. Other questions will need the user to type in values or leave them empty\&. Some checks are implemented to test the input for valid settings\&. However, not all insane input can be detected since any attempt to do so will inevitably fail\&. Or, as Rick Cook puts it:
+\(lqProgramming today is a race between software engineers striving to build bigger and better idiot\-proof programs, and the Universe trying to produce bigger and better idiots\&. So far, the Universe is winning\&.\(rq
+Hence, be careful about what you are doing\&.
+.PP
+After all questions are answered, the user will be asked if this is ok\&. If not, the script is terminated without writing a new file, and eventually restoring an existing file\&. If ok, the environment variables will be saved in the file
+$HOME/\&.kirbyrc\&.
+.PP
+It is possible to change some or all variables by editing the file
+$HOME/\&.kirbyrc
+directly, but take care of the dependencies and make sure you know what you are doing\&.
+.SH "OPTIONS"
+.PP
+None
+.SH "ENVIRONMENT"
+.PP
+\fBKIRBYSUFFIX\fR
 .RS 4
-Script to setup a new Kirby website\&. This program will use
+This variable will be used as a suffix (sometimes as a prefix) in multiple other settings, i\&.e\&. file and directory names\&. Default:
+kirby
+.RE
+.PP
+\fBKIRBYKIT\fR
+.RS 4
+This variable holds the default Kirby kit, which will be downloaded/installed if no other kit is requested\&. Possible values are
+starterkit
+and
+plainkit\&. Default:
+starterkit
+.RE
+.PP
+\fBKIRBYVERSION\fR
+.RS 4
+This variable either contains one of the strings
+current
+or
+other, or a specific version like
+3\&.2\&.3, which will be used as the default version of the given kit which will be downloaded/installed if no other version is requested\&. Default:
+current
+.sp
+current
+means, that the most recent version will be downloaded/installed\&.
+other
+makes only sense for the
+\fBkirbysetup\fR
+command, which will then ask for any other than the current version\&. The
 \fBkirbydownload\fR
 and
 \fBkirbyinstall\fR
-if necessary\&. See
-\fBkirbysetup\fR(1)
+either require the string
+current, or a specific version number, since they do not ask the user anything\&.
+.RE
+.PP
+\fBKIRBYDOWNLOADDIR\fR
+.RS 4
+This variable contains the directory where the Kirby package will be downloaded to\&. Default:
+/usr/local/src/$KIRBYSUFFIX
+.sp
+Note about permissions: If the directory does not exist, it will be created with all parent directories if necessary\&. If your user does not have write/execute permission to this directory or one of its existing parents,
+\fBsudo\fR
+will be used to perform the necessary actions\&. Hence, make sure your user is allowed to run sudo (possibly without being asked for the password), or choose a user writable (parent) directory here\&.
+$HOME/Downloads/$KIRBYSUFFIX
+would not be a bad choice in this case\&. See also the file
+README\&.permissions
+in
+/usr/share/kirbytools
 for further details\&.
+.sp
+The Kirby packages which will be saved here will be named as
+\fIkit\fR\-\fIversion\fR\&.tar\&.gz, i\&.e\&. if you download the starterkit, version 3\&.3\&.4, it will end up as
+starterkit\-3\&.3\&.4\&.tar\&.gz
+in this directory, or as full path:
+/usr/local/src/kirby/starterkit\-3\&.3\&.4\&.tar\&.gz
+\- if $KIRBYSUFFIX is defined as "kirby"\&.
+.RE
+.PP
+\fBKIRBYLIBDIR\fR
+.RS 4
+This variable contains the directory where the kirby program folder will be extracted to, if requested\&. Default:
+/usr/local/lib/$KIRBYSUFFIX
+.sp
+Everything which has been noted about permissions for the
+\fBKIRBYDOWNLOADDIR\fR
+variable is valid here as well\&.
+.sp
+The kirby program folder will be renamed to reflect its version, i\&.e\&. the kirby program folder of the starterkit/plainkit version 3\&.3\&.4 will end up as directory
+3\&.3\&.4
+in this directory, or as full path:
+/usr/local/lib/kirby/3\&.3\&.4
+\- if $KIRBYSUFFIX is defined as "kirby"\&.
+.RE
+.PP
+\fBKIRBYVHOSTROOT\fR
+.RS 4
+This important variable will contain the path to your vitual hosts root folder, which is the directory which will hold all your virtual hosts (in separate subfolders of course)\&. Default:
+$HOME/vhosts
+.sp
+Everything which has been noted about permissions for the
+\fBKIRBYDOWNLOADDIR\fR
+variable is valid here as well\&.
+.sp
+The
+\fBkirbyinstall\fR
+command will install a new Kirby installation into a subfolder of this directory\&. See
+\fBkirbyinstall\fR(1)
+for further details\&.
+.sp
+This directory is not intended to be kirby specific, therefore no suffix is used here\&. The subfolders for Kirby installations will have the suffix in its name per default (actually as a prefix), though this is not required\&.
+.RE
+.PP
+\fBKIRBYCREATEUSERSCRIPT\fR
+.RS 4
+This variable should contain the path to a php script which can create a panel user for a Kirby installation\&. Default:
+/usr/share/kirbytools/createUser\&.php
+.sp
+Note: Every new Kirby installation will have a disabled panel if you are installing it on a server which has a FQDN\&. In this case, you have to activate the panel manually by editing the file
+site/config/config\&.php
+(creating it first if the plainkit is used)\&. Once you have activated the panel, your first task is usually to create your own admin user\&. The
+\fBkirbysetup\fR
+command is able to create a default panel admin user for the given Kirby installation, which also means that you do not have to activate the panel manually first\&.
+.sp
+The php script is invoked by your user, if this user has write and execute permissions in the
+site
+folder of the given Kirby installation\&. Otherwise
+\fBsudo\fR
+is used here as well\&.
+.sp
+The script takes the following parameters (in this order): 1\&. The base directory of the Kirby installation (the webroot of the installation, but as a full path), 2\&. the username of the admin user (which must conform to the syntax of an email address), 3\&. the full name of the admin user (may be left blank), 4\&. the language of the admin user (which must be a valid Kirby language definition; defaults to "en"), and 5\&. the password of this user in cleartext\&.
+.sp
+The
+\fBkirbysetup\fR
+command will take care about the correct base directory of the Kirby installation, while all other parameters will be taken from the environment variables which can be defined by the
+\fBkirbyconfigure\fR
+command and are described next\&.
+.sp
+Note: The php script which is supplied by this package always creates a user with role "admin"\&.
+.RE
+.PP
+\fBKIRBYADMINUSERNAME\fR
+.RS 4
+This variable contains the full name of the panel user, probably your own name\&. Can be left blank\&. Default: ""
+.RE
+.PP
+\fBKIRBYADMINUSERMAIL\fR
+.RS 4
+This variable contains the "username" or "loginname" of the panel user\&. Must conform to the syntax of an email address, but can be left blank as well\&. Default: ""
+.sp
+Note: If this variable is left blank, no panel user can be created\&.
+.RE
+.PP
+\fBKIRBYADMINUSERPASS\fR
+.RS 4
+This variable holds the password of the panel user\&. Can be left blank\&. Default: ""
+.sp
+Note: Since the password will be stored in cleartext in
+$HOME/\&.kirbyrc
+the permissions of this file will be set to 0600, i\&.e\&. only user has read/write permissions\&.
+.RE
+.PP
+\fBKIRBYADMINUSERLANG\fR
+.RS 4
+The language code of the panel user\&. Default:
+en
+.sp
+The language code can be any value which is valid for Kirby language settings\&. Currently this is bg, ca, cs, da, de, el, en, es_419, es_ES, fa, fi, fr, hu, id, it, ko, lt, nb, nl, pl, pt_BR, pt_PT, ru, sk, sv_SE, or tr\&.
+.RE
+.PP
+\fBKIRBYAPACHECONFDIR\fR
+.RS 4
+This is another important variable, which should contain the path to your apache configuration files root folder\&. Default: $HOME/apache2
+.sp
+Everything which has been noted about permissions for the
+\fBKIRBYDOWNLOADDIR\fR
+variable is valid here as well\&.
+.sp
+This directory is not intended to be kirby specific, therefore no suffix is used here\&.
+.sp
+It is used as a root directory for subdirectories which contain vhost config templates, available and enabled apache configuration files and available and enabled vhost configuration files\&. These 5 subdirectories are defined by the following 5 variables\&.
+.sp
+The rationale to use different subdirectories for available and enabled configurations is the same as for the main apache2 installation on Debian based systems\&. The
+vhostmanager
+package and its
+\fBvhostenconf\fR,
+\fBvhostdisconf\fR,
+\fBvhostensite\fR
+and
+\fBvhostdissite\fR
+commands can be used to manage these configurations similar to the
+\fBa2enconf\fR,
+\fBa2disconf\fR,
+\fBa2ensite\fR
+and
+\fBa2dissite\fR
+commands of the
+apache2
+package\&.
+.sp
+It is possible to set this variable to the main apache2 configuration directory
+/etc/apache2\&.
+.RE
+.PP
+\fBKIRBYTEMPLATEDIR\fR
+.RS 4
+This variable contains the full path to the subdirectory where configuration templates can be stored\&. Default: $KIRBYAPACHECONFDIR/templates
+.sp
+If you want the
+\fBkirbysetup\fR
+command to create one or more vhost configuration files for the new Kirby installation, put your templates into this directory\&. The templates must have a filename like
+$KIRBYSUFFIX\-vhost\-SOMETHING\&.template
+where SOMETHING might be any valid string which describe the purpose of the given configuration file\&. The
+\fBkirbysetup\fR
+command will pick up any template in this directory, rename it to
+KIRBYVHOST\-SOMETHING\&.conf, substitute any placeholder within to its actual value and save the file in $KIRBYSITEAVAILABLEDIR\&. See
+\fBkirbysetup\fR(1)
+and the file
+README\&.templates
+in
+/usr/share/kirbytools/examples
+for further details\&.
+.RE
+.PP
+\fBKIRBYCONFAVAILABLEDIR\fR
+.RS 4
+This variable contains the full path to the subdirectory where apache2 configuration files will be stored\&. Default:
+$KIRBYAPACHECONFDIR/conf\-available
+.RE
+.PP
+\fBKIRBYCONFENABLEDDIR\fR
+.RS 4
+This variable contains the full path to the subdirectory where symbolic links to enabled/activated apache2 configuration files will be stored\&. Default:
+$KIRBYAPACHECONFDIR/conf\-enabled
+.sp
+This is the directory from which apache2 will include configuration files\&.
+.RE
+.PP
+\fBKIRBYSITEAVAILABLEDIR\fR
+.RS 4
+This variable contains the full path to the subdirectory where vhost configuration files will be stored\&. Default:
+$KIRBYAPACHECONFDIR/sites\-available
+.RE
+.PP
+\fBKIRBYSITEENABLEDDIR\fR
+.RS 4
+This variable contains the full path to the subdirectory where symbolic links to enabled/activated vhost configuration files will be stored\&. Default:
+$KIRBYAPACHECONFDIR/sites\-enabled
+.sp
+This is the directory from which apache2 will include vhost configuration files\&.
+.RE
+.PP
+\fBKIRBYTEMPDIR\fR
+.RS 4
+This variables is the path to a temporary directory used by the scripts in the
+kirbytools\&. Default: /tmp/$KIRBYSUFFIX
+.RE
+.PP
+\fBKIRBYHTDOCSDIR\fR
+.RS 4
+This variable will be used as the final part of a new Kirby installation directory\&. May be left blank\&. Default:
+htdocs
+.sp
+Usually one would install a new virtual host in a separate subdirectory beneath the virtual hosts root directory, i\&.e\&.
+/home/foo/vhosts/bar123, if
+/home/foo/vhosts
+is the virtual hosts root directory and
+bar123
+is one of many virtual hosts\&. Then the document root for the webserver would be
+/home/foo/vhosts/bar123\&.
+.sp
+Sometimes however it turns out that it would be good to have room for additional virtual host specific files and folders which should not be in the document root, because they should not be visible by the webserver unconditionally\&. Thus, an intermediate directory for the document root makes sense, i\&.e\&. the document root from the example above would be in
+/home/foo/vhosts/bar123/htdocs
+which is absolutely irrelevant for the document root itself, but now we can create additional files and folders in
+/home/foo/vhosts/bar123
+which are not visible for the webserver per se (of course, in the first scenario the document root in the webservers configuration file is set to
+/home/foo/vhosts/bar123, while in the second scenario it is
+/home/foo/vhosts/bar123/htdocs)\&.
+.sp
+If you left the
+\fBKIRBYHTDOCSDIR\fR
+variable empty, the first scenario is applied\&. Otherwise, the second scenario\&.
 .RE
 .SH "FILES"
 .PP
@@ -93,15 +345,6 @@ kirbyconfigure\&.
 ${HOME}/\&.kirbyrc
 .RS 4
 The per\-user configuration file to control the behaviour of
-kirbyconfigure\&. This file will be created by the
-\fBkirbyconfigure\fR
-script (see
-\fBkirbyconfigure\fR(1)) if it does not exist\&.
-.RE
-.PP
-/etc/kirbytools/kirbyfunctions
-.RS 4
-Functions to be used by
 kirbyconfigure\&.
 .RE
 .SH "BUGS"
@@ -115,11 +358,11 @@ httpd\&.
 Some functionality requires root (or sudo as root) access\&.
 .SH "SEE ALSO"
 .PP
-\fBkirbyconfigure\fR(1),
 \fBkirbydeinstall\fR(1),
 \fBkirbydownload\fR(1),
 \fBkirbyinstall\fR(1),
-\fBkirbysetup\fR(1)
+\fBkirbysetup\fR(1),
+\fBkirbytools\fR(1)
 .SH "AUTHOR"
 .PP
 \fBUwe Gehring\fR <\&adspectus@fastmail\&.com\&>

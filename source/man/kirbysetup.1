@@ -28,124 +28,98 @@
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
 .SH "NAME"
-kirbysetup \- program to setup a new Kirby website
+kirbysetup \- Script to setup a new Kirby website
 .SH "SYNOPSIS"
 .HP \w'\fBkirbysetup\fR\ 'u
-\fBkirbysetup\fR \fB\-e\ \fR\fB\fIthis\fR\fR [\fB\-\-example=\fR\fBthat\fR] [{\fB\-e\fR\ |\ \fB\-\-example\fR}\ \fIthis\fR] [{\fB\-e\fR\ |\ \fB\-\-example\fR}\ {\fIthis\fR\ |\ \fIthat\fR}]
+\fBkirbysetup\fR [\fB\-d\fR]
 .HP \w'\fBkirbysetup\fR\ 'u
-\fBkirbysetup\fR [{\fB\-h\fR\ |\ \fB\-\-help\fR} | {\fB\-v\fR\ |\ \fB\-\-version\fR}]
+\fBkirbysetup\fR [\fB\-h\fR]
 .SH "DESCRIPTION"
 .PP
 This manual page documents briefly the
 \fBkirbysetup\fR
-and
-\fBbar\fR
-commands\&.
-.PP
-This manual page was written for the Debian distribution because the original program does not have a manual page\&. Instead, it has documentation in the GNU
-\fBinfo\fR(1)
-format; see below\&.
+command, which is part of the
+\fBkirbytools\fR(1)
+package\&.
 .PP
 \fBkirbysetup\fR
-is a program that\&.\&.\&.
+is a script that will set up a new Kirby website\&. The installation will be done by means of the
+\fBkirbyinstall\fR(1)
+script\&. The selected package will be downloaded first if it is not already on the local machine by means of the
+\fBkirbydownload\fR(1)
+script\&.
+.PP
+All necessary information will be gathered interactively with the default values set by the
+\fBkirbyconfigure\fR(1)
+script, which will be called upon first invocation of any of the
+kirbytools
+scripts\&. The values will be saved in the file
+$HOME/\&.kirbyrc\&.
+.PP
+Hence, if you have deliberately defined your default values therein, and do not want to deviate, you can just confirm all settings\&. The script will present you a summary of your settings and give you the opportunity to cancel the setup without changing anything on your system\&.
+.PP
+In addition to what can be done by means of the
+\fBkirbydownload\fR
+and
+\fBkirbyinstall\fR
+commands, the script gives you the option to either create your default Kirby panel admin user or enable the panel\&.
+.PP
+Furthermore, it will look into the
+templates
+subdirectory of your apache configuration files root folder (as configured by the
+\fBkirbyconfigure\fR
+command) and \- if it find appropriate named template files \- will create virtual host configuration files for the just created Kirby website\&.
 .SH "OPTIONS"
 .PP
-The program follows the usual GNU command line syntax, with long options starting with two dashes (`\-\*(Aq)\&. A summary of options is included below\&. For a complete description, see the
-\fBinfo\fR(1)
-files\&.
+The script follows the usual GNU command line syntax, options always starting with a dash (`\-\*(Aq)\&.
 .PP
-\fB\-e \fR\fB\fIthis\fR\fR, \fB\-\-example=\fR\fB\fIthat\fR\fR
-.RS 4
-Does this and that\&.
-.RE
-.PP
-\fB\-h\fR, \fB\-\-help\fR
+\fB\-h\fR
 .RS 4
 Show summary of options\&.
 .RE
 .PP
-\fB\-v\fR, \fB\-\-version\fR
+\fB\-d\fR
 .RS 4
-Show version of program\&.
+Show debugging information\&.
 .RE
+.SH "CREATING YOUR DEFAULT KIRBY PANEL ADMIN USER"
+.PP
+.SH "ENABLING THE PANEL"
+.PP
+.SH "CREATING VIRTUAL HOST CONFIGURATION FILES"
+.PP
 .SH "FILES"
 .PP
-/etc/foo\&.conf
+/etc/kirbytools/kirbyrc
 .RS 4
 The system\-wide configuration file to control the behaviour of
-kirbysetup\&. See
-\fBfoo.conf\fR(5)
-for further details\&.
+kirbysetup\&.
 .RE
 .PP
-${HOME}/\&.foo\&.conf
+${HOME}/\&.kirbyrc
 .RS 4
 The per\-user configuration file to control the behaviour of
-kirbysetup\&. See
-\fBfoo.conf\fR(5)
-for further details\&.
+kirbysetup\&. This file will be created by the
+\fBkirbyconfigure\fR
+script (see
+\fBkirbyconfigure\fR(1)) if it does not exist\&.
 .RE
-.SH "ENVIRONMENT"
-.PP
-\fBFOO_CONF\fR
-.RS 4
-If used, the defined file is used as configuration file (see also
-the section called \(lqFILES\(rq)\&.
-.RE
-.SH "DIAGNOSTICS"
-.PP
-The following diagnostics may be issued on
-stderr:
-.PP
-Bad configuration file\&. Exiting\&.
-.RS 4
-The configuration file seems to contain a broken configuration line\&. Use the
-\fB\-\-verbose\fR
-option, to get more info\&.
-.RE
-.PP
-\fBkirbysetup\fR
-provides some return codes, that can be used in scripts:
-.\" line length increase to cope w/ tbl weirdness
-.ll +(\n(LLu * 62u / 100u)
-.TS
-ll.
-\fICode\fR	\fIDiagnostic\fR
-T{
-\fB0\fR
-T}	T{
-Program exited successfully\&.
-T}
-T{
-\fB1\fR
-T}	T{
-The configuration file seems to be broken\&.
-T}
-.TE
-.\" line length decrease back to previous value
-.ll -(\n(LLu * 62u / 100u)
-.sp
 .SH "BUGS"
 .PP
-The program is currently limited to only work with the
-foobar
-library\&.
+Currently, only Kirby 3 starterkits and plainkits are supported\&.
 .PP
-The upstreams
-BTS
-can be found at
-\m[blue]\fB\%http://bugzilla.foo.tld\fR\m[]\&.
+The programs are currently limited to work with the
+apache2
+httpd\&.
+.PP
+Some functionality requires root (or sudo as root) access\&.
 .SH "SEE ALSO"
 .PP
-\fBbar\fR(1),
-\fBbaz\fR(1),
-\fBfoo.conf\fR(5)
-.PP
-The programs are documented fully by
-The Rise and Fall of a Fooish Bar
-available via the
-\fBinfo\fR(1)
-system\&.
+\fBkirbyconfigure\fR(1),
+\fBkirbydeinstall\fR(1),
+\fBkirbydownload\fR(1),
+\fBkirbyinstall\fR(1),
+\fBkirbytools\fR(1)
 .SH "AUTHOR"
 .PP
 \fBUwe Gehring\fR <\&adspectus@fastmail\&.com\&>

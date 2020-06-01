@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-  <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
   <!ENTITY dhfirstname "Uwe">
   <!ENTITY dhsurname   "Gehring">
   <!ENTITY dhusername  "&dhfirstname; &dhsurname;">
@@ -34,14 +34,17 @@
       <para>On Debian systems, the complete text of the GNU General Public License can be found in <filename>/usr/share/common-licenses/GPL</filename>.</para>
     </legalnotice>
   </refentryinfo>
+
   <refmeta>
     <refentrytitle>&dhucpackage;</refentrytitle>
     <manvolnum>&dhsection;</manvolnum>
   </refmeta>
+
   <refnamediv>
     <refname>&dhpackage;</refname>
     <refpurpose>Script to select and download a Kirby kit</refpurpose>
   </refnamediv>
+
   <refsynopsisdiv>
     <cmdsynopsis>
       <command>&dhpackage;</command>
@@ -69,11 +72,13 @@
       <arg choice="opt"><option>-h</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
+
   <refsect1 id="description">
     <title>DESCRIPTION</title>
     <para>This manual page documents briefly the <command>&dhpackage;</command> command, which is part of the <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry> package.</para>
     <para><command>&dhpackage;</command> is a script that will download a Kirby package from Github to your local machine. You can choose between the starterkit and the plainkit package and you can select the version which should be downloaded. You can also specify the directory where the package will be downloaded to.</para>
-    <para>Default values for these options will be set by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> script, which will be called upon first invocation of any of the <package>kirbytools</package> scripts. The values will be saved in a file <filename>$HOME/.kirbyrc</filename>.</para>
+    <para>Optionally, you can force the download even if a package of the same kit and version is already on your local machine, and you can ask to extract and install only the <filename>kirby</filename> program directory to a specific directory used for symbolic links of the same directory in a given virtual host installations directory.</para>
+    <para>Default values for these options will be set by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> script, which will be called upon first invocation of any of the <package>kirbytools</package> scripts. The values will be saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
   </refsect1>
 
   <refsect1 id="options">
@@ -95,14 +100,14 @@
       <varlistentry>
         <term><option>-l</option></term>
         <listitem>
-          <para>Extract the <filename>kirby</filename> program directory of the downloaded kit to a defined location. The location defaults to the value of <envar>KIRBYLIBDIR</envar> (appended with the versionnumber), which has been configured by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> script and which is saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
-          <para>This makes sense if you would like to create multiple virtual hosts which are based on the same Kirby version. The <filename>kirby</filename> program directory will then only be linked into the virtual host folder. See <ulink url="https://getkirby.com/docs/cookbook/setup/multisite-variant">this Kirby cookbook recipe</ulink> for further details.</para>
+          <para>Extract the <filename>kirby</filename> program directory of the downloaded kit to a folder with kirby program directories. The location defaults to the value of <envar>KIRBYLIBDIR</envar> (appended with the versionnumber), which has been configured by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> script and which is saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
+          <para>This makes sense if you would like to create multiple virtual hosts which are based on the same Kirby version. The <filename>kirby</filename> program directory will then only be linked into the virtual host folder. See the <ulink url="https://getkirby.com/docs/cookbook/setup/multisite-variant">Kirby cookbook recipe about multisite installations</ulink> for further details.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><option>-f</option></term>
         <listitem>
-          <para>Force download even if the package is already downloaded.</para>
+          <para>Force download even if the package is already downloaded. Standard behavior is to skip downloading if the package is already in <envar>KIRBYDOWNLOADDIR</envar>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -123,7 +128,7 @@
         </term>
         <listitem>
           <para>Specify the directory where downloads will be saved. Defaults to the value of <envar>KIRBYDOWNLOADDIR</envar>, which has been configured by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> script and which is saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
-          <para>The downloaded package is named <filename><replaceable>package</replaceable>-<replaceable>version</replaceable>.tar.gz</filename>.</para>
+          <para>The downloaded package is named <filename><replaceable>package</replaceable>-<replaceable>version</replaceable>.tar.gz</filename>. Hence, the full path would be <filename>/usr/local/src/kirby/<replaceable>package</replaceable>-<replaceable>version</replaceable>.tar.gz</filename> if the variable <envar>KIRBYDOWNLOADDIR</envar> points to <filename>/usr/local/src/$KIRBYSUFFIX</filename>, and the variable <envar>KIRBYSUFFIX</envar> is defined as <quote>kirby</quote>.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -144,12 +149,6 @@
           <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the <command>kirbyconfigure</command> script (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>) if it does not exist.</para>
         </listitem>
       </varlistentry>
-      <varlistentry>
-        <term><filename>/etc/kirbytools/kirbyfunctions</filename></term>
-        <listitem>
-          <para>Functions to be used by <application>&dhpackage;</application>.</para>
-        </listitem>
-      </varlistentry>
     </variablelist>
   </refsect1>
 
@@ -166,8 +165,8 @@
       <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
-      <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry>
-      <citerefentry><refentrytitle>kirbyttols</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry>
     </para>
   </refsect1>
 </refentry>

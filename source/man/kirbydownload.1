@@ -45,11 +45,15 @@ package\&.
 \fBkirbydownload\fR
 is a script that will download a Kirby package from Github to your local machine\&. You can choose between the starterkit and the plainkit package and you can select the version which should be downloaded\&. You can also specify the directory where the package will be downloaded to\&.
 .PP
+Optionally, you can force the download even if a package of the same kit and version is already on your local machine, and you can ask to extract and install only the
+kirby
+program directory to a specific directory used for symbolic links of the same directory in a given virtual host installations directory\&.
+.PP
 Default values for these options will be set by the
 \fBkirbyconfigure\fR(1)
 script, which will be called upon first invocation of any of the
 kirbytools
-scripts\&. The values will be saved in a file
+scripts\&. The values will be saved in the file
 $HOME/\&.kirbyrc\&.
 .SH "OPTIONS"
 .PP
@@ -69,7 +73,7 @@ Show debugging information\&.
 .RS 4
 Extract the
 kirby
-program directory of the downloaded kit to a defined location\&. The location defaults to the value of
+program directory of the downloaded kit to a folder with kirby program directories\&. The location defaults to the value of
 \fBKIRBYLIBDIR\fR
 (appended with the versionnumber), which has been configured by the
 \fBkirbyconfigure\fR(1)
@@ -78,14 +82,15 @@ $HOME/\&.kirbyrc\&.
 .sp
 This makes sense if you would like to create multiple virtual hosts which are based on the same Kirby version\&. The
 kirby
-program directory will then only be linked into the virtual host folder\&. See
-\m[blue]\fBthis Kirby cookbook recipe\fR\m[]\&\s-2\u[1]\d\s+2
+program directory will then only be linked into the virtual host folder\&. See the
+\m[blue]\fBKirby cookbook recipe about multisite installations\fR\m[]\&\s-2\u[1]\d\s+2
 for further details\&.
 .RE
 .PP
 \fB\-f\fR
 .RS 4
-Force download even if the package is already downloaded\&.
+Force download even if the package is already downloaded\&. Standard behavior is to skip downloading if the package is already in
+\fBKIRBYDOWNLOADDIR\fR\&.
 .RE
 .PP
 \fB\-k \fR\fB\fBstarterkit\fR\fR\fB|\fR\fB\fBplainkit\fR\fR
@@ -123,7 +128,15 @@ script and which is saved in the file
 $HOME/\&.kirbyrc\&.
 .sp
 The downloaded package is named
-\fIpackage\fR\-\fIversion\fR\&.tar\&.gz\&.
+\fIpackage\fR\-\fIversion\fR\&.tar\&.gz\&. Hence, the full path would be
+/usr/local/src/kirby/\fIpackage\fR\-\fIversion\fR\&.tar\&.gz
+if the variable
+\fBKIRBYDOWNLOADDIR\fR
+points to
+/usr/local/src/$KIRBYSUFFIX, and the variable
+\fBKIRBYSUFFIX\fR
+is defined as
+\(lqkirby\(rq\&.
 .RE
 .SH "FILES"
 .PP
@@ -141,12 +154,6 @@ kirbydownload\&. This file will be created by the
 script (see
 \fBkirbyconfigure\fR(1)) if it does not exist\&.
 .RE
-.PP
-/etc/kirbytools/kirbyfunctions
-.RS 4
-Functions to be used by
-kirbydownload\&.
-.RE
 .SH "BUGS"
 .PP
 Currently, only Kirby 3 starterkits and plainkits are supported\&.
@@ -161,8 +168,8 @@ Some functionality requires root (or sudo as root) access\&.
 \fBkirbyconfigure\fR(1),
 \fBkirbydeinstall\fR(1),
 \fBkirbyinstall\fR(1),
-\fBkirbysetup\fR(1)
-\fBkirbyttols\fR(1),
+\fBkirbysetup\fR(1),
+\fBkirbytools\fR(1)
 .SH "AUTHOR"
 .PP
 \fBUwe Gehring\fR <\&adspectus@fastmail\&.com\&>
@@ -182,7 +189,7 @@ On Debian systems, the complete text of the GNU General Public License can be fo
 .sp
 .SH "NOTES"
 .IP " 1." 4
-this Kirby cookbook recipe
+Kirby cookbook recipe about multisite installations
 .RS 4
 \%https://getkirby.com/docs/cookbook/setup/multisite-variant
 .RE

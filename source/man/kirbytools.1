@@ -39,7 +39,7 @@ The
 kirbytools
 package is a collection of shell scripts which should ease and speed the installation and management of the Kirby CMS on your machine\&.
 .PP
-It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost, and eventually deinstalling it\&.
+It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking and copying) to a new virtual host, and eventually deinstalling it\&.
 .SH "COMMANDS"
 .PP
 The package consists of the following scripts which are documented in their own man page:
@@ -67,7 +67,7 @@ for further details\&.
 .PP
 \fBkirbyinstall\fR
 .RS 4
-Script to install (unpack and transfer files) a Kirby kit to a new vhost directory\&. See
+Script to install a Kirby kit to a new virtual host directory\&. See
 \fBkirbyinstall\fR(1)
 for further details\&.
 .RE
@@ -96,12 +96,12 @@ The per\-user configuration file to control the behaviour of
 kirbytools\&. This file will be created by the
 \fBkirbyconfigure\fR
 script (see
-\fBkirbyconfigure\fR(1)) if it does not exist\&.
+\fBkirbyconfigure\fR(1))\&.
 .RE
 .PP
 /etc/kirbytools/kirbyfunctions
 .RS 4
-Functions to be used by
+Functions which will used by
 kirbytools\&.
 .RE
 .SH "BUGS"

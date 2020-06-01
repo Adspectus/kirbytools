@@ -40,46 +40,172 @@
   </refmeta>
   <refnamediv>
     <refname>&dhpackage;</refname>
-    <refpurpose>Tools to create &amp; manage Kirby websites</refpurpose>
+    <refpurpose>Script to create a user-specific configuration file for use with other kirbytools scripts</refpurpose>
   </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>&dhpackage;</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
   <refsect1 id="description">
     <title>DESCRIPTION</title>
-    <para>This manual page documents briefly the <package>&dhpackage;</package> package.</para>
-    <para>The <package>&dhpackage;</package> package is a collection of shell scripts which should ease and speed the installation and management of the Kirby CMS on your machine.</para>
-    <para>It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost, and eventually deinstalling it.</para>
+    <para>This manual page documents briefly the <command>&dhpackage;</command> command, which is part of the <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry> package.</para>
+    <para>The <command>&dhpackage;</command> command is a bash script which should be run by user before any other scripts of the package. It will create a user specific configuration file $HOME/.kirbyrc with necessary settings and default values which will be used by <command>kirbydeinstall</command>, <command>kirbydownload</command>, <command>kirbyinstall</command>, and <command>kirbysetup</command> commands.</para>
+    <para>Upon invocation, the script first checks if the file <filename>$HOME/.kirbyrc</filename> already exists and if so, asks for confirmation to overwrite it.</para>
+    <para>Then, the user will be presented with a couple of questions about settings and default values of environment variables which will be described below.</para>
+    <para>Many questions will be presented with a reasonable default value in blue, which can be accepted by hitting return. Other questions will need the user to type in values or leave them empty. Some checks are implemented to test the input for valid settings. However, not all insane input can be detected since any attempt to do so will inevitably fail. Or, as Rick Cook puts it: <quote>Programming today is a race between software engineers striving to build bigger and better idiot-proof programs, and the Universe trying to produce bigger and better idiots. So far, the Universe is winning.</quote> Hence, be careful about what you are doing.</para>
+    <para>After all questions are answered, the user will be asked if this is ok. If not, the script is terminated without writing a new file, and eventually restoring an existing file. If ok, the environment variables will be saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
+    <para>It is possible to change some or all variables by editing the file <filename>$HOME/.kirbyrc</filename> directly, but take care of the dependencies and make sure you know what you are doing.</para>
   </refsect1>
-  <refsect1 id="commands">
-    <title>COMMANDS</title>
-    <para>The package consists of the following scripts which are documented in their own man page:</para>
+
+  <refsect1 id="options">
+    <title>OPTIONS</title>
+    <para>None</para>
+  </refsect1>
+
+  <refsect1 id="environment">
+    <title>ENVIRONMENT</title>
     <variablelist>
       <varlistentry>
-        <term><command>kirbyconfigure</command></term>
+        <term><envar>KIRBYSUFFIX</envar></term>
         <listitem>
-          <para>Script to create a user-specific configuration file which will be used by the other programs in the package. See <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>This variable will be used as a suffix (sometimes as a prefix) in multiple other settings, i.e. file and directory names. Default: <code>kirby</code></para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><command>kirbydeinstall</command></term>
+        <term><envar>KIRBYKIT</envar></term>
         <listitem>
-          <para>Script to delete a Kirby vhost (directory and configuration). See <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>This variable holds the default Kirby kit, which will be downloaded/installed if no other kit is requested. Possible values are <code>starterkit</code> and <code>plainkit</code>. Default: <code>starterkit</code></para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><command>kirbydownload</command></term>
+        <term><envar>KIRBYVERSION</envar></term>
         <listitem>
-          <para>Script to select and download a Kirby kit to the local machine. See <citerefentry><refentrytitle>kirbydownload</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>This variable either contains one of the strings <code>current</code> or <code>other</code>, or a specific version like <code>3.2.3</code>, which will be used as the default version of the given kit which will be downloaded/installed if no other version is requested. Default: <code>current</code></para>
+          <para><code>current</code> means, that the most recent version will be downloaded/installed. <code>other</code> makes only sense for the <command>kirbysetup</command> command, which will then ask for any other than the current version. The <command>kirbydownload</command> and <command>kirbyinstall</command> either require the string <code>current</code>, or a specific version number, since they do not ask the user anything.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><command>kirbyinstall</command></term>
+        <term><envar>KIRBYDOWNLOADDIR</envar></term>
         <listitem>
-          <para>Script to install (unpack and transfer files) a Kirby kit to a new vhost directory. See <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>This variable contains the directory where the Kirby package will be downloaded to. Default: <filename>/usr/local/src/$KIRBYSUFFIX</filename></para>
+          <para>Note about permissions: If the directory does not exist, it will be created with all parent directories if necessary. If your user does not have write/execute permission to this directory or one of its existing parents, <command>sudo</command> will be used to perform the necessary actions. Hence, make sure your user is allowed to run sudo (possibly without being asked for the password), or choose a user writable (parent) directory here. <code>$HOME/Downloads/$KIRBYSUFFIX</code> would not be a bad choice in this case. See also the file <filename>README.permissions</filename> in <filename>/usr/share/kirbytools</filename> for further details.</para>
+          <para>The Kirby packages which will be saved here will be named as <replaceable>kit</replaceable>-<replaceable>version</replaceable>.tar.gz, i.e. if you download the starterkit, version 3.3.4, it will end up as <filename>starterkit-3.3.4.tar.gz</filename> in this directory, or as full path: <filename>/usr/local/src/kirby/starterkit-3.3.4.tar.gz</filename> - if $KIRBYSUFFIX is defined as "kirby".</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><command>kirbysetup</command></term>
+        <term><envar>KIRBYLIBDIR</envar></term>
         <listitem>
-          <para>Script to setup a new Kirby website. This program will use <command>kirbydownload</command> and <command>kirbyinstall</command> if necessary. See <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>This variable contains the directory where the kirby program folder will be extracted to, if requested. Default: <filename>/usr/local/lib/$KIRBYSUFFIX</filename></para>
+          <para>Everything which has been noted about permissions for the <envar>KIRBYDOWNLOADDIR</envar> variable is valid here as well.</para>
+          <para>The kirby program folder will be renamed to reflect its version, i.e. the kirby program folder of the starterkit/plainkit version 3.3.4 will end up as directory <filename>3.3.4</filename> in this directory, or as full path: <filename>/usr/local/lib/kirby/3.3.4</filename> - if $KIRBYSUFFIX is defined as "kirby".</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYVHOSTROOT</envar></term>
+        <listitem>
+          <para>This important variable will contain the path to your vitual hosts root folder, which is the directory which will hold all your virtual hosts (in separate subfolders of course). Default: <filename>$HOME/vhosts</filename></para>
+          <para>Everything which has been noted about permissions for the <envar>KIRBYDOWNLOADDIR</envar> variable is valid here as well.</para>
+          <para>The <command>kirbyinstall</command> command will install a new Kirby installation into a subfolder of this directory. See <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>This directory is not intended to be kirby specific, therefore no suffix is used here. The subfolders for Kirby installations will have the suffix in its name per default (actually as a prefix), though this is not required.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYCREATEUSERSCRIPT</envar></term>
+        <listitem>
+          <para>This variable should contain the path to a php script which can create a panel user for a Kirby installation. Default: <filename>/usr/share/kirbytools/createUser.php</filename></para>
+          <para>Note: Every new Kirby installation will have a disabled panel if you are installing it on a server which has a FQDN. In this case, you have to activate the panel manually by editing the file <filename>site/config/config.php</filename> (creating it first if the plainkit is used). Once you have activated the panel, your first task is usually to create your own admin user. The <command>kirbysetup</command> command is able to create a default panel admin user for the given Kirby installation, which also means that you do not have to activate the panel manually first.</para>
+          <para>The php script is invoked by your user, if this user has write and execute permissions in the <filename>site</filename> folder of the given Kirby installation. Otherwise <command>sudo</command> is used here as well.</para>
+          <para>The script takes the following parameters (in this order): 1. The base directory of the Kirby installation (the webroot of the installation, but as a full path), 2. the username of the admin user (which must conform to the syntax of an email address), 3. the full name of the admin user (may be left blank), 4. the language of the admin user (which must be a valid Kirby language definition; defaults to "en"), and 5. the password of this user in cleartext.</para>
+          <para>The <command>kirbysetup</command> command will take care about the correct base directory of the Kirby installation, while all other parameters will be taken from the environment variables which can be defined by the <command>kirbyconfigure</command> command and are described next.</para>
+          <para>Note: The php script which is supplied by this package always creates a user with role "admin".</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYADMINUSERNAME</envar></term>
+        <listitem>
+          <para>This variable contains the full name of the panel user, probably your own name. Can be left blank. Default: ""</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYADMINUSERMAIL</envar></term>
+        <listitem>
+          <para>This variable contains the "username" or "loginname" of the panel user. Must conform to the syntax of an email address, but can be left blank as well. Default: ""</para>
+          <para>Note: If this variable is left blank, no panel user can be created.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYADMINUSERPASS</envar></term>
+        <listitem>
+          <para>This variable holds the password of the panel user. Can be left blank. Default: ""</para>
+          <para>Note: Since the password will be stored in cleartext in <filename>$HOME/.kirbyrc</filename> the permissions of this file will be set to 0600, i.e. only user has read/write permissions.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYADMINUSERLANG</envar></term>
+        <listitem>
+          <para>The language code of the panel user. Default: <code>en</code></para>
+          <para>The language code can be any value which is valid for Kirby language settings. Currently this is bg, ca, cs, da, de, el, en, es_419, es_ES, fa, fi, fr, hu, id, it, ko, lt, nb, nl, pl, pt_BR, pt_PT, ru, sk, sv_SE, or tr.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYAPACHECONFDIR</envar></term>
+        <listitem>
+          <para>This is another important variable, which should contain the path to your apache configuration files root folder. Default: $HOME/apache2</para>
+          <para>Everything which has been noted about permissions for the <envar>KIRBYDOWNLOADDIR</envar> variable is valid here as well.</para>
+          <para>This directory is not intended to be kirby specific, therefore no suffix is used here.</para>
+          <para>It is used as a root directory for subdirectories which contain vhost config templates, available and enabled apache configuration files and available and enabled vhost configuration files. These 5 subdirectories are defined by the following 5 variables.</para>
+          <para>The rationale to use different subdirectories for available and enabled configurations is the same as for the main apache2 installation on Debian based systems. The <package>vhostmanager</package> package and its <command>vhostenconf</command>, <command>vhostdisconf</command>, <command>vhostensite</command> and <command>vhostdissite</command> commands can be used to manage these configurations similar to the <command>a2enconf</command>, <command>a2disconf</command>, <command>a2ensite</command> and <command>a2dissite</command> commands of the <package>apache2</package> package.</para>
+          <para>It is possible to set this variable to the main apache2 configuration directory <filename>/etc/apache2</filename>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYTEMPLATEDIR</envar></term>
+        <listitem>
+          <para>This variable contains the full path to the subdirectory where configuration templates can be stored. Default: $KIRBYAPACHECONFDIR/templates</para>
+          <para>If you want the <command>kirbysetup</command> command to create one or more vhost configuration files for the new Kirby installation, put your templates into this directory. The templates must have a filename like <filename>$KIRBYSUFFIX-vhost-SOMETHING.template</filename> where SOMETHING might be any valid string which describe the purpose of the given configuration file. The <command>kirbysetup</command> command will pick up any template in this directory, rename it to <filename>KIRBYVHOST-SOMETHING.conf</filename>, substitute any placeholder within to its actual value and save the file in $KIRBYSITEAVAILABLEDIR. See <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry> and the file <filename>README.templates</filename> in <filename>/usr/share/kirbytools/examples</filename> for further details.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYCONFAVAILABLEDIR</envar></term>
+        <listitem>
+          <para>This variable contains the full path to the subdirectory where apache2 configuration files will be stored. Default: <filename>$KIRBYAPACHECONFDIR/conf-available</filename></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYCONFENABLEDDIR</envar></term>
+        <listitem>
+          <para>This variable contains the full path to the subdirectory where symbolic links to enabled/activated apache2 configuration files will be stored. Default: <filename>$KIRBYAPACHECONFDIR/conf-enabled</filename></para>
+          <para>This is the directory from which apache2 will include configuration files.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYSITEAVAILABLEDIR</envar></term>
+        <listitem>
+          <para>This variable contains the full path to the subdirectory where vhost configuration files will be stored. Default: <filename>$KIRBYAPACHECONFDIR/sites-available</filename></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYSITEENABLEDDIR</envar></term>
+        <listitem>
+          <para>This variable contains the full path to the subdirectory where symbolic links to enabled/activated vhost configuration files will be stored. Default: <filename>$KIRBYAPACHECONFDIR/sites-enabled</filename></para>
+          <para>This is the directory from which apache2 will include vhost configuration files.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYTEMPDIR</envar></term>
+        <listitem>
+          <para>This variables is the path to a temporary directory used by the scripts in the <package>kirbytools</package>. Default: /tmp/$KIRBYSUFFIX</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><envar>KIRBYHTDOCSDIR</envar></term>
+        <listitem>
+          <para>This variable will be used as the final part of a new Kirby installation directory. May be left blank. Default: <filename>htdocs</filename></para>
+          <para>Usually one would install a new virtual host in a separate subdirectory beneath the virtual hosts root directory, i.e. <filename>/home/foo/vhosts/bar123</filename>, if <filename>/home/foo/vhosts</filename> is the virtual hosts root directory and <filename>bar123</filename> is one of many virtual hosts. Then the document root for the webserver would be <filename>/home/foo/vhosts/bar123</filename>.</para>
+          <para>Sometimes however it turns out that it would be good to have room for additional virtual host specific files and folders which should not be in the document root, because they should not be visible by the webserver unconditionally. Thus, an intermediate directory for the document root makes sense, i.e. the document root from the example above would be in <filename>/home/foo/vhosts/bar123/htdocs</filename> which is absolutely irrelevant for the document root itself, but now we can create additional files and folders in <filename>/home/foo/vhosts/bar123</filename> which are not visible for the webserver per se (of course, in the first scenario the document root in the webservers configuration file is set to <filename>/home/foo/vhosts/bar123</filename>, while in the second scenario it is <filename>/home/foo/vhosts/bar123/htdocs</filename>).</para>
+          <para>If you left the <envar>KIRBYHTDOCSDIR</envar> variable empty, the first scenario is applied. Otherwise, the second scenario.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -97,13 +223,7 @@
       <varlistentry>
         <term><filename>${HOME}/.kirbyrc</filename></term>
         <listitem>
-          <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the <command>kirbyconfigure</command> script (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>) if it does not exist.</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><filename>/etc/kirbytools/kirbyfunctions</filename></term>
-        <listitem>
-          <para>Functions to be used by <application>&dhpackage;</application>.</para>
+          <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -119,11 +239,11 @@
   <refsect1 id="see_also">
     <title>SEE ALSO</title>
     <para>
-      <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbydownload</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
-      <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+      <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry>
     </para>
   </refsect1>
 </refentry>

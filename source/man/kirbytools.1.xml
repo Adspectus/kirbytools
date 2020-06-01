@@ -46,7 +46,7 @@
     <title>DESCRIPTION</title>
     <para>This manual page documents briefly the <package>&dhpackage;</package> package.</para>
     <para>The <package>&dhpackage;</package> package is a collection of shell scripts which should ease and speed the installation and management of the Kirby CMS on your machine.</para>
-    <para>It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking it and transfering the files) to a new vhost, and eventually deinstalling it.</para>
+    <para>It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking and copying) to a new virtual host, and eventually deinstalling it.</para>
   </refsect1>
   <refsect1 id="commands">
     <title>COMMANDS</title>
@@ -73,7 +73,7 @@
       <varlistentry>
         <term><command>kirbyinstall</command></term>
         <listitem>
-          <para>Script to install (unpack and transfer files) a Kirby kit to a new vhost directory. See <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
+          <para>Script to install a Kirby kit to a new virtual host directory. See <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry> for further details.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -97,13 +97,13 @@
       <varlistentry>
         <term><filename>${HOME}/.kirbyrc</filename></term>
         <listitem>
-          <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the <command>kirbyconfigure</command> script (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>) if it does not exist.</para>
+          <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the <command>kirbyconfigure</command> script (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>).</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <term><filename>/etc/kirbytools/kirbyfunctions</filename></term>
         <listitem>
-          <para>Functions to be used by <application>&dhpackage;</application>.</para>
+          <para>Functions which will used by <application>&dhpackage;</application>.</para>
         </listitem>
       </varlistentry>
     </variablelist>
