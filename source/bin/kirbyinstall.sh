@@ -22,7 +22,7 @@ usage() {
   echo ""
   echo "  -h: Show this help"
   echo "  -d: Show debug information"
-  echo "  -l: will replace kirby program directory with symbolic link to $KIRBYLIBDIR/[versionnumber]"
+  echo "  -l: Replace the kirby program directory with a symbolic link to $KIRBYLIBDIR/[versionnumber]"
   echo "  -f: Force download even if package is already in $KIRBYDOWNLOADDIR"
   echo "  -p: package to be installed (default: ${txtbld}$KIRBYDEFAULTPACKAGE${txtrst})"
   echo "  -w: virtual hostname to be used (default: ${txtbld}$KIRBYDEFAULTVHOST${txtrst})"
@@ -72,7 +72,6 @@ if [[ $FORCEDOWNLOAD || ! -f $KIRBYDOWNLOADDIR/$package.tar.gz ]];then
 fi
 
 save_mkdir "$KIRBYVHOSTDIR"
-save_mkdir "$KIRBYVHOSTLOGDIR"
 tar -xzf $KIRBYDOWNLOADDIR/$package.tar.gz -C "$KIRBYTEMPDIR"
 save_cp "$KIRBYTEMPDIR/$package/." "$KIRBYVHOSTDIR"
 
