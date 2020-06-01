@@ -15,7 +15,7 @@ function initKirbySetup {
   #done
 
   # Create directories if not exist
-  for dir in $KIRBYDOWNLOADDIR $KIRBYLIBDIR $KIRBYTEMPDIR $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYVHOSTROOT;do
+  for dir in $KIRBYDOWNLOADDIR $KIRBYLIBDIR $KIRBYTEMPDIR $KIRBYTEMPLATEDIR $KIRBYCONFAVAILABLEDIR $KIRBYCONFENABLEDDIR $KIRBYSITEAVAILABLEDIR $KIRBYSITEENABLEDDIR $KIRBYVHOSTROOT;do
     debMsg "save_mkdir $dir"
     save_mkdir "$dir"
   done
@@ -79,16 +79,6 @@ function getVHostDir {
   [[ ! -z $KIRBYHTDOCSDIR ]] && VHOSTDIR=$VHOSTDIR/$KIRBYHTDOCSDIR
   [[ -d $VHOSTDIR ]] && errMsg "$VHOSTDIR already exists" && usage
   echo $VHOSTDIR
-  debMsg "Leaving function $FUNCNAME"
-}
-
-## Creates the name of LOG directory dependent of HTDOCSDIR value
-function getLogDir {
-  debMsg "Entering function $FUNCNAME"
-  local LOGDIR="$KIRBYVHOSTROOT/$1"
-  [[ ! -z $KIRBYHTDOCSDIR ]] && LOGDIR=$LOGDIR/$KIRBYLOGDIR
-  [[ -d $LOGDIR ]] && errMsg "$LOGDIR already exists" && usage
-  echo $LOGDIR
   debMsg "Leaving function $FUNCNAME"
 }
 
@@ -178,7 +168,7 @@ function askAccount {
   debMsg "Leaving function $FUNCNAME"
 }
 
-## Enabling the panel? Only asked if admin user account is NOT created (default: Yes)
+## Enabling the panel? Only asked if admin user account should NOT be created (default: Yes)
 function askPanel {
   debMsg "Entering function $FUNCNAME"
   KIRBYSELECTEDENABLEPANEL="No"

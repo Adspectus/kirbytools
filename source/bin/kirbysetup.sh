@@ -48,10 +48,8 @@ askVHost
 askLink
 askAccount
 askPanel
-#askConf
 
 KIRBYSELECTEDVHOSTDIR=$(getVHostDir $KIRBYSELECTEDVHOST)
-#KIRBYSELECTEDVHOSTLOGDIR=$(getLogDir $KIRBYSELECTEDVHOST)
 
 ## Show all variables (in debug mode) and all settings
 [[ $DEBUG ]] && showVars
@@ -123,12 +121,12 @@ fi
 for tpl in $KIRBYTEMPLATEDIR/$KIRBYSUFFIX-vhost-*.template;do
   debMsg "Working on vhost template $tpl"
   TEMPLATE=$(basename $tpl .template)
-  CONFFILE="$KIRBYCONFAVAILABLEDIR/${TEMPLATE/kirby-vhost/$KIRBYSELECTEDVHOST}.conf"
+  CONFFILE="$KIRBYSITEAVAILABLEDIR/${TEMPLATE/kirby-vhost/$KIRBYSELECTEDVHOST}.conf"
   echo -n "Creating $(basename $CONFFILE)... "
 
   [[ -f $CONFFILE ]] && save_mv "$CONFFILE" "$CONFFILE.bak"
 
-  if [ -w $KIRBYCONFAVAILABLEDIR ];then
+  if [ -w $KIRBYSITEAVAILABLEDIR ];then
     echo -e "# Virtual Host ${TEMPLATE/kirby-vhost/$KIRBYSELECTEDVHOST}\n# Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
     cat $tpl >> $CONFFILE
     sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" -e "s|<VHOSTROOT>|$KIRBYVHOSTROOT|g" -e "s|<HTDOCSDIR>|$KIRBYHTDOCSDIR|g" $CONFFILE
@@ -140,19 +138,8 @@ for tpl in $KIRBYTEMPLATEDIR/$KIRBYSUFFIX-vhost-*.template;do
   [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 done
 
-#if [ "$KIRBYSELECTEDCOMBINECONF" == "Yes" ];then
-#  if [ -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf -a -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf ];then 
-#    echo -n "Merging redirection and ssl vhost configuration files into 1 file... "
-#    cat $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf > $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf
-#    if [ -f $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf ];then
-#      rm $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-Redirection.conf $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST-SSL.conf
-#    fi
-#    [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
-#  fi
-#fi
-
-if [ $(which vhostenable) ];then
-  for conf in $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST*.conf;do
+if [ $(which vhostensite) ];then
+  for conf in $KIRBYSITEAVAILABLEDIR/$KIRBYSELECTEDVHOST*.conf;do
     echo ""
     CONF=$(basename $conf .conf)
     read -n1 -p "${txtbld}Enable Virtual Host $CONF? [y|${txtrst}${txtblue}N${txtrst}${txtbld}] ${txtrst}"
@@ -160,7 +147,7 @@ if [ $(which vhostenable) ];then
     SEL=${REPLY:-n}
     if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
       echo -n "Enabling Virtual Host $CONF ..."
-      vhostenable $CONF > /dev/null
+      vhostensite $CONF > /dev/null
       CONFIGTEST=$(sudo apache2ctl configtest 2>&1 > /dev/null)
       ERR=$?
       if [ "$ERR" != "0" ];then
@@ -173,8 +160,10 @@ if [ $(which vhostenable) ];then
     fi
   done
 else
-  echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYCONFENABLEDDIR/ with:\n"
-  echo -e "  ${txtblue}ln -s $KIRBYCONFAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf $KIRBYCONFENABLEDDIR/${txtrst}\n"
+  echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYSITEENABLEDDIR/ with:\n"
+  for conf in $KIRBYSITEAVAILABLEDIR/$KIRBYSELECTEDVHOST*.conf;do
+    echo -e "  ${txtblue}ln -s $conf $KIRBYSITEENABLEDDIR/${txtrst}\n"
+  done
   echo -e "and restart apache with:\n"
   echo -e "  ${txtblue}sudo apache2ctl graceful${txtrst}\n"
 fi
