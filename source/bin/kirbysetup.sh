@@ -118,55 +118,76 @@ if [ "$KIRBYSELECTEDENABLEPANEL" == "Yes" ];then
 fi
 
 ## Copying kirby vhost templates as .conf files to sites-available dir in KIRBYAPACHECONFDIR
-for tpl in $KIRBYTEMPLATEDIR/$KIRBYSUFFIX-vhost-*.template;do
-  debMsg "Working on vhost template $tpl"
-  TEMPLATE=$(basename $tpl .template)
-  CONFFILE="$KIRBYSITEAVAILABLEDIR/${TEMPLATE/kirby-vhost/$KIRBYSELECTEDVHOST}.conf"
-  echo -n "Creating $(basename $CONFFILE)... "
+TEMPLATES=$(find $KIRBYTEMPLATEDIR -name $KIRBYSUFFIX-vhost*.template)
+if [[ ! -z $TEMPLATES ]];then
+  for tpl in $(find $KIRBYTEMPLATEDIR -name $KIRBYSUFFIX-vhost*.template);do
+    debMsg "Working on vhost template $tpl"
+    TEMPLATE=$(basename $tpl .template)
+    CONFFILE="$KIRBYSITEAVAILABLEDIR/${TEMPLATE/$KIRBYSUFFIX-vhost/$KIRBYSELECTEDVHOST}.conf"
+    echo -n "Creating apache config file $(basename $CONFFILE)... "
 
-  [[ -f $CONFFILE ]] && save_mv "$CONFFILE" "$CONFFILE.bak"
+    [[ -f $CONFFILE ]] && save_mv "$CONFFILE" "$CONFFILE.bak"
 
-  if [ -w $KIRBYSITEAVAILABLEDIR ];then
-    echo -e "# Virtual Host ${TEMPLATE/kirby-vhost/$KIRBYSELECTEDVHOST}\n# Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
-    cat $tpl >> $CONFFILE
-    sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" -e "s|<VHOSTROOT>|$KIRBYVHOSTROOT|g" -e "s|<HTDOCSDIR>|$KIRBYHTDOCSDIR|g" $CONFFILE
-  else
-    sudo echo -e "# Virtual Host ${TEMPLATE/vhost/$KIRBYSELECTEDVHOST} Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
-    sudo cat $tpl >> $CONFFILE
-    sudo sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" -e "s|<VHOSTROOT>|$KIRBYVHOSTROOT|g" -e "s|<HTDOCSDIR>|$KIRBYHTDOCSDIR|g" $CONFFILE
-  fi
-  [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
-done
-
-if [ $(which vhostensite) ];then
-  for conf in $KIRBYSITEAVAILABLEDIR/$KIRBYSELECTEDVHOST*.conf;do
-    echo ""
-    CONF=$(basename $conf .conf)
-    read -n1 -p "${txtbld}Enable Virtual Host $CONF? [y|${txtrst}${txtblue}N${txtrst}${txtbld}] ${txtrst}"
-    [[ -z $REPLY ]] || echo ""
-    SEL=${REPLY:-n}
-    if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
-      echo -n "Enabling Virtual Host $CONF ..."
-      vhostensite $CONF > /dev/null
-      CONFIGTEST=$(sudo apache2ctl configtest 2>&1 > /dev/null)
-      ERR=$?
-      if [ "$ERR" != "0" ];then
-        echo -e "${txtred}failed.${txtrst}\n"
-        errMsg $CONFIGTEST
-      else
-        sudo apache2ctl graceful
-        echo -e "${txtgreen}successful.${txtrst}"
-      fi
+    if [ -w $KIRBYSITEAVAILABLEDIR ];then
+      echo -e "# Virtual Host ${TEMPLATE/$KIRBYSUFFIX-vhost/$KIRBYSELECTEDVHOST}\n# Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
+      cat $tpl >> $CONFFILE
+      sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" -e "s|<VHOSTROOT>|$KIRBYVHOSTROOT|g" -e "s|<HTDOCSDIR>|$KIRBYHTDOCSDIR|g" $CONFFILE
+    else
+      sudo echo -e "# Virtual Host ${TEMPLATE/$KIRBYSUFFIX-vhost/$KIRBYSELECTEDVHOST} Configuration created by $(basename $0) $KIRBYTOOLSVERSION\n# Name: $KIRBYSELECTEDVHOSTNAME\n# Date: $(date)\n# Desc: $KIRBYSELECTEDVHOSTDESC\n" > $CONFFILE
+      sudo cat $tpl >> $CONFFILE
+      sudo sed -i -e "s/<VHOST>/$KIRBYSELECTEDVHOST/g" -e "s|<VHOSTROOT>|$KIRBYVHOSTROOT|g" -e "s|<HTDOCSDIR>|$KIRBYHTDOCSDIR|g" $CONFFILE
     fi
+    [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
   done
+
+  if [ $(which vhostensite) ];then
+    for conf in $(find $KIRBYSITEAVAILABLEDIR -name $KIRBYSELECTEDVHOST*.conf);do
+      debMsg "Working on conf file $conf"
+      echo ""
+      CONF=$(basename $conf .conf)
+      read -n1 -p "${txtbld}Enable Virtual Host $CONF? [y|${txtrst}${txtblue}N${txtrst}${txtbld}] ${txtrst}"
+      [[ -z $REPLY ]] || echo ""
+      SEL=${REPLY:-n}
+      if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
+        echo -n "Enabling Virtual Host $CONF ..."
+        vhostensite $CONF > /dev/null
+        CONFIGTEST=$(sudo apache2ctl configtest 2>&1 > /dev/null)
+        ERR=$?
+        if [ "$ERR" != "0" ];then
+          echo -e "${txtred}failed.${txtrst}\n"
+          errMsg $CONFIGTEST
+        else
+          sudo apache2ctl graceful
+          echo -e "${txtgreen}successful.${txtrst}"
+        fi
+      fi
+    done
+  else
+    echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYSITEENABLEDDIR/ with:\n"
+    for conf in $(find $KIRBYSITEAVAILABLEDIR -name $KIRBYSELECTEDVHOST*.conf);do
+      echo -e "  ${txtblue}ln -s $conf $KIRBYSITEENABLEDDIR/${txtrst}\n"
+    done
+    echo -e "and restart apache with:\n"
+    echo -e "  ${txtblue}sudo apache2ctl graceful${txtrst}\n"
+  fi
 else
-  echo -e "\nTo enable the virtual host, create a symbolic link in $KIRBYSITEENABLEDDIR/ with:\n"
-  for conf in $KIRBYSITEAVAILABLEDIR/$KIRBYSELECTEDVHOST*.conf;do
-    echo -e "  ${txtblue}ln -s $conf $KIRBYSITEENABLEDDIR/${txtrst}\n"
-  done
-  echo -e "and restart apache with:\n"
-  echo -e "  ${txtblue}sudo apache2ctl graceful${txtrst}\n"
+  debMsg "No templates found in $KIRBYTEMPLATEDIR"
+  echo -e "\n${txtbld}No virtual host configuration templates found!${txtrst}\n"
+  echo "You have to create a suitable apache vhost configuration file and save it as"
+  echo "$KIRBYSITEAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf. Then, enable the vhost with either"
+  echo -e "\n  ${txtblue}vhostensite $KIRBYSELECTEDVHOST${txtrst}\n"
+  echo "(requires the vhostmanger package to be installed) OR"
+  echo -e "\n  ${txtblue}ln -s $KIRBYSITEAVAILABLEDIR/$KIRBYSELECTEDVHOST.conf $KIRBYSITEENABLEDDIR/${txtrst}\n"
+  echo "Finally restart apache with"
+  echo -e "\n  ${txtblue}sudo apache2ctl graceful${txtrst}\n"
+  echo "If you would like kirbysetup to create virtual host configuration file(s) for you, add"
+  echo "template files in $KIRBYAPACHECONFDIR/templates with file names corresponding to the pattern"
+  echo "'$KIRBYSUFFIX-vhost[SOMETHING].template'. The kirbysetup script will pick up any template in this"
+  echo "directory, rename it to 'KIRBYVHOST[SOMETHING].conf', substitute any placeholder within to its"
+  echo "actual value, and save the file in $KIRBYSITEAVAILABLEDIR."
+  echo -e "\nSee kirbysetup(1) and $KIRBYTOOLSPACKAGEDIR/examples/README.templates for further details.\n"
 fi
+
 
 debMsg "Script $(basename $0) finished successfully"
 
