@@ -232,7 +232,7 @@
   <refsect1 id="bugs">
     <title>BUGS</title>
     <para>Currently, only Kirby 3 starterkits and plainkits are supported.</para>
-    <para>The programs are currently limited to work with the <package>apache2</package> httpd.</para>
+    <para>The programs are currently optimized to work with the <package>apache2</package> httpd.</para>
     <para>Some functionality requires root (or sudo as root) access.</para>
   </refsect1>
 
