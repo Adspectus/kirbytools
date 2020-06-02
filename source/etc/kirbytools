@@ -14,6 +14,7 @@ _kirbydeinstall() {
     set -o noglob
     [[ -f $HOME/.kirbyrc ]] && . $HOME/.kirbyrc
     COMPREPLY=( $( cd $KIRBYVHOSTROOT && compgen -d -- "${cur}" ) )
+    set +o noglob
   else
     COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
   fi
