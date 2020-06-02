@@ -41,7 +41,14 @@ _kirbyinstall() {
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   opts="-h -d -l -f -p -w"
-  COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+  if [ "${prev}" = "-p" ];then
+    set -o noglob
+    [[ -f $HOME/.kirbyrc ]] && . $HOME/.kirbyrc
+    COMPREPLY=( $( cd $KIRBYDOWNLOADDIR && compgen -f -- "${cur}" ) )
+    set +o noglob
+  else
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+  fi
 }
 complete -F _kirbyinstall kirbyinstall
 
