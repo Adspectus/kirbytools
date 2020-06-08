@@ -151,12 +151,16 @@ if [[ ! -z $TEMPLATES ]];then
       if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
         echo -n "Enabling Virtual Host $CONF ..."
         vhostensite $CONF > /dev/null
+        echo -e "${txtgreen}successful.${txtrst}"
+        echo -n "Testing apache2 configuration (with 'sudo apache2ctl configtest') ..."
         CONFIGTEST=$(sudo apache2ctl configtest 2>&1 > /dev/null)
         ERR=$?
         if [ "$ERR" != "0" ];then
           echo -e "${txtred}failed.${txtrst}\n"
           errMsg $CONFIGTEST
         else
+          echo -e "${txtgreen}successful.${txtrst}"
+          echo -n "Restarting apache2 (with 'sudo apache2ctl graceful') ..."
           sudo apache2ctl graceful
           echo -e "${txtgreen}successful.${txtrst}"
         fi
