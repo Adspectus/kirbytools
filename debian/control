@@ -9,6 +9,6 @@ Package: kirbytools
 Architecture: all
 Depends: coreutils (>= 8.26-3), curl, jq, libapache2-mod-php | php-cgi, sudo, wget, ${misc:Depends}
 Suggests: vhostmanager
-Description: Tools to create & manage kirby websites with apache2
- Various tools to create & manage kirby websites with apache2
+Description: Tools to create & manage kirby websites
+ Various tools to create & manage kirby websites
 
