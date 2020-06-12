@@ -29,7 +29,7 @@ usage() {
 
 ## Get commandline options
 debMsg "Get commandline options"
-while getopts ":dhlw:" opt;do
+while getopts ":dhw:" opt;do
   case "${opt}" in
     h)  usage;;
     d)  DEBUG=1;;
