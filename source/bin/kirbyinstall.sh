@@ -67,7 +67,8 @@ KIRBYVHOSTDIR=$(getVHostDir $vhost)
 
 ## Check first if package is already downloaded. If not, download package
 if [[ $FORCEDOWNLOAD || ! -f $KIRBYDOWNLOADDIR/$package.tar.gz ]];then
-  kirbydownload -f -l -k $kit -v $ver > /dev/null
+  [[ $LINKKIRBY ]] && kirbydownload -f -l -k $kit -v $ver > /dev/null
+  [[ $LINKKIRBY ]] || kirbydownload -f -k $kit -v $ver > /dev/null
   [[ $? -ne 0 ]] && errMsg "Could not download $package" && usage
 fi
 
