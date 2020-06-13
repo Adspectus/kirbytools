@@ -18,7 +18,7 @@ usage() {
   echo ""
   echo "  Usage:"
   echo ""
-  echo "  $(basename $0) [-h] [-d] [-w <vhost>]"
+  echo "  $(basename $0) [-h] [-d] -w <vhost>"
   echo ""
   echo "  -h: Show this help"
   echo "  -d: Show debug information"
@@ -33,12 +33,14 @@ while getopts ":dhw:" opt;do
   case "${opt}" in
     h)  usage;;
     d)  DEBUG=1;;
-    w)  vhost=$OPTARG;;
+    w)  opt_w=1;vhost=$OPTARG;;
     :)  errMsg "-$OPTARG requires an argument" && usage;;
     *)  errMsg "Invalid option $OPTARG" && usage;;
   esac
 done
 shift $((OPTIND -1))
+
+[[ $opt_w ]] || { errMsg "-w is required" && usage; }
 
 [[ $DEBUG ]] && showVars
 

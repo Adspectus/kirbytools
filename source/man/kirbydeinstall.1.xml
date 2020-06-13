@@ -49,7 +49,7 @@
     <cmdsynopsis>
       <command>&dhpackage;</command>
       <arg choice="opt"><option>-d</option></arg>
-      <arg choice="opt"><option>-w</option>
+      <arg choice="plain"><option>-w</option>
         <arg choice="plain"><replaceable>vhost</replaceable></arg>
       </arg>
     </cmdsynopsis>
@@ -128,4 +128,3 @@
     </para>
   </refsect1>
 </refentry>
-
