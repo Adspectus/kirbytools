@@ -6,9 +6,4 @@
 /source/bin/kirbydownload.sh /usr/share/kirbytools
 /source/bin/kirbyinstall.sh /usr/share/kirbytools
 /source/bin/kirbydeinstall.sh /usr/share/kirbytools
-/source/misc/vhost-Redirection.template /usr/share/kirbytools/examples
-/source/misc/vhost-Remote.template /usr/share/kirbytools/examples
-/source/misc/vhost-SSL.template /usr/share/kirbytools/examples
-/source/misc/README.templates /usr/share/kirbytools/examples
-/source/misc/kirbytools.conf /usr/share/kirbytools/examples
 /source/misc/createUser.php /usr/share/kirbytools
