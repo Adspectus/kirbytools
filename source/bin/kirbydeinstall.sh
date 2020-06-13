@@ -81,5 +81,7 @@ for vh in $KIRBYVHOSTROOT/${vhost[*]};do
   fi
 done
 
+restart_apache2
+
 exit 0
 ## code: language=bash
