@@ -61,10 +61,10 @@ read -n1 -p "${txtbld}Are you satisfied with above settings? [${txtrst}${txtblue
 SEL=${REPLY:-y}
 [[ "$SEL" == "y" || "$SEL" == "Y" ]] || exit 0
 
-## Download Kit if not already here
-echo -en "\nDownloading Kirby $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION... "
-kirbydownload -k $KIRBYSELECTEDKIT -v $KIRBYSELECTEDVERSION -t $KIRBYDOWNLOADDIR > /dev/null 2>&1
-[[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
+## Download Kit if not already here (obsolete, will be done by kirbyinstall if necessary)
+#echo -en "\nDownloading Kirby $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION... "
+#kirbydownload -k $KIRBYSELECTEDKIT -v $KIRBYSELECTEDVERSION -t $KIRBYDOWNLOADDIR > /dev/null 2>&1
+#[[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 
 ## Install Kit to Virtual Host Dir
 echo -n "Installing Kirby $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION... "
