@@ -1,77 +1,106 @@
 ## File: /usr/share/kirbytools/examples/README.templates
 
-Background
-==========
-
-In order to make a website visible through the apache2 webserver, one has to
-create an appropriate configuration for it and save it to a location where
-the webserver can find it.
-
-There are many different ways to create such a configuration. One way, which is
-followed here, is to have at least one configuration file per website which is
-refered to as "virtual host".
-
-How apache2 find its configuration
-----------------------------------
-
-The Debian implementation of apache2 comes with the following directory structure
-in its main configuration directory /etc/apache2:
-
-├── apache2.conf
-├── conf-available/
-├── conf-enabled/
-├── envvars
-├── magic
-├── mods-available/
-├── mods-enabled/
-├── ports.conf
-├── sites-available/
-└── sites-enabled/
-
-The main configuration file is apache2.conf, which loads other configuration files
-from the {mods,conf,site}-enabled directories, in this order. The idea is to put
-configuration files in the {mods,conf,site}-available directories and create a
-symlink for each file which should be active in the resp. *-enabled directory.
-
-The activation and deactivation of configuration files is done by helper programs
-a2{en|dis}{mod|conf|site}, hence "a2enconf foo" will enable the configuration
-file foo.conf by creating a symlink from /etc/apache2/conf-available/foo.conf to
-/etc/apache2/conf-enabled/foo.conf.
-
-It is possible to stick with this and just create the necessary configuration
-files in the designated folders or even change the standard files.
-
-The approach which is followed here is different. The idea is to have a user
-specific apache2 configuration directory which reflects almost the same
-structure. The mods-available and mods-enabled directories are not needed and
-so are the various files in the /etc/apache2 directory. Hence the structure of
-the user specific apache2 configuration directory looks like this:
-
-├── conf-available/
-├── conf-enabled/
-├── sites-available/
-├── sites-enabled/
-└── templates/
-
-As with the main apache2 configuration directory, arbitrary configuration files
-go into the conf-available subdirectory and vhost configuration files into the
-sites-available subdirectory. Likewise, a configuration or a vhost can be
-activated by symlinking them into the *-enabled directory.
-
-But, how does apache2 know that it has to include additional configuration from
-these both directories? Well, we need two files with two configuration directives
-in the main apache2 configuration directory.
-
-
-Extending the configuration for apache2
----------------------------------------
-
-In /etc/apache2/conf-available we create a file with any name, however it has to
-end with .conf. 
-
-
 
 The kirbysetup script is able to copy virtual host configuration templates from
 the templates subdirectory of the user specific apache2 configuration directory
 (as defined by the kirbyconfigure script in $HOME/.kirbyrc) to the sites-available
 subdirectory.
+
+These template files have to follow a naming convention and must contain valid
+apache2 configuration directives, with the only exception of specific place-
+holders which are filled by kirbysetup during installation.
+
+Naming convention
+-----------------
+
+The names of the template files must have 4 parts:
+
+First, they have to start with the KIRBYSUFFIX which has been defined by
+running the kirbyconfigure script. The default value for this is "kirby".
+
+Then, the string "-vhost-" have to follow.
+
+The third part is a user defined string (which should be allowed as filename)
+which distinguish the template from others, i.e. "standard" or "ssl".
+
+The fourth part is the extension ".template".
+
+Hence, from the examples above, we could have two templates like these:
+
+kirby-vhost-standard.template
+kirby-vhost-ssl.template
+
+Note: You can have multiple templates which will result in having multiple
+virtual host configuration files for the same virtual host installation.
+If this makes sense depends on your setup, an example is given below.
+
+Placeholders
+------------
+
+The templates may contain placeholders in the form of <PLACEHOLDER> which will
+be replaced by their actual value by the kirbysetup script. Currently, the
+kirbysetup script recognizes the following placeholders:
+
+<VHOST> - The directory name of the current virtual host being installed.
+
+This is the name of the virtual host as defined when kirbysetup asks for
+"Virtual Host Name" and suggest a name like "kirby-abcdefgh". The suggestion is
+the value of KIRBYSUFFIX (see above) appended with a dash and an 8-character
+randomly generated string of lowercase letters.
+
+<VHOSTROOT> - The root directory of user specific virtual hosts.
+
+This is the path to the user specific virtual hosts root folder which has been
+defined by running the kirbyconfigure script and defaults to "$HOME/vhosts".
+
+<HTDOCSDIR> - The directory name of the webroot (aka document root).
+
+This is the directory within the virtual host folder which is used as "webroot"
+or "document root" and has also been defined by running the kirbyconfigure
+script. It defaults to "htdocs".
+
+This variable my also be set to an empty value in $HOME/.kirbyrc which will
+result in the webroot being the virtual host folder. This is not recommended
+because it will prevent from the ability to place more files and directories
+to the virtual host folder without being visible to the webserver immediatly.
+
+Example: Given the default values, the replacement would be like this:
+
+<VHOST>      => "kirby-blablabl"
+<VHOSTROOT>  => "/home/user/vhosts"
+<HTDOCSDIR>  => "htdocs"
+
+Note: The kirbysetup script will expand any shell variable (like $HOME) when
+replacing a placeholder because Apache2 would not understand it.
+
+This would mean that a line in your template like
+
+DocumentRoot "<VHOSTROOT>/<VHOST>/<HTDOCSDIR>"
+
+would be changed to 
+
+DocumentRoot "/home/user/vhosts/kirby-blablabl/htdocs"
+
+
+Examples
+--------
+
+The /usr/share/doc/kirbytools/examples directory contains example templates
+which you can use, eventually with some modifications or combinations.
+
+1. An minimum configuration file for non-ssl virtual hosts
+
+---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
+<VirtualHost YOUR_IP_HERE:80>
+  ServerName <VHOST>.YOUR_DOMAIN_HERE
+
+  DocumentRoot "<VHOSTROOT>/<VHOST>/<HTDOCSDIR>"
+
+  <Directory "<VHOSTROOT>/<VHOST>/<HTDOCSDIR>">
+    AllowOverride All
+  </Directory>
+</VirtualHost>
+--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8---
+
+Note that you have to replace YOUR_IP_HERE and YOUR_DOMAIN_HERE in the template
+with real values which are valid for your server.
