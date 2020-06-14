@@ -32,7 +32,7 @@ kirby-vhost-ssl.template
 
 Note: You can have multiple templates which will result in having multiple
 virtual host configuration files for the same virtual host installation.
-If this makes sense depends on your setup, an example is given below.
+If this makes sense depends on your setup, an example is given below (see 5).
 
 Placeholders
 ------------
@@ -88,7 +88,10 @@ Examples
 The /usr/share/doc/kirbytools/examples directory contains example templates
 which you can use, eventually with some modifications or combinations.
 
-1. An minimum configuration file for non-ssl virtual hosts
+In the following we will develop some template files.
+
+
+(1) A minimum configuration file for non-ssl virtual hosts
 
 ---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
 <VirtualHost YOUR_IP_HERE:80>
@@ -104,3 +107,167 @@ which you can use, eventually with some modifications or combinations.
 
 Note that you have to replace YOUR_IP_HERE and YOUR_DOMAIN_HERE in the template
 with real values which are valid for your server.
+
+It may turn out that it would be nice to not hard-code the IP and the domain
+within each virtual host configuration file because these might change, i.e.
+when changing the server hardware (or virtual server). Thus, one would define 2
+variables either in the /etc/apache2/envvars file or an supplemental file which
+will be loaded by the Apache2 server upon start. It is also possible to define
+these as apache2-only variables in a conf file.
+
+One of the following would be necessary:
+
+a) A shell environment variable definition, i.e. in envvars file:
+
+---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
+export APACHE_IP="123.456.789.000"
+export DOMAIN="my.example.org"
+--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8---
+
+b) An apache2 variable definition in a conf file:
+
+---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
+Define APACHE_IP 123.456.789.000
+Define DOMAIN my.example.org
+--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8---
+
+Both variants have the effect that you can use these variables anywhere in
+apache2 configuration directives as ${APACHE_IP} and ${DOMAIN} resp.
+
+Lets rewrite the example template (1) and add some more directives:
+
+
+(2) An extended configuration file for non-ssl virtual hosts
+
+---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
+<VirtualHost ${APACHE_IP}:80>
+  ServerName <VHOST>.${DOMAIN}
+
+  Define VIRTUAL_ROOT <VHOSTROOT>/<VHOST>
+
+  CustomLog /var/log/apache2/<VHOST>.${DOMAIN}-access.log combined
+  ErrorLog /var/log/apache2/<VHOST>.${DOMAIN}-error.log
+
+  DocumentRoot "${VIRTUAL_ROOT}/<HTDOCSDIR>"
+
+  <Directory "${VIRTUAL_ROOT}/<HTDOCSDIR>">
+    AllowOverride All
+  </Directory>
+
+  UnDefine VIRTUAL_ROOT
+</VirtualHost>
+--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8---
+
+Assuming the variables APACHE_IP and DOMAIN have been defined with correct values,
+this is a fully functional template for use with the kirbysetup program.
+
+
+(3) A configuration file for virtual hosts with ssl
+
+It is not difficult to extend the example template (2) for use with https:
+
+---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
+<VirtualHost ${APACHE_IP}:443>
+  ServerName <VHOST>.${DOMAIN}
+
+  Define VIRTUAL_ROOT <VHOSTROOT>/<VHOST>
+
+  CustomLog /var/log/apache2/<VHOST>.${DOMAIN}-access.log combined
+  ErrorLog /var/log/apache2/<VHOST>.${DOMAIN}-error.log
+
+  SSLEngine on
+  SSLCertificateFile /etc/letsencrypt/live/<VHOST>.${DOMAIN}/fullchain.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/<VHOST>.${DOMAIN}/privkey.pem
+  SSLCACertificatePath /etc/ssl/certs/
+
+  DocumentRoot "${VIRTUAL_ROOT}/<HTDOCSDIR>"
+
+  <Directory "${VIRTUAL_ROOT}/<HTDOCSDIR>">
+    SSLRequireSSL
+    AllowOverride All
+  </Directory>
+
+  UnDefine VIRTUAL_ROOT
+</VirtualHost>
+--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8---
+
+This assumes that you have a valid ssl certificate file from Let's Encrypt for
+the domain kirby-blablabl.my.example.org if we stick with the example names we
+have used before. Acquiring a certificate for each and every virtual host you
+will create in the my.example.org domain is a cumbersome task. If you aquire a
+wildcard certificate for *.my.example.org you can simplify two lines in the
+example template (3) to:
+
+---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
+  SSLCertificateFile /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/${DOMAIN}/privkey.pem
+--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8---
+
+
+(4) A configuration file for ssl virtual host with http->https redirect
+
+Most often you will want redirect all http requests to your ssl-secured host.
+Instead of having 2 virtual host blocks in 2 different files, you can put them
+into one file, which makes it easier to activate or deactivate both of them at
+once:
+
+---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
+<VirtualHost ${APACHE_IP}:80>
+  ServerName <VHOST>.${DOMAIN}
+  RedirectPermanent / https://<VHOST>.${DOMAIN}/
+</VirtualHost>
+
+<VirtualHost ${APACHE_IP}:443>
+  ServerName <VHOST>.${DOMAIN}
+
+  Define VIRTUAL_ROOT <VHOSTROOT>/<VHOST>
+
+  CustomLog /var/log/apache2/<VHOST>.${DOMAIN}-access.log combined
+  ErrorLog /var/log/apache2/<VHOST>.${DOMAIN}-error.log
+
+  SSLEngine on
+  SSLCertificateFile /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/${DOMAIN}/privkey.pem
+  SSLCACertificatePath /etc/ssl/certs/
+
+  DocumentRoot "${VIRTUAL_ROOT}/<HTDOCSDIR>"
+
+  <Directory "${VIRTUAL_ROOT}/<HTDOCSDIR>">
+    SSLRequireSSL
+    AllowOverride All
+  </Directory>
+
+  UnDefine VIRTUAL_ROOT
+</VirtualHost>
+--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8---
+
+
+(5) An additional configuration for listening on different interfaces
+
+Sometimes it might be useful to have multiple virtual hosts for the same site,
+but which will be reached on different interfaces Apache2 is listening to.
+Usually the Apache2 webserver is listening on the IP address of the host, if
+there is only one, or multiple IP addresses if there are multiple, and on the
+localhost address for requests originating from the same server.
+
+Thus, we could have an additional template, because we might want to activate
+or deactivate this configuration independently from others:
+
+---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---8<---
+<VirtualHost localhost:80>
+  ServerName <VHOST>.${DOMAIN}
+
+  Define VIRTUAL_ROOT <VHOSTROOT>/<VHOST>
+
+  CustomLog /var/log/apache2/<VHOST>.${DOMAIN}-access.log combined
+  ErrorLog /var/log/apache2/<VHOST>.${DOMAIN}-error.log
+
+  DocumentRoot "${VIRTUAL_ROOT}/<HTDOCSDIR>"
+
+  <Directory "${VIRTUAL_ROOT}/<HTDOCSDIR>">
+    AllowOverride All
+  </Directory>
+
+  UnDefine VIRTUAL_ROOT
+</VirtualHost>
+--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8--->8---
