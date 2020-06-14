@@ -44,12 +44,13 @@ shift $((OPTIND -1))
 
 [[ $DEBUG ]] && showVars
 
-for vh in $KIRBYVHOSTROOT/${vhost[*]};do
+for vh in $(find $KIRBYVHOSTROOT -type d -name ${vhost[*]});do
   debMsg "Remove dir $vh?"
   [[ -d $vh ]] && read -n1 -p "Remove directory $vh and all subdirectories [y|${txtblue}N${txtrst}] "
   [[ -z $REPLY ]] || echo ""
   SEL=${REPLY:-n}
   if [[ "$SEL" == "y" || "$SEL" == "Y" ]];then
+    RESTARTAPACHE=1
     # First disable the site if it is enabled
     for file in $KIRBYSITEENABLEDDIR/$(basename $vh)*.conf;do
       if [ $(which vhostdissite) ];then
@@ -81,7 +82,7 @@ for vh in $KIRBYVHOSTROOT/${vhost[*]};do
   fi
 done
 
-restart_apache2
+[[ $RESTARTAPACHE ]] && restart_apache2
 
 exit 0
 ## code: language=bash
