@@ -1,3 +1,21 @@
+kirbytools (1.4.0) unstable; urgency=medium
+
+  * 42454fe Removed obsolete option l
+  * 7c2ef5f First version of README
+  * 24710e4 Finalized README
+  * 69bf49f Moved examples to its designated place
+  * 92116bd Adopted manpage to examples location
+  * a0c4b9f Fix: kirbydownload -l only when called with -l
+  * 782163e Change: Option -w is required
+  * 4e84851 Added function for save restart of apache2
+  * c06e988 Removed kirbydownload, will be done by kirbyinstall
+  * d39e874 Changed and removed obsolete parts
+  * 0113a12 Finalized README.templates
+  * 164686d Ask for confirmation before apache2 restart
+  * a57e63e Restart apache2 only if necessary
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Sun, 14 Jun 2020 11:04:41 +0200
+
 kirbytools (1.3.4) unstable; urgency=medium
 
   * 9264f11 Bugfix: Remove noglob after set COMPREPLY
