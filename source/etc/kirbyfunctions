@@ -346,22 +346,28 @@ function save_ln { # $1=sourcefile $2=targetfile or targetdir
 ## Try apache2 configtest and restart if ok
 function restart_apache2 {
   debMsg "Entering function $FUNCNAME"
-  echo -n "Testing apache2 configuration (with 'sudo apache2ctl configtest') ..."
-  CONFIGTEST=$(sudo apache2ctl configtest 2>&1 > /dev/null)
-  ERR=$?
-  if [ "$ERR" != "0" ];then
-    echo -e "${txtred}failed.${txtrst}\n"
-    errMsg $CONFIGTEST
-  else
-    echo -e "${txtgreen}successful.${txtrst}"
-    echo -n "Restarting apache2 (with 'sudo apache2ctl graceful') ..."
-    GRACEFUL=$(sudo apache2ctl graceful 2>&1 > /dev/null)
+  read -n1 -p "${txtbld}Restart the apache2 webserver? [${txtrst}${txtblue}Y${txtrst}${txtbld}|n] ${txtrst}"
+  [[ -z $REPLY ]] || echo ""
+  SEL=${REPLY:-y}
+
+  if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
+    echo -n "Testing apache2 configuration (with 'sudo apache2ctl configtest') ..."
+    CONFIGTEST=$(sudo apache2ctl configtest 2>&1 > /dev/null)
     ERR=$?
     if [ "$ERR" != "0" ];then
       echo -e "${txtred}failed.${txtrst}\n"
-      errMsg $GRACEFUL
+      errMsg $CONFIGTEST
     else
       echo -e "${txtgreen}successful.${txtrst}"
+      echo -n "Restarting apache2 (with 'sudo apache2ctl graceful') ..."
+      GRACEFUL=$(sudo apache2ctl graceful 2>&1 > /dev/null)
+      ERR=$?
+      if [ "$ERR" != "0" ];then
+        echo -e "${txtred}failed.${txtrst}\n"
+        errMsg $GRACEFUL
+      else
+        echo -e "${txtgreen}successful.${txtrst}"
+      fi
     fi
   fi
   debMsg "Leaving function $FUNCNAME"
