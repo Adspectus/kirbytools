@@ -1,11 +1,17 @@
+<!-- ABOUT KIRBYTOOLS-->
+## kirbytools
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Adspectus/kirbytools?style=flat-square&label=Version)](https://github.com/Adspectus/kirbytools/releases)
 [![GitHub issues](https://img.shields.io/github/issues/Adspectus/kirbytools?style=flat-square&label=Issues)](https://github.com/Adspectus/kirbytools/issues)
 [![GitHub license](https://img.shields.io/github/license/Adspectus/kirbytools?style=flat-square&label=License)](https://github.com/Adspectus/kirbytools/blob/master/LICENSE)
 [![Kirby version](https://img.shields.io/static/v1?label=Kirby&message=3&color=yellow&style=flat-square)](https://getkirby.com/)
 
-<!-- TABLE OF CONTENTS -->
-## Table of Contents
 
-* [About](#about)
+The __kirbytools__ package is a collection of shell scripts which should ease and speed the installation and management of the [Kirby CMS](https://getkirby.com/) on your machine. It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking and copying) to a new virtual host, and eventually deinstalling it. Furthermore, it can set up a new virtual host configuration for an Apache2 webserver.
+
+
+<!-- TABLE OF CONTENTS -->
+## Contents
+
 * [Getting Started](#getting-started)
 * [Usage](#usage)
   * [Download a given Kirby package](#download-a-given-kirby-package)
@@ -20,10 +26,6 @@
 * [License](#license)
 
 
-<!-- ABOUT -->
-## About
-
-The __kirbytools__ package is a collection of shell scripts which should ease and speed the installation and management of the [Kirby CMS](https://getkirby.com/) on your machine. It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking and copying) to a new virtual host, and eventually deinstalling it.
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -39,51 +41,34 @@ The __kirbytools__ package is a collection of shell scripts which should ease an
 
 ### Installation
 
-1. Add my Debian repository to your list of sources, either by adding the following line to `/etc/apt/sources.list`
-   
-    ```
-    deb https://repo.uwe-gehring.de/apt/debian ./  # Uwe Gehring's repo
-    ```
-   
-   or better create a new file `/etc/apt/sources.list.d/uwe-gehring.list` with:
-   
-    ```sh
-    $ sudo echo "deb https://repo.uwe-gehring.de/apt/debian ./" > /etc/apt/sources.list.d/uwe-gehring.list
-    ```
+See the installation instructions in [INSTALL.md](./INSTALL.md).
 
-2. Import verification key with:
-   
-    ```sh
-    $ wget -qO - https://repo.uwe-gehring.de/apt.key | sudo apt-key add -
-    ```
+After installation of the package, run the script _kirbyconfigure_ with:
 
-3. Refresh apt database:
-   
-    ```sh
-    $ sudo apt-get update
-    ```
+```sh
+$ kirbyconfigure
+```
 
-4. Install the package with
-   
-    ```sh
-    $ sudo apt-get install kirbytools
-    ```
-   Optionally install also the package [vhostmanager](https://github.com/Adspectus/vhostmanager).
+The _kirbyconfigure_ script creates a file `$HOME/.kirbyrc` with necessary settings and default values which will be used by the other scripts in the package. You will be presented with a couple of questions about settings and default values of environment variables which are described in the manpage of _kirbyconfigure_. Many questions will be presented with a reasonable default value in blue, which can be accepted by hitting return. Other questions will need the user to type in values or leave them empty. It is possible to change some or all variables by editing the file `$HOME/.kirbyrc` directly, but take care of the dependencies and make sure you know what you are doing.
 
-
-5. Run the script _kirbyconfigure_ with:
-   
-    ```sh
-    $ kirbyconfigure
-    ```
-   
-   The _kirbyconfigure_ script creates a file `$HOME/.kirbyrc` with necessary settings and default values which will be used by the other scripts in the package. You will be presented with a couple of questions about settings and default values of environment variables which are described in the manpage of _kirbyconfigure_. Many questions will be presented with a reasonable default value in blue, which can be accepted by hitting return. Other questions will need the user to type in values or leave them empty. It is possible to change some or all variables by editing the file `$HOME/.kirbyrc` directly, but take care of the dependencies and make sure you know what you are doing.
+You can run the _kirbyconfigure_ script over and over again to recreate the `$HOME/.kirbyrc` file if you wish.
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
 For any of the scripts described here the tab-completion feature of the shell is activated. Try it by pressing `<tab>` or `<tab><tab>` after a command or option.
+
+> All scripts described below are fetching the information about available Kirby releases from GitHub with curl against the GitHub API. By default you can only query the API 60 times per hour unless you authenticate the call. Authentication can be done by creating or editing the file `.netrc` in your home directory. For GitHub, it should contain the following line:
+> ```
+> machine api.github.com login YOUR_GITHUBUSER password YOUR_GITHUB_ACCESS-TOKEN
+> ```
+> curl will recognize this and authenticate the call with the given credentials.
+> 
+> The Access-Token is to be created in your GitHub account settings and should contain at least the scope _public-repo_. The `.netrc` must be owned by your user and have mode `0600`. 
+> 
+> To mitigate further against the rate limit in case you are not providing credentials, the first call will not only fetch the release information but save it in 2 "cache" files in your home directory, `.kirby-plainkit-tags.json` and `.kirby-starterkit-tags.json` resp. If these files exist, the next call against the API will include a `If-Modified-Since` header.  GitHub API calls with this header are not counted against the rate limit. If the release information on GitHub is not newer than the provided date (= creation date of the files), the release information is fetched from the cache files.
+
 ### Download a given Kirby package
 
 The _kirbydownload_ script makes it easy to just download a Kirby package from GitHub to your local machine:
@@ -97,7 +82,7 @@ If you have accepted the default values when creating the file `$HOME/.kirbyrc` 
 1. Download the most recent version of the starterkit.
 2. Save this package in `/usr/local/src/kirby` as `starterkit-3.3.6.tar.gz`.
 
-It is possible to override the default values for the __kit__, the __version__, and the __target__ folder which have been set with the _kirbyconfigure_ command by command line parameters. I.e. the command
+It is possible to override the default values for the __kit__, the __version__, and the __target__ folder which have been set with the _kirbyconfigure_ command by command line parameters. For example, the command
 
 ```sh
 $ kirbydownload -k plainkit -v 3.3.4 -t $HOME/Downloads
@@ -140,7 +125,7 @@ $HOME/vhosts/
         └── site
 ```
 
-It is possible to override the default values for the __package__ (= __kit__ + __version__) and the __subdirectory__ name for the virtual host. I.e. the command
+It is possible to override the default values for the __package__ (= __kit__ + __version__) and the __subdirectory__ name for the virtual host. For example, the command
 
 ```sh
 $ kirbyinstall -p plainkit-3.3.4 -w test01
@@ -174,13 +159,13 @@ The _kirbysetup_ script makes it easy to create a Kirby virtual host by combinin
 
 The _kirbysetup_ script does not know any command line parameters (except `-h` and `-d`). Instead it will ask the relevant settings interactively, with defaults from the `$HOME/.kirbyrc` file in blue. You can just hit return to accept the default value or type in a new one. 
 
-![foo](kirbysetup.png)
+![foo](kirbysetup.gif)
 
-From the screenshot above it is quite clear that the script will install (download if necessary) the starterkit, version 3.3.6 into a virtual host folder named `kirby-bfsymksl`. In addition to that, the script gives you the option to either [create your default Kirby panel admin user](#adding-your-default-admin-account) or [enable the panel](#enabling-the-panel). Furthermore, it will look into the `templates` subdirectory of your apache configuration files root folder (as configured by the _kirbyconfigure_ script) and - if it finds appropriate named template files - will [create virtual host configuration files](#creating-virtual-host-configuration-file-s) for the just created Kirby website. If you want, the script then will activate the configuration, test if it is syntactically correct (by means of the `sudo apachectl configtest` command) and - if that does not throw an error, will reload the webserver configuration with `sudo apachectl graceful`.
+From the screencast above it is quite clear that the script will install (download if necessary) the starterkit, version 3.3.6 into a virtual host folder named `kirby-eoaxvbtd`. In addition to that, the script gives you the option to either [create your default Kirby panel admin user](#adding-your-default-admin-account) or [enable the panel](#enabling-the-panel). Furthermore, it will look into the `templates` subdirectory of your apache configuration files root folder (as configured by the _kirbyconfigure_ script) and - if it finds appropriate named template files - will [create virtual host configuration files](#creating-virtual-host-configuration-file-s) for the just created Kirby website. If you want, the script then will activate the configuration, test if it is syntactically correct (by means of the `sudo apachectl configtest` command) and - if that does not throw an error, will reload the webserver configuration with `sudo apachectl graceful`. See [Options](#options) below for further details.
 
 The __Meaningful name__ and the __Description__ will only appear as a comment in your virtual host configuration file in order to better identify the given virtual host.
 
-Nothing will be done if you answer the last question with "n".
+Nothing will be done if you are not satisfied with your settings and answer the resp. question with "n".
 
 See also the manpage of _kirbysetup_.
 
@@ -192,13 +177,13 @@ The _kirbydeinstall_ script makes it easy to deinstall a previous installed virt
 $ kirbydeinstall -w <vhost>
 ```
 
-The `<vhost>` may be any valid virtual host directory, i.e. `kirby-xtkxqema`, `test01` or `kirby-bfsymksl` if we would have installed these according to the examples above.
+The `<vhost>` may be any valid virtual host directory, i.e. `kirby-xtkxqema`, `test01` or `kirby-eoaxvbtd` if we would have installed these according to the examples above.
 
-Wildcards are allowed, hence `kirbydeinstall -w kirby-*` will remove all virtual hosts starting with `kirby-`, i.e. the virtual hosts `kirby-xtkxqema` and `kirby-bfsymksl`, but not `test01` in our example.
+Wildcards are allowed, hence `kirbydeinstall -w kirby-*` will remove all virtual hosts starting with `kirby-`, i.e. the virtual hosts `kirby-xtkxqema` and `kirby-eoaxvbtd`, but not `test01` in our example.
 
 To be on the safe side, you have to confirm the removal of every virtual host.
 
-Before removal of the virtual host folder, the script will deactivate any virtual host configuration file which is still active for this host. This is done by means of the `vhostdissite` program if present or by removing the symlink(s) from the `sites-enabled` directory. If one of these is successful, the webserver configuration will be reloaded with `sudo apachectl graceful`. Finally you will be asked if you like to remove the virtual host configuration file(s) from the `sites-available` directory.
+Before removal of the virtual host folder, the script will deactivate any virtual host configuration file which is still active for this host. This is done by means of the `vhostdissite` program if present or by removing the symlink(s) from the `sites-enabled` directory. If one of these is successful, the webserver configuration will be reloaded with `sudo apachectl graceful`. Finally you will be asked if you like to remove the virtual host configuration file(s) from the `sites-available` directory also.
 
 ## Options
 
@@ -236,15 +221,15 @@ $HOME/vhosts/
 │       └── site
 ```
 
-Note, that there is indeed a file `index.php.bak` now. The _kirbyinstall_ script has created this before changing the `index.php` file in order to reflect the different setup.
+> Yes, there is indeed a file `index.php.bak` now. The _kirbyinstall_ script has created this backup file before changing the `index.php` file in order to reflect the different setup.
 
 ### Adding your default admin account
 
 If you wish, you can create an admin account to the panel right after installation of the Kirby site. For that, you will need to put at least your username/email-address and your password in cleartext into the file `$HOME/.kirbyrc` by answering the resp. questions of the _kirbyconfigure_ command. Optionally, you can also give your full name.
 
-Because it is in general not a good idea to store plaintext passwords in a file, the `$HOME/.kirbyrc` file will be saved with mode `600`, i.e. it is only readable by you (and system administrators).
+> Because in general it is not a good idea to store plaintext passwords in a file, the `$HOME/.kirbyrc` file will be owned by your user and saved with mode `0600`, i.e. it is only readable by you (and system administrators).
 
-The _kirbysetup_ script will call a php script named `createUser.php` with the necessary parameters which will create the user. This script is located in `/usr/share/kirbytools` by default, but you know, you can change that with the _kirbyconfigure_ command.
+The _kirbysetup_ script will call a php script named `createUser.php` with the necessary parameters which will create the user. This script is located in `/usr/share/kirbytools` by default, but you can change that with the _kirbyconfigure_ command.
 
 ### Enabling the panel
 
