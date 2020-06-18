@@ -1,3 +1,9 @@
+kirbytools (1.4.2) unstable; urgency=medium
+
+  * 977adf3 Changed order of last section with templates
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Thu, 18 Jun 2020 10:43:24 +0200
+
 kirbytools (1.4.1) unstable; urgency=medium
 
   * b2702d7 Changed README
