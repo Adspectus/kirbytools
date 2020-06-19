@@ -5,7 +5,7 @@
 ## Do not change this file! Put your changes in $HOME/.kirbyrc. If $HOME/.kirbyrc
 ## does not exists, it will be created by any call to one of the kirbytools scripts
 ## and you can change all variables there.
-KIRBYTOOLSVERSION="1.3"
+KIRBYTOOLSVERSION="$(zcat /usr/share/doc/kirbytools/changelog.gz | head -n1 |  sed -e 's/.*(\(.*\)).*/\1/')"
 KIRBYTOOLSPACKAGEDIR="/usr/share/kirbytools"
 
 # The Github URL where we can find kirby packages to download [https://github.com/getkirby]
