@@ -1,3 +1,10 @@
+kirbytools (1.4.3) unstable; urgency=medium
+
+  * 1f705c9 Change: Read version from changelog
+  * 7dff4d2 Bugfix for function askTag
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Wed, 02 Sep 2020 15:07:10 +0200
+
 kirbytools (1.4.2) unstable; urgency=medium
 
   * 977adf3 Changed order of last section with templates
