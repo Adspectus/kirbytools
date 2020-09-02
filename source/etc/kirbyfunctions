@@ -121,7 +121,7 @@ function askTag {
     if isValidKirbyVersion $SEL $KIRBYSELECTEDKIT;then KIRBYSELECTEDVERSION=$SEL && break;fi
     echo "${txtred}Version $SEL does not exist. Please specify a correct version number!${txtrst}"
   done
-  return 1
+  return 0
   debMsg "Leaving function $FUNCNAME"
 }
 
