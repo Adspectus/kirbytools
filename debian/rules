@@ -3,6 +3,7 @@
 # output every command that modifies files on the build system.
 #export DH_VERBOSE = 1
 
+XML=tools configure changeversion deinstall download install setup
 XSLOPT=--nonet --param make.year.ranges 1 --param make.single.year.ranges 1 --param man.charmap.use.subset 0
 XSL=http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl
 MANDIR=source/man
@@ -11,5 +12,5 @@ MANDIR=source/man
 	dh $@
 
 override_dh_auto_build:
-	for prg in kirbytools.1 kirbyconfigure.1 kirbydeinstall.1 kirbydownload.1 kirbyinstall.1 kirbysetup.1;do xsltproc ${XSLOPT} -o ${MANDIR}/ ${XSL} ${MANDIR}/$$prg.xml;done
+	for prg in ${XML};do xsltproc ${XSLOPT} -o ${MANDIR}/ ${XSL} ${MANDIR}/kirby$$prg.1.xml;done
 	dh_auto_build

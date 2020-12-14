@@ -6,4 +6,5 @@
 /source/bin/kirbydownload.sh /usr/share/kirbytools
 /source/bin/kirbyinstall.sh /usr/share/kirbytools
 /source/bin/kirbydeinstall.sh /usr/share/kirbytools
+/source/bin/kirbychangeversion.sh /usr/share/kirbytools
 /source/misc/createUser.php /usr/share/kirbytools

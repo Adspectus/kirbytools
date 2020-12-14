@@ -1,8 +1,10 @@
 /usr/share/kirbytools/kirbyconfigure.sh /usr/bin/kirbyconfigure
+/usr/share/kirbytools/kirbychangeversion.sh /usr/bin/kirbychangeversion
 /usr/share/kirbytools/kirbydeinstall.sh /usr/bin/kirbydeinstall
 /usr/share/kirbytools/kirbydownload.sh /usr/bin/kirbydownload
 /usr/share/kirbytools/kirbyinstall.sh /usr/bin/kirbyinstall
 /usr/share/kirbytools/kirbysetup.sh /usr/bin/kirbysetup
+/usr/share/bash-completion/completions/kirbytools /usr/share/bash-completion/completions/kirbychangeversion
 /usr/share/bash-completion/completions/kirbytools /usr/share/bash-completion/completions/kirbydeinstall
 /usr/share/bash-completion/completions/kirbytools /usr/share/bash-completion/completions/kirbydownload
 /usr/share/bash-completion/completions/kirbytools /usr/share/bash-completion/completions/kirbyinstall
