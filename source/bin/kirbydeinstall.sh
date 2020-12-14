@@ -44,7 +44,7 @@ shift $((OPTIND -1))
 
 [[ $DEBUG ]] && showVars
 
-for vh in $(find $KIRBYVHOSTROOT -type d -name ${vhost[*]});do
+for vh in $(find $KIRBYVHOSTROOT -maxdepth 1 -type d -name ${vhost[*]});do
   debMsg "Remove dir $vh?"
   [[ -d $vh ]] && read -n1 -p "Remove directory $vh and all subdirectories [y|${txtblue}N${txtrst}] "
   [[ -z $REPLY ]] || echo ""
