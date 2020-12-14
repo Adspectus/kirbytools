@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY dhfirstname "Uwe">
+  <!ENTITY dhsurname   "Gehring">
+  <!ENTITY dhusername  "&dhfirstname; &dhsurname;">
+  <!ENTITY dhemail     "adspectus@fastmail.com">
+  <!ENTITY dhsection   "1">
+  <!ENTITY dhtitle     "kirbychangeversion User Manual">
+  <!ENTITY dhucpackage "Kirbychangeversion">
+  <!ENTITY dhpackage   "kirbychangeversion">
+]>
+
+<refentry>
+  <refentryinfo>
+    <title>&dhtitle;</title>
+    <productname>&dhpackage;</productname>
+    <authorgroup>
+      <author>
+       <firstname>&dhfirstname;</firstname>
+        <surname>&dhsurname;</surname>
+        <contrib></contrib>
+        <address>
+          <email>&dhemail;</email>
+        </address>
+      </author>
+    </authorgroup>
+    <copyright>
+      <year>2020</year>
+      <holder>&dhusername;</holder>
+    </copyright>
+    <legalnotice>
+      <para>This manual page was written for the Debian system (and may be used by others).</para>
+      <para>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License, Version 2 or (at your option) any later version published by the Free Software Foundation.</para>
+      <para>On Debian systems, the complete text of the GNU General Public License can be found in <filename>/usr/share/common-licenses/GPL</filename>.</para>
+    </legalnotice>
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>&dhucpackage;</refentrytitle>
+    <manvolnum>&dhsection;</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+    <refname>&dhpackage;</refname>
+    <refpurpose>Script to change the Kirby version of a vhost</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>&dhpackage;</command>
+      <arg choice="opt"><option>-d</option></arg>
+      <arg choice="plain"><option>-w</option>
+        <arg choice="plain"><replaceable>vhost</replaceable></arg>
+      </arg>
+    </cmdsynopsis>
+    <cmdsynopsis>
+      <command>&dhpackage;</command>
+      <arg choice="opt"><option>-h</option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id="description">
+    <title>DESCRIPTION</title>
+    <para>This manual page documents briefly the <command>&dhpackage;</command> command, which is part of the <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry> package.</para>
+    <para><command>&dhpackage;</command> is a script that will change the Kirby version of a virtual host. Multiple virtual hosts can be changed at once by supplying a wildcard expression for the virtual host name. However, you have to confirm the change of every single virtual host.</para>
+  </refsect1>
+
+  <refsect1 id="options">
+    <title>OPTIONS</title>
+    <para>The script follows the usual GNU command line syntax, options always starting with a dash (`-').</para>
+    <variablelist>
+      <varlistentry>
+        <term><option>-h</option></term>
+        <listitem>
+          <para>Show summary of options.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-d</option></term>
+        <listitem>
+          <para>Show debugging information.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-w  <replaceable>vhost</replaceable></option></term>
+        <listitem>
+          <para>Specify the name of the <emphasis>virtual host</emphasis> to be changed. You can easiliy find any given virtual host by using bash's tab completion functionality. Hitting &lt;tab&gt; once will complete the name if it is unambiguous. Hitting &lt;tab&gt; twice will show all possible completions.</para>
+          <para>It is possible to use wildcards here. Hence using <quote>kirby-*</quote> will change the Kirby version of all virtual hosts which have been created with the <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry> package (supposed you did not change the default value for $KIRBYSUFFIX).</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1 id="files">
+    <title>FILES</title>
+    <variablelist>
+      <varlistentry>
+        <term><filename>/etc/kirbytools/kirbyrc</filename></term>
+        <listitem>
+          <para>The system-wide configuration file to control the behaviour of <application>&dhpackage;</application>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><filename>${HOME}/.kirbyrc</filename></term>
+        <listitem>
+          <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the <command>kirbyconfigure</command> script (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>) if it does not exist.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+
+  <refsect1 id="bugs">
+    <title>BUGS</title>
+    <para>Currently, only versions of Kirby 3 are supported.</para>
+    <para>The programs are currently optimized to work with the <package>apache2</package> httpd.</para>
+    <para>Some functionality requires root (or sudo as root) access.</para>
+  </refsect1>
+
+  <refsect1 id="see_also">
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbydownload</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbysetup</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+    </para>
+  </refsect1>
+</refentry>

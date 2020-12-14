@@ -1,15 +1,29 @@
 ## File: /usr/share/bash-completion/completions/kirbytools
 ## Bash completion for kirbytools
 
+_kirbychangeversion() {
+  local cur prev opts base
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  opts="-h -d -w"
+  if [ "${prev}" = "-w" ];then
+    set -o noglob
+    [[ -f $HOME/.kirbyrc ]] && . $HOME/.kirbyrc
+    COMPREPLY=( $( cd $KIRBYVHOSTROOT && compgen -d -- "${cur}" ) )
+    set +o noglob
+  else
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+  fi
+}
+complete -F _kirbychangeversion kirbychangeversion
+
 _kirbydeinstall() {
   local cur prev opts base
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   opts="-h -d -w"
-#  set -o noglob
-#  local cur=${COMP_WORDS[COMP_CWORD]}
-#  COMPREPLY=( $( cd $KIRBYVHOSTROOT && compgen -d -- "$cur" ) )
   if [ "${prev}" = "-w" ];then
     set -o noglob
     [[ -f $HOME/.kirbyrc ]] && . $HOME/.kirbyrc
