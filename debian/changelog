@@ -1,3 +1,12 @@
+kirbytools (1.5.0) UNRELEASED; urgency=medium
+
+  * 0d7ab07 Adding new script kirbychangeversion
+  * bb14ffd Adding new script kirbychangeversion
+  * 285a748 Bugfix to find only real vhosts
+  * 3f05e9e Added basic structure for kirby dir/symlink
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Mon, 14 Dec 2020 11:02:55 +0100
+
 kirbytools (1.4.4) unstable; urgency=medium
 
   * 84fa33c Bugfix for function askTag
