@@ -52,10 +52,21 @@ shift $((OPTIND -1))
 ## Print info in debug mode
 [[ $DEBUG ]] && showVars
 
-for vh in $(find $KIRBYVHOSTROOT -type d -name ${vhost[*]});do
-  debMsg "Remove dir $vh?"
+for vh in $(find $KIRBYVHOSTROOT -maxdepth 1 -type d -name ${vhost[*]});do
+  debMsg "Found virtual host in $vh"
+# Check if Kirby vhost and whether the kirby dir is a real dir or symlink
+  if [[ -n $(find $vh -type d -name kirby) ]];then
+    kirbydir=$(find $vh -type d -name kirby)
+    debMsg "Found kirby directory $kirbydir"
+  elif [[ -n $(find $vh -type l -name kirby) ]];then
+    kirbylnk=$(find $vh -type l -name kirby)
+    debMsg "Found kirby symlink $kirbylnk"
+  else
+    errMsg "$vh is not a Kirby vhost"
+  fi
 done
 
+# version=$(jq -r '.version' composer.json)
 exit
 
 ## Check first if package is already downloaded. If not, download package
