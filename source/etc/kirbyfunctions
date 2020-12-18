@@ -35,6 +35,8 @@ function initKirbySetup {
 ## Sets the hash variables _KIRBYTAGCURRENT, _KIRBYTAGRECENT, and _KIRBYTAGSOTHERS
 ## The hash key for all these variables is either 'starterkit' or 'plainkit'
 ##
+## The API currently returns tags in the order they would be returned by the "git tag" command,
+## which means they are alphabetically sorted.
 ## _KIRBYTAGCURRENT contains the most recent version number for the kit, i.e. '3.3.6'
 ## _KIRBYTAGRECENT contains the previous version number for the kit, i.e '3.3.5'
 ## _KIRBYTAGSOTHERS contains the list of all remaining versions, i.e. '3.3.4 3.3.3 ... 3.0.0'
@@ -57,7 +59,48 @@ function getKirbyTags {
     _KIRBYTAGCURRENT[$_kit]=${_taglist[0]}
     _KIRBYTAGRECENT[$_kit]=${_taglist[1]}
     _KIRBYTAGSOTHERS[$_kit]=${_taglist[@]:2}
+    _KIRBYTAGSALL[$_kit]=${_taglist[@]}
   done
+  debMsg "Leaving function $FUNCNAME"
+}
+
+## Returns the highest minor version for a given kit ($1) and major version ($2)
+## Example: getHighestMinorVersion plainkit 3 returns 3.4
+function getHighestMinorVersion {
+  debMsg "Entering function $FUNCNAME"
+#  declare -a _taglist=( $(jq -r '.[] | .name' $HOME/.kirby-$1-tags.json) )
+  declare -a _all=(${_KIRBYTAGSALL[plainkit]})
+  local _last=$(( ${#_all[*]} - 1 ))
+  for (( i=$_last; i>=0; i-- ));do
+    ver="${_all[$i]}"
+    major=$(echo $ver | cut -d"." -f 1)
+    minor=$(echo $ver | cut -d"." -f 2)
+    patch=$(echo $ver | cut -d"." -f 3)
+    if [ "$major" == "$2" ];then
+      HIGHESTMINOR="$major.$minor"
+    fi
+  done
+  echo $HIGHESTMINOR
+  debMsg "Leaving function $FUNCNAME"
+}
+
+## Returns the highest patch version for a given kit ($1) and major.minor version ($2)
+## Example: getHighestPatchVersion plainkit 3.4 returns 3.4.5
+function getHighestPatchVersion {
+  debMsg "Entering function $FUNCNAME"
+#  declare -a _KIRBYTAGSALL=( $(jq -r '.[] | .name' $HOME/.kirby-$1-tags.json) )
+  declare -a _all=(${_KIRBYTAGSALL[plainkit]})
+  local _last=$(( ${#_all[*]} - 1 ))
+  for (( i=$_last; i>=0; i-- ));do
+    ver="${_all[$i]}"
+    major=$(echo $ver | cut -d"." -f 1)
+    minor=$(echo $ver | cut -d"." -f 2)
+    patch=$(echo $ver | cut -d"." -f 3)
+    if [ "$major.$minor" == "$2" ];then
+      HIGHESTPATCH="$major.$minor.$patch"
+    fi
+  done
+  echo $HIGHESTPATCH
   debMsg "Leaving function $FUNCNAME"
 }
 

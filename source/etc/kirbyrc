@@ -80,6 +80,7 @@ declare -A _KIRBYVERSIONS=( ["c"]="current" ["o"]="other" )
 declare -A _KIRBYTAGCURRENT
 declare -A _KIRBYTAGRECENT
 declare -A _KIRBYTAGSOTHERS
+declare -A _KIRBYTAGSALL
 
 # Variables used to create a RFC2822 conform date to be used in HTTP If-Modified-Since header
 # Unfortunately, the date command is not able to do this
