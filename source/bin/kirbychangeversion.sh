@@ -49,18 +49,49 @@ shift $((OPTIND -1))
 
 [[ $opt_w ]] || { errMsg "-w is required" && usage; }
 
+## Check if version has valid value
+debMsg "Check if version has valid value"
+version=${version:-$KIRBYVERSION}
+if ! isValidKirbyVersion $version $KIRBYKIT;then
+  errMsg "Invalid version $version" && usage
+fi
+
+## Download the required version if not already and extract kirby program dir
+kirbydownload -l -v $version > /dev/null
+[[ $? -ne 0 ]] && errMsg "Could not download $version" && usage
+
 ## Print info in debug mode
 [[ $DEBUG ]] && showVars
 
 for vh in $(find $KIRBYVHOSTROOT -maxdepth 1 -type d -name ${vhost[*]});do
   debMsg "Found virtual host in $vh"
-# Check if Kirby vhost and whether the kirby dir is a real dir or symlink
-  if [[ -n $(find $vh -type d -name kirby) ]];then
-    kirbydir=$(find $vh -type d -name kirby)
-    debMsg "Found kirby directory $kirbydir"
-  elif [[ -n $(find $vh -type l -name kirby) ]];then
-    kirbylnk=$(find $vh -type l -name kirby)
-    debMsg "Found kirby symlink $kirbylnk"
+  kirbydir=$(find $vh \( -type d -or -type l \) -name kirby)
+  if [[ -n "$kirbydir" ]];then
+    debMsg "Found 'kirby' directory $kirbydir"
+    thisversion=$(jq -r '.version' $kirbydir/composer.json)
+    debMsg "Current Kirby version: $thisversion"
+# If the target version has not been set on command line, we will only upgrade
+# to the latest patch version of the current version, so we will determine it
+    if [ "$version" == "current" ];then
+    else
+      thisversionmajor=$(echo $thisversion | cut -d"." -f 1)
+      thisversionminor=$(echo $thisversion | cut -d"." -f 2)
+      lastversion=$(getHighestPatchVersion $KIRBYKIT $(getHighestMinorVersion $KIRBYKIT $thisversionmajor))
+      lastpatchversion=$(getHighestPatchVersion $KIRBYKIT $thisversionmajor.$thisversionminor)
+      debMsg "Last patch for this version: $lastpatchversion"
+      debMsg "Last available version: $lastversion"
+    fi
+    if [ -f $(dirname $kirbydir)/.previouskirbyversion ];then
+      previousversion=$(cat $(dirname $kirbydir)/.previouskirbyversion)
+      debMsg "Previous Kirby version: $previousversion"
+    fi
+    kirbypath=$(realpath $kirbydir)
+    debMsg "Real 'kirby' directory: $kirbypath"
+    if [ "$kirbydir" == "$kirbypath" ];then
+      debMsg "$kirbydir is a real directory"
+    else
+      debMsg "$kirbydir is a symbolic link pointing to $kirbypath"
+    fi
   else
     errMsg "$vh is not a Kirby vhost"
   fi
