@@ -89,13 +89,13 @@ declare -A DAYNAME=( ["1"]="Mon" ["2"]="Tue" ["3"]="Wed" ["4"]="Thu" ["5"]="Fri"
 
 # Add colored output if tput program is installed
 if [ ! -z $(which tput) ];then
-  txtbld=$(tput -Txterm-256color bold)
+  txtbold=$(tput -Txterm-256color bold)
   txtbld=
   txtrst=$(tput -Txterm-256color sgr0)
-  txtred=$(tput -Txterm-256color bold)$(tput -Txterm-256color setaf 1)
+  txtred=${txtbold}$(tput -Txterm-256color setaf 1)
   txtgreen=${txtbld}$(tput -Txterm-256color setaf 2)
   txtyellow=${txtbld}$(tput -Txterm-256color setaf 3)
-  txtblue=$(tput -Txterm-256color bold)$(tput -Txterm-256color setaf 4)
+  txtblue=${txtbold}$(tput -Txterm-256color setaf 4)
   txtmagenta=${txtbld}$(tput -Txterm-256color setaf 5)
   txtcyan=${txtbld}$(tput -Txterm-256color setaf 6)
   txtwhite=${txtbld}$(tput -Txterm-256color setaf 7)
