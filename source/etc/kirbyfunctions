@@ -292,12 +292,12 @@ function save_mkdir { # $1=targetdir
   # Check permissions of the base dir and create with sudo if necessary
   if [ -x "$DIR" -a -w "$DIR" ];then
     debMsg "mkdir -p $TARGETDIR"
-    mkdir -p "$TARGETDIR"
+    mkdir -p "$TARGETDIR" && return 0
   else
     debMsg "sudo mkdir -p $TARGETDIR"
-    sudo mkdir -p "$TARGETDIR"
+    sudo mkdir -p "$TARGETDIR" && return 0
   fi
-  debMsg "Leaving function $FUNCNAME"
+  debMsg "Leaving function $FUNCNAME with returncode 1" && return 1
 }
 
 ## Check if dir is valid
@@ -329,12 +329,12 @@ function save_mv { # $1=sourcefile $2=targetfile or targetdir
   # Check permissions of the target dir and move with sudo if necessary
   if [ -x "$TARGETDIR" -a -w "$TARGETDIR" ];then
     debMsg "mv $SOURCE $TARGET"
-    mv "$SOURCE" "$TARGET"
+    mv "$SOURCE" "$TARGET" && return 0
   else
     debMsg "sudo mv $SOURCE $TARGET"
-    sudo mv "$SOURCE" "$TARGET"
+    sudo mv "$SOURCE" "$TARGET" && return 0
   fi
-  debMsg "Leaving function $FUNCNAME"
+  debMsg "Leaving function $FUNCNAME with returncode 1" && return 1
 }
 
 ## Custom cp which will run sudo if necessary
@@ -346,12 +346,12 @@ function save_cp { # $1=sourcefile $2=targetfile or targetdir
   # Check permissions of the target dir and copy with sudo if necessary
   if [ -x "$TARGETDIR" -a -w "$TARGETDIR" ];then
     debMsg "cp -dR --preserve=mode,timestamps $SOURCE $TARGET"
-    cp -dR --preserve=mode,timestamps "$SOURCE" "$TARGET"
+    cp -dR --preserve=mode,timestamps "$SOURCE" "$TARGET" && return 0
   else
     debMsg "sudo cp -dR --preserve=mode,timestamps $SOURCE $TARGET"
-    sudo cp -dR --preserve=mode,timestamps "$SOURCE" "$TARGET"
+    sudo cp -dR --preserve=mode,timestamps "$SOURCE" "$TARGET" && return 0
   fi
-  debMsg "Leaving function $FUNCNAME"
+  debMsg "Leaving function $FUNCNAME with returncode 1" && return 1
 }
 
 ## Custom rm which will run sudo if necessary
@@ -362,12 +362,12 @@ function save_rm { # $1=source
   # Check permissions of the target dir and rm with sudo if necessary
   if [ -w "$PARENTDIR" -a -w "$TARGET" ];then
     debMsg "rm -rf $TARGET"
-    rm -rf "$TARGET"
+    rm -rf "$TARGET" && return 0
   else
     debMsg "sudo rm -rf $TARGET"
-    sudo rm -rf "$TARGET"
+    sudo rm -rf "$TARGET" && return 0
   fi
-  debMsg "Leaving function $FUNCNAME"
+  debMsg "Leaving function $FUNCNAME with returncode 1" && return 1
 }
 
 ## Custom ln which will run sudo if necessary
@@ -379,12 +379,12 @@ function save_ln { # $1=sourcefile $2=targetfile or targetdir
   # Check permissions of the target dir and ln with sudo if necessary
   if [ -x "$TARGETDIR" -a -w "$TARGETDIR" ];then
     debMsg "ln -fs $SOURCE $TARGET"
-    ln -fs "$SOURCE" "$TARGET"
+    ln -fs "$SOURCE" "$TARGET" && return 0
   else
     debMsg "sudo ln -fs $SOURCE $TARGET"
-    sudo ln -fs "$SOURCE" "$TARGET"
+    sudo ln -fs "$SOURCE" "$TARGET" && return 0
   fi
-  debMsg "Leaving function $FUNCNAME"
+  debMsg "Leaving function $FUNCNAME with returncode 1" && return 1
 }
 
 ## Try apache2 configtest and restart if ok
