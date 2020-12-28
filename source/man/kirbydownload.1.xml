@@ -162,6 +162,7 @@
   <refsect1 id="see_also">
     <title>SEE ALSO</title>
     <para>
+      <citerefentry><refentrytitle>kirbychangeversion</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbyinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
@@ -170,4 +171,3 @@
     </para>
   </refsect1>
 </refentry>
-

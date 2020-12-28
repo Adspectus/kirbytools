@@ -112,6 +112,7 @@
         <listitem>
           <para>Specify the name of the <emphasis>virtual host directory</emphasis> to install to. Defaults to a random value of lowercase letters prefixed by <envar>$KIRBYSUFFIX</envar>, which has been configured by the <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry> script and which is saved in the file <filename>$HOME/.kirbyrc</filename>.</para>
           <para>The value must conform to a valid directory name, wich will be used as a subdirectory of the virtual hosts root folder as defined by <envar>$KIRBYVHOSTROOT</envar> in the file <filename>$HOME/.kirbyrc</filename>.</para>
+          <para>The empty file <filename>.kirbydocroot</filename> will be written to this directory to identify the document root of a Kirby based website.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -145,6 +146,7 @@
   <refsect1 id="see_also">
     <title>SEE ALSO</title>
     <para>
+      <citerefentry><refentrytitle>kirbychangeversion</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbydeinstall</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
       <citerefentry><refentrytitle>kirbydownload</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
@@ -153,4 +155,3 @@
     </para>
   </refsect1>
 </refentry>
-
