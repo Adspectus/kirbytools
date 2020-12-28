@@ -101,6 +101,9 @@ if [ ! -z $(which tput) ];then
   txtwhite=${txtbld}$(tput -Txterm-256color setaf 7)
 fi
 
+# Define the PHP binary
+PHPBIN=$(which php)
+
 # Read the functions or exit with error
 [[ ! -f $KIRBYFUNCTIONS ]] && echo "File $KIRBYFUNCTIONS not found!" && exit 1
 . $KIRBYFUNCTIONS
