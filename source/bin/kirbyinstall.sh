@@ -75,6 +75,7 @@ fi
 save_mkdir "$KIRBYVHOSTDIR"
 tar -xzf $KIRBYDOWNLOADDIR/$package.tar.gz -C "$KIRBYTEMPDIR"
 save_cp "$KIRBYTEMPDIR/$package/." "$KIRBYVHOSTDIR"
+touch "$KIRBYVHOSTDIR/.kirbydocroot"
 
 echo -e "\n${txtgreen}Kirby $package installed to $KIRBYVHOSTDIR${txtrst}\n"
 
