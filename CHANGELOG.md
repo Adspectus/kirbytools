@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.1 (2020-12-29)
+
+- Updated README.md [Uwe Gehring] e1f0a28
+
 ## v1.5.0 (2020-12-29)
 
 - Finished manpage of kirbychangeversion [Uwe Gehring] 319e4fd

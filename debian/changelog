@@ -1,3 +1,9 @@
+kirbytools (1.5.1) unstable; urgency=medium
+
+  * e1f0a28 Updated README.md
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Tue, 29 Dec 2020 13:12:13 +0100
+
 kirbytools (1.5.0) unstable; urgency=medium
 
   * 0d7ab07 Adding new script kirbychangeversion
