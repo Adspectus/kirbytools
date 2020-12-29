@@ -1,11 +1,22 @@
-kirbytools (1.5.0) UNRELEASED; urgency=medium
+kirbytools (1.5.0) unstable; urgency=medium
 
   * 0d7ab07 Adding new script kirbychangeversion
   * bb14ffd Adding new script kirbychangeversion
   * 285a748 Bugfix to find only real vhosts
   * 3f05e9e Added basic structure for kirby dir/symlink
+  * 42f261b Added variable and functions to find next version
+  * 5e7922f Reworked the structure
+  * 408f252 Added dependency bash >= 4
+  * 8655981 Added return codes to save_* functions
+  * e4d9a2b Changed color definition
+  * a3e60b1 Define PHPBIN for usage of php
+  * be9068c Create .kirbydocroot to identify document root of a kirby vhost
+  * 12318cc New PHP script getConfig.php
+  * 2150bf7 Added reference to new script kirbychangeversion
+  * 2a1bef4 First working version
+  * 319e4fd Finished manpage of kirbychangeversion
 
- -- Uwe Gehring <adspectus@fastmail.com>  Mon, 14 Dec 2020 11:02:55 +0100
+ -- Uwe Gehring <adspectus@fastmail.com>  Tue, 29 Dec 2020 11:34:50 +0100
 
 kirbytools (1.4.4) unstable; urgency=medium
 
