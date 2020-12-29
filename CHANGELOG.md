@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.2 (2020-12-29)
+
+- Bugfix: Removing old and creating new symlink [Uwe Gehring] 3a99a6c
+
 ## v1.5.1 (2020-12-29)
 
 - Updated README.md [Uwe Gehring] e1f0a28
