@@ -6,7 +6,7 @@
 [![Kirby version](https://img.shields.io/static/v1?label=Kirby&message=3&color=yellow&style=flat-square)](https://getkirby.com/)
 
 
-The __kirbytools__ package is a collection of shell scripts which should ease and speed the installation and management of the [Kirby CMS](https://getkirby.com/) on your machine. It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking and copying) to a new virtual host, and eventually deinstalling it. Furthermore, it can set up a new virtual host configuration for an Apache2 webserver.
+The __kirbytools__ package is a collection of shell scripts which should ease and speed the installation and management of the [Kirby CMS](https://getkirby.com/) on your machine. It covers the process from downloading an appropriate Kirby package from Github to your local machine, installing (unpacking and copying) to a new virtual host, up- or downgrading the Kirby version, and eventually deinstalling it. Furthermore, it can set up a new virtual host configuration for an Apache2 webserver.
 
 
 <!-- TABLE OF CONTENTS -->
@@ -18,6 +18,7 @@ The __kirbytools__ package is a collection of shell scripts which should ease an
   * [Install a given Kirby package](#install-a-given-kirby-package)
   * [Set up a Kirby virtual host](#set-up-a-kirby-virtual-host)
   * [Remove a given virtual host](#remove-a-given-virtual-host)
+  * [Change the Kirby program version](#change-the-kirby-program-version)
 * [Options](#options)
   * [Replacing the kirby folder with a symbolic link](#replacing-the-kirby-folder-with-a-symbolic-link)
   * [Adding your default admin account](#adding-your-default-admin-account)
@@ -105,6 +106,7 @@ If you have accepted the default values when creating the file `$HOME/.kirbyrc` 
 1. Download and save the most recent version of the starterkit by means of the _kirbydownload_ script, if it does not already exists in `/usr/local/src/kirby`.
 2. Create a subdirectory named `kirby-` followed by a random string of 8 lowercase letters in `$HOME/vhosts`.
 3. Extract the given Kirby package to the subdirectory `htdocs` within the directory created in step 2.
+4. Place an empty file `.kirbydocroot` to the directory created in step 3 to identify the document root of the website.
 
 Hence, the final result will look like this (assuming the random string has been created as `xtkxqema`):
 
@@ -120,6 +122,7 @@ $HOME/vhosts/
         ├── .htaccess
         ├── index.php
         ├── kirby
+        ├── .kirbydocroot
         ├── media
         ├── README.md
         └── site
@@ -146,6 +149,7 @@ $HOME/vhosts/
         ├── .htaccess
         ├── index.php
         ├── kirby
+        ├── .kirbydocroot
         ├── media
         ├── README.md
         └── site
@@ -185,6 +189,36 @@ To be on the safe side, you have to confirm the removal of every virtual host.
 
 Before removal of the virtual host folder, the script will deactivate any virtual host configuration file which is still active for this host. This is done by means of the `vhostdissite` program if present or by removing the symlink(s) from the `sites-enabled` directory. If one of these is successful, the webserver configuration will be reloaded with `sudo apachectl graceful`. Finally you will be asked if you like to remove the virtual host configuration file(s) from the `sites-available` directory also.
 
+### Change the Kirby program version
+
+The _kirbychangeversion_ script makes it easy to upgrade or downgrade a given Kirby virtual host in your virtual hosts root directory (which is `$HOME/vhosts` by default). The virtual host must be given by the parameter `-w`:
+
+```sh
+$ kirbychangeversion -w <vhost>
+```
+
+The `<vhost>` may be any valid virtual host directory which contains a Kirby installation, i.e. `kirby-xtkxqema`, `test01` or `kirby-eoaxvbtd` if we would have installed these according to the examples above.
+
+Wildcards are allowed, hence `kirbychangeversion -w kirby-*` will change the Kirby program version of all virtual hosts starting with `kirby-`, i.e. the virtual hosts `kirby-xtkxqema` and `kirby-eoaxvbtd`, but not `test01` in our example.
+
+Without further options, the Kirby installation will be upgraded to the highest patch level of the current version. If the current version is 3.3.4, it will be upgraded to version 3.3.6. Nothing will be done if the current version is already at the highest patch level.
+
+An upgrade - or downgrade - to a different version is possible by specyfying the target version with the `-v` parameter. Thus, to upgrade the version 3.3.6 to 3.4.5 or any other version, one would run:
+
+```sh
+$ kirbychangeversion -v 3.4.5 -w <vhost>
+```
+
+> Since it is also possible to downgrade the version, this command would also downgrade a given Kirby installation of version 3.5.0 to version 3.4.5!
+
+Changing the Kirby version is basically the task of replacing the content of the `kirby` folder with the content of a different versions `kirby` folder. The script can also detect a symlinked kirby folder and will only change the target of the symlink in this case. Fetching the necessary files for the new version is done by means of the _kirbydownload_ script.
+
+After successful up- or downgrading, the script also purges the content of the `media` folder by removing all subdirectories recursively. Files in the `media` folder and the folder itself will not be removed. Moreover, the file `.kirbypreviousversion` is written to the document root which contains the version number of the previous version from which the up- or downgrade has been performed. Running the _kirbychangeversion_ script with the `-r` parameter (instead of `-v version`) will revert the previous up- or downgrade to exact this version.
+
+To determine the current version and the locations of the `kirby` and `media` folders, the _kirbychangeversion_ script will call a PHP script named `getConfig.php` with the necessary parameter (the document root of the Kirby virtual host). This script is located in `/usr/share/kirbytools` by default, but you can change that with the _kirbyconfigure_ command. The PHP script creates and stores the information of the Kirby installation in JSON format in the folder defined by KIRBYTEMPDIR (which defaults to `/tmp/kirby`).
+
+The _kirbychangeversion_ command has more options, use `kirbychangeversion -h` to see them all or refer to the manpage of _kirbychangeversion_.
+
 ## Options
 
 ### Replacing the kirby folder with a symbolic link
@@ -216,6 +250,7 @@ $HOME/vhosts/
 │       ├── index.php
 │       ├── index.php.bak
 │       ├── kirby -> /usr/local/lib/kirby/3.3.6
+│       ├── .kirbydocroot
 │       ├── media
 │       ├── README.md
 │       └── site
@@ -229,7 +264,7 @@ If you wish, you can create an admin account to the panel right after installati
 
 > Because in general it is not a good idea to store plaintext passwords in a file, the `$HOME/.kirbyrc` file will be owned by your user and saved with mode `0600`, i.e. it is only readable by you (and system administrators).
 
-The _kirbysetup_ script will call a php script named `createUser.php` with the necessary parameters which will create the user. This script is located in `/usr/share/kirbytools` by default, but you can change that with the _kirbyconfigure_ command.
+The _kirbysetup_ script will call a PHP script named `createUser.php` with the necessary parameters which will create the user. This script is located in `/usr/share/kirbytools` by default, but you can change that with the _kirbyconfigure_ command.
 
 ### Enabling the panel
 
