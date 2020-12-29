@@ -49,6 +49,13 @@
     <cmdsynopsis>
       <command>&dhpackage;</command>
       <arg choice="opt"><option>-d</option></arg>
+      <arg choice="opt"><option>-t</option></arg>
+      <group choice="opt">
+        <arg choice="plain"><option>-v</option>
+          <arg choice="plain"><replaceable>versionnumber</replaceable></arg>
+        </arg>
+        <arg choice="plain"><option>-r</option></arg>
+      </group>
       <arg choice="plain"><option>-w</option>
         <arg choice="plain"><replaceable>vhost</replaceable></arg>
       </arg>
@@ -62,7 +69,12 @@
   <refsect1 id="description">
     <title>DESCRIPTION</title>
     <para>This manual page documents briefly the <command>&dhpackage;</command> command, which is part of the <citerefentry><refentrytitle>kirbytools</refentrytitle><manvolnum>1</manvolnum></citerefentry> package.</para>
-    <para><command>&dhpackage;</command> is a script that will change the Kirby version of a virtual host. Multiple virtual hosts can be changed at once by supplying a wildcard expression for the virtual host name. However, you have to confirm the change of every single virtual host.</para>
+    <para><command>&dhpackage;</command> is a script that will change the Kirby version of a virtual host. Multiple virtual hosts can be changed at once by supplying a wildcard expression for the virtual host name. <quote>Change</quote> does not necessarily mean <quote>upgrade</quote> - it is also possible to downgrade the Kirby version.</para>
+    <para>The basic usage is without specifying a version to change to. The script will then determine the highest patch level of the current version as the target version for upgrade, i.e. version 3.2.1 will be upgraded to version 3.2.5, but version 3.2.5 will not be upgraded to 3.3.0 or any higher patch level.</para>
+    <para>A specific target version to up- or downgrade to can be specified with the <option>-v</option> option.</para>
+    <para>After successful up- or downgrading, the script writes the previous version into the file <filename>.kirbypreviousversion</filename> which is placed in the document root of the given site. This makes it possible to go back to the previous version by the <option>-r</option> option, if you encounter problems with the new version. Note that <filename>.kirbypreviousversion</filename> will always contain only the previous version of the last successful up- or downgrading. There is no history in this file. The <option>-r</option> and <option>-v</option> options are mutually exclusive.</para>
+    <para>Changing the Kirby version means replacing the content of the <filename>kirby</filename> folder with the content of a different versions <filename>kirby</filename> folder. The script can also detect a symlinked kirby folder and will only change the target of the symlink in this case.</para>
+    <para>After successful up- or downgrading, the script also empties the <filename>media</filename> folder by removing all subdirectories recursively in this folder. Files in this folder and the folder itself will not be removed.</para>
   </refsect1>
 
   <refsect1 id="options">
@@ -79,6 +91,24 @@
         <term><option>-d</option></term>
         <listitem>
           <para>Show debugging information.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-t</option></term>
+        <listitem>
+          <para>Test run, nothing will be changed.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-v  <replaceable>version</replaceable></option></term>
+        <listitem>
+          <para>Specify the version number to up- or downgrade to.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-r</option></term>
+        <listitem>
+          <para>Revert to the previous version from which this script has been run. The previous version will be determined by the file <filename>.kirbypreviousversion</filename> in the document root.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -104,6 +134,12 @@
         <term><filename>${HOME}/.kirbyrc</filename></term>
         <listitem>
           <para>The per-user configuration file to control the behaviour of <application>&dhpackage;</application>. This file will be created by the <command>kirbyconfigure</command> script (see <citerefentry><refentrytitle>kirbyconfigure</refentrytitle><manvolnum>1</manvolnum></citerefentry>) if it does not exist.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><filename><option>DOCROOT</option>/.kirbypreviousversion</filename></term>
+        <listitem>
+          <para>This file contains the version from which a previous run of this script has made a successful up- or downgrade.</para>
         </listitem>
       </varlistentry>
     </variablelist>
