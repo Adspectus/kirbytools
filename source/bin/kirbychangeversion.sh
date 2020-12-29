@@ -118,11 +118,11 @@ for vh in $(find $KIRBYVHOSTROOT -maxdepth 1 -type d -name ${vhost[*]});do
       debMsg "kirby is real directory $kirbydir"
       debMsg "Deleting old directory $kirbydir"
       [[ $TEST ]] && echo "${txtblue}Testing: kirby directory would be deleted${txtrst}"
-      [[ $TEST ]] || save_rm "$kirbydir"
+      [[ $TEST ]] || save_rm "$docroot/kirby"
       if [ $? ];then
         debMsg "Creating kirby directory and copying $KIRBYLIBDIR/$targetversion"
         [[ $TEST ]] && echo "${txtblue}Testing: kirby directory would be created and $KIRBYLIBDIR/$targetversion/. would be copied into it${txtrst}"
-        [[ $TEST ]] || { save_mkdir "$kirbydir" && save_cp "$KIRBYLIBDIR/$targetversion/." "$kirbydir"; }
+        [[ $TEST ]] || { save_mkdir "$docroot/kirby" && save_cp "$KIRBYLIBDIR/$targetversion/." "$docroot/kirby"; }
         [[ $? ]] && SUCCESS=1
       else
         errMsg "Link/Directory $kirbydir could not be deleted, nothing is changed"
@@ -131,37 +131,37 @@ for vh in $(find $KIRBYVHOSTROOT -maxdepth 1 -type d -name ${vhost[*]});do
       debMsg "kirby is a symlink to $kirbydir"
       debMsg "Deleting old link $kirbydir"
       [[ $TEST ]] && echo "${txtblue}Testing: kirby link would be deleted${txtrst}"
-      [[ $TEST ]] || save_rm "$kirbydir"
+      [[ $TEST ]] || save_rm "$docroot/kirby"
       if [ $? ];then
         debMsg "Creating kirby link and pointing to $KIRBYLIBDIR/$targetversion"
         [[ $TEST ]] && echo "${txtblue}Testing: kirby link with target $KIRBYLIBDIR/$targetversion would be created${txtrst}"
-        [[ $TEST ]] || save_ln "$KIRBYLIBDIR/$targetversion" "$kirbydir"
+        [[ $TEST ]] || save_ln "$KIRBYLIBDIR/$targetversion" "$docroot/kirby"
         [[ $? ]] && SUCCESS=1
       else
         errMsg "Link/Directory $kirbydir could not be deleted, nothing is changed"
       fi
-      if [ ! $SUCCESS ];then
-        errMsg "$action not successful, restoring previous version"
-      else
-        [[ $TEST ]] || echo "${txtgreen}Kirby virtual host $thisvhost ${action,,}d from version $thisversion to version $targetversion${txtrst}"
-        [[ $TEST ]] || echo "$thisversion" > $docroot/.kirbypreviousversion
-        mediadir=$(jq -r '.roots.media' $KIRBYTEMPDIR/$(basename $vh).json)
-        if [ -d "$mediadir" ];then
-          debMsg "Found 'media' directory $mediadir"
-          for md in $(find "$mediadir" -mindepth 1 -maxdepth 1 -type d);do
-            debMsg "Deleting directory $md"
-            [[ $TEST ]] && echo "${txtblue}Testing: Directory $md would be deleted${txtrst}"
-            [[ $TEST ]] || save_rm "$md"
-            if [ $? ];then
-              [[ $TEST ]] || echo "${txtgreen}Directory $md deleted${txtrst}"
-            else
-              [[ $TEST ]] || errMsg "Could not delete directory $md"
-            fi
-          done
-        fi
-      fi
     else # Case 3: kirby is anything else, but this will not be considered
       debMsg "kirby is neither a real directory nor a symlink, skipping" && continue
+    fi
+    if [ ! $SUCCESS ];then
+      errMsg "$action not successful, restoring previous version"
+    else
+      [[ $TEST ]] || echo "${txtgreen}Kirby virtual host $thisvhost ${action,,}d from version $thisversion to version $targetversion${txtrst}"
+      [[ $TEST ]] || echo "$thisversion" > $docroot/.kirbypreviousversion
+      mediadir=$(jq -r '.roots.media' $KIRBYTEMPDIR/$(basename $vh).json)
+      if [ -d "$mediadir" ];then
+        debMsg "Found 'media' directory $mediadir"
+        for md in $(find "$mediadir" -mindepth 1 -maxdepth 1 -type d);do
+          debMsg "Deleting directory $md"
+          [[ $TEST ]] && echo "${txtblue}Testing: Directory $md would be deleted${txtrst}"
+          [[ $TEST ]] || save_rm "$md"
+          if [ $? ];then
+            [[ $TEST ]] || echo "${txtgreen}Directory $md deleted${txtrst}"
+          else
+            [[ $TEST ]] || errMsg "Could not delete directory $md"
+          fi
+        done
+      fi
     fi
   else
     errMsg "$vh is not a Kirby vhost"
