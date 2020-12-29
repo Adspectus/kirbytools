@@ -1,3 +1,9 @@
+kirbytools (1.5.2) unstable; urgency=medium
+
+  * 3a99a6c Bugfix: Removing old and creating new symlink
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Tue, 29 Dec 2020 14:47:23 +0100
+
 kirbytools (1.5.1) unstable; urgency=medium
 
   * e1f0a28 Updated README.md
