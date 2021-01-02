@@ -191,7 +191,7 @@ function askVHost {
   done
   # Along with the name of the virtual host we ask for a more meaningful name and a description
   # which will be used only in a comment in the virtual host config file (from there they can be used elsewhere).
-  KIRBYDEFAULTVHOSTNAME="Kirby $KIRBYSELECTEDKIT-$KIRBYSELECTEDVERSION"
+  KIRBYDEFAULTVHOSTNAME="Kirby ${KIRBYSELECTEDKIT^}"
   read -p "${txtbld}Meaningful name? [${txtrst}${txtblue}$KIRBYDEFAULTVHOSTNAME${txtrst}${txtbld}] ${txtrst}"
   SEL=${REPLY:-$KIRBYDEFAULTVHOSTNAME}
   KIRBYSELECTEDVHOSTNAME=$SEL
