@@ -1,3 +1,9 @@
+kirbytools (1.5.3) unstable; urgency=medium
+
+  * bf039e5 Changed the default vhost name
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Sun, 09 May 2021 11:11:54 +0200
+
 kirbytools (1.5.2) unstable; urgency=medium
 
   * 3a99a6c Bugfix: Removing old and creating new symlink
