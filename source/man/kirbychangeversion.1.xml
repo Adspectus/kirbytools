@@ -74,7 +74,7 @@
     <para>A specific target version to up- or downgrade to can be specified with the <option>-v</option> option.</para>
     <para>After successful up- or downgrading, the script writes the previous version into the file <filename>.kirbypreviousversion</filename> which is placed in the document root of the given site. This makes it possible to go back to the previous version by the <option>-r</option> option, if you encounter problems with the new version. Note that <filename>.kirbypreviousversion</filename> will always contain only the previous version of the last successful up- or downgrading. There is no history in this file. The <option>-r</option> and <option>-v</option> options are mutually exclusive.</para>
     <para>Changing the Kirby version means replacing the content of the <filename>kirby</filename> folder with the content of a different versions <filename>kirby</filename> folder. The script can also detect a symlinked kirby folder and will only change the target of the symlink in this case.</para>
-    <para>After successful up- or downgrading, the script also empties the <filename>media</filename> folder by removing all subdirectories recursively in this folder. Files in this folder and the folder itself will not be removed.</para>
+    <para>After successful up- or downgrading, the script also empties the <filename>media</filename>, <filename>site/cache</filename>, and <filename>site/sessions</filename> folders by removing all files and subdirectories recursively in these folders, except for the (empty) file <filename>index.html</filename>. The folder itself will not be removed.</para>
   </refsect1>
 
   <refsect1 id="options">

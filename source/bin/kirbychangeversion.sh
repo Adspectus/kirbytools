@@ -74,7 +74,7 @@ for vh in $(find $KIRBYVHOSTROOT -maxdepth 1 -type d -name ${vhost[*]});do
     if [ -z $thisversion ];then
       errMsg "Could not determine this Kirby version!" && continue
     fi
-    echo "Kirby virtual host $thisvhost is version $thisversion"
+    echo "Virtual host $thisvhost is Kirby version $thisversion"
 
 # If the target version has not been set on command line, we will only upgrade
 # to the latest patch version of the current version, so we will determine it
@@ -149,16 +149,44 @@ for vh in $(find $KIRBYVHOSTROOT -maxdepth 1 -type d -name ${vhost[*]});do
       [[ $TEST ]] || echo "${txtgreen}Kirby virtual host $thisvhost ${action,,}d from version $thisversion to version $targetversion${txtrst}"
       [[ $TEST ]] || echo "$thisversion" > $docroot/.kirbypreviousversion
       mediadir=$(jq -r '.roots.media' $KIRBYTEMPDIR/$(basename $vh).json)
+      cachedir=$(jq -r '.roots.cache' $KIRBYTEMPDIR/$(basename $vh).json)
+      sessiondir=$(jq -r '.roots.sessions' $KIRBYTEMPDIR/$(basename $vh).json)
       if [ -d "$mediadir" ];then
         debMsg "Found 'media' directory $mediadir"
-        for md in $(find "$mediadir" -mindepth 1 -maxdepth 1 -type d);do
-          debMsg "Deleting directory $md"
-          [[ $TEST ]] && echo "${txtblue}Testing: Directory $md would be deleted${txtrst}"
-          [[ $TEST ]] || save_rm "$md"
+        for mdir in $(find "$mediadir" -mindepth 1 -maxdepth 1 -type d);do
+          debMsg "Deleting directory $mdir"
+          [[ $TEST ]] && echo "${txtblue}Testing: Directory $mdir would be deleted${txtrst}"
+          [[ $TEST ]] || save_rm "$mdir"
           if [ $? ];then
-            [[ $TEST ]] || echo "${txtgreen}Directory $md deleted${txtrst}"
+            [[ $TEST ]] || echo "${txtgreen}Directory $mdir deleted${txtrst}"
           else
-            [[ $TEST ]] || errMsg "Could not delete directory $md"
+            [[ $TEST ]] || errMsg "Could not delete directory $mdir"
+          fi
+        done
+      fi
+      if [ -d "$cachedir" ];then
+        debMsg "Found 'cache' directory $cachedir"
+        for cdir in $(find "$cachedir" -mindepth 1 -maxdepth 1 -type d);do
+          debMsg "Deleting directory $cdir"
+          [[ $TEST ]] && echo "${txtblue}Testing: Directory $cdir would be deleted${txtrst}"
+          [[ $TEST ]] || save_rm "$cdir"
+          if [ $? ];then
+            [[ $TEST ]] || echo "${txtgreen}Directory $cdir deleted${txtrst}"
+          else
+            [[ $TEST ]] || errMsg "Could not delete directory $cdir"
+          fi
+        done
+      fi
+      if [ -d "$sessiondir" ];then
+        debMsg "Found 'session' directory $sessiondir"
+        for sfile in $(find "$sessiondir" -mindepth 1 -maxdepth 1 -type f -name '*.sess');do
+          debMsg "Deleting file $sfile"
+          [[ $TEST ]] && echo "${txtblue}Testing: File $sfile would be deleted${txtrst}"
+          [[ $TEST ]] || save_rm "$sfile"
+          if [ $? ];then
+            [[ $TEST ]] || echo "${txtgreen}File $sfile deleted${txtrst}"
+          else
+            [[ $TEST ]] || errMsg "Could not delete file $sfile"
           fi
         done
       fi
