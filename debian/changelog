@@ -1,3 +1,10 @@
+kirbytools (1.5.4) unstable; urgency=medium
+
+  * a2b8944 Added cleanup of cache and sessions dirs
+  * 0243254 Updated README
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Thu, 27 Jan 2022 16:03:49 +0100
+
 kirbytools (1.5.3) unstable; urgency=medium
 
   * bf039e5 Changed the default vhost name
