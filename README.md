@@ -12,19 +12,23 @@ The __kirbytools__ package is a collection of shell scripts which should ease an
 <!-- TABLE OF CONTENTS -->
 ## Contents
 
-* [Getting Started](#getting-started)
-* [Usage](#usage)
-  * [Download a given Kirby package](#download-a-given-kirby-package)
-  * [Install a given Kirby package](#install-a-given-kirby-package)
-  * [Set up a Kirby virtual host](#set-up-a-kirby-virtual-host)
-  * [Remove a given virtual host](#remove-a-given-virtual-host)
-  * [Change the Kirby program version](#change-the-kirby-program-version)
-* [Options](#options)
-  * [Replacing the kirby folder with a symbolic link](#replacing-the-kirby-folder-with-a-symbolic-link)
-  * [Adding your default admin account](#adding-your-default-admin-account)
-  * [Enabling the panel](#enabling-the-panel)
-  * [Creating virtual host configuration file(s)](#creating-virtual-host-configuration-file-s)
-* [License](#license)
+- [kirbytools](#kirbytools)
+- [Contents](#contents)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+  - [Download a given Kirby package](#download-a-given-kirby-package)
+  - [Install a given Kirby package](#install-a-given-kirby-package)
+  - [Set up a Kirby virtual host](#set-up-a-kirby-virtual-host)
+  - [Remove a given virtual host](#remove-a-given-virtual-host)
+  - [Change the Kirby program version](#change-the-kirby-program-version)
+- [Options](#options)
+  - [Replacing the kirby folder with a symbolic link](#replacing-the-kirby-folder-with-a-symbolic-link)
+  - [Adding your default admin account](#adding-your-default-admin-account)
+  - [Enabling the panel](#enabling-the-panel)
+  - [Creating virtual host configuration file(s)](#creating-virtual-host-configuration-files)
+- [License](#license)
 
 
 
@@ -213,7 +217,9 @@ $ kirbychangeversion -v 3.4.5 -w <vhost>
 
 Changing the Kirby version is basically the task of replacing the content of the `kirby` folder with the content of a different versions `kirby` folder. The script can also detect a symlinked kirby folder and will only change the target of the symlink in this case. Fetching the necessary files for the new version is done by means of the _kirbydownload_ script.
 
-After successful up- or downgrading, the script also purges the content of the `media` folder by removing all subdirectories recursively. Files in the `media` folder and the folder itself will not be removed. Moreover, the file `.kirbypreviousversion` is written to the document root which contains the version number of the previous version from which the up- or downgrade has been performed. Running the _kirbychangeversion_ script with the `-r` parameter (instead of `-v version`) will revert the previous up- or downgrade to exact this version.
+After successful up- or downgrading, the script also purges the content of the `media`, `site/cache`, and `site/sessions` folders by removing all files and subdirectories in these folders recursively, except for the (empty) file `index.html`. The folders themself will not be removed.
+
+Moreover, the file `.kirbypreviousversion` is written to the document root which contains the version number of the previous version from which the up- or downgrade has been performed. Running the _kirbychangeversion_ script with the `-r` parameter (instead of `-v version`) will revert the previous up- or downgrade to exact this version.
 
 To determine the current version and the locations of the `kirby` and `media` folders, the _kirbychangeversion_ script will call a PHP script named `getConfig.php` with the necessary parameter (the document root of the Kirby virtual host). This script is located in `/usr/share/kirbytools` by default, but you can change that with the _kirbyconfigure_ command. The PHP script creates and stores the information of the Kirby installation in JSON format in the folder defined by KIRBYTEMPDIR (which defaults to `/tmp/kirby`).
 
