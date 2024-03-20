@@ -85,6 +85,9 @@ KIRBYTEMPDIR="/tmp/\$KIRBYSUFFIX"
 
 # The vhost subdirectory where the document root will be [htdocs]
 KIRBYHTDOCSDIR="htdocs"
+
+# Put any modifications which should not be overwritten by kirbyconfigure in this file
+[[ -f \$HOME/.kirbyrclocal ]] && . \$HOME/.kirbyrclocal
 EOB
 
 echo ""
