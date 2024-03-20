@@ -77,8 +77,8 @@ else
 fi
 [[ $? -eq 0 ]] && echo -e "${txtgreen}successful.${txtrst}" || echo -e "${txtred}failed.${txtrst}\n"
 
-## Create admin account if selected and if script exist
-if [ "$KIRBYSELECTEDCREATEACCOUNT" == "Yes" -a -f $KIRBYCREATEUSERSCRIPT -a -n "$KIRBYADMINUSERMAIL" ];then
+## Create admin account if selected and if script exist and if PHPBIN is not empty
+if [ "$KIRBYSELECTEDCREATEACCOUNT" == "Yes" -a -f $KIRBYCREATEUSERSCRIPT -a -n "$KIRBYADMINUSERMAIL" -a -n "$PHPBIN" ];then
   echo -n "Creating default admin account... "
   if [ -x $KIRBYSELECTEDVHOSTDIR/site -a -w $KIRBYSELECTEDVHOSTDIR/site ];then
     debMsg "$PHPBIN $KIRBYCREATEUSERSCRIPT ..."
