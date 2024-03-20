@@ -3,4 +3,4 @@
 /source/misc/vhost-SSL.template
 /source/misc/README.templates
 /source/misc/kirbytools.conf
-/source/misc/createUserByDocker.sh
+/source/misc/PHPDocker.sh

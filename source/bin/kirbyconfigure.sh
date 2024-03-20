@@ -112,7 +112,7 @@ if [ "$SEL" == "y" -o "$SEL" == "Y" ];then
     echo -e "\nNOTE: Your PHP executable could not be found locally. To be able to create an admin user automatically,\n"
     echo "you must set PHPBIN in $KIRBYUSERRC either to a local PHP executable or a script,"
     echo "which will run PHP via i.e. 'docker'."
-    echo -e "See $KIRBYTOOLSPACKAGEDIR/examples/createUserByDocker.sh for an example script.\n"
+    echo -e "See $KIRBYTOOLSPACKAGEDIR/examples/PHPDocker.sh for an example script.\n"
   fi
 else
   echo -e "\n${txtred}Configuration aborted! Run '$(basename $0)' again to define default values for kirbytools.${txtrst}\n"
