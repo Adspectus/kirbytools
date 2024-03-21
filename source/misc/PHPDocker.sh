@@ -62,21 +62,30 @@ fi
 WORKDIR=$(dirname $SCRIPT)
 SCRIPT=$(basename $SCRIPT)
 
-## When used with kirbytools, read settings and make sure all config files exist
+## The directory of the script needs to be mapped as volume and set as workdir.
+VOLUMES="--volume $WORKDIR:$WORKDIR:ro --workdir $WORKDIR"
+
+## When used with kirbytools, read settings and make sure all config files exist.
+## We also need to map the webroot as a docker volume. Furthermore, we need to
+## check if the kirby subfolder is a symbolic link. If it is a symlink, we need
+## to map the target as a volume for docker, too.
 if [ $KIRBY ];then
   [[ ! -f /etc/kirbytools/kirbyrc ]] && echo "File /etc/kirbytools/kirbyrc not found!" && exit 1
+
   . /etc/kirbytools/kirbyrc
+
   [[ ! -f $KIRBYUSERRC ]] && errMsg "File $KIRBYUSERRC not found! Run 'kirbyconfigure' to define default values for kirbytools in $KIRBYUSERRC!" && exit 1
+
+  VOLUMES="$VOLUMES --volume $WEBROOT:$WEBROOT"
+
+  if [ -L $WEBROOT/kirby ];then
+    TARGET=$(readlink $WEBROOT/kirby)
+    VOLUMES="$VOLUMES --volume $TARGET:$TARGET:ro"
+  fi
 fi
 
-[[ $DEBUG ]] && echo -e "\ndocker run\n  --rm\n  --volume $WEBROOT:$WEBROOT\n  --volume $WORKDIR:$WORKDIR:ro\n  --workdir $WORKDIR\n  php:$PHPVERSION-cli\n  php -f $SCRIPT $WEBROOT $@\n" && exit 0
+[[ $DEBUG ]] && echo -e "\ndocker run  --rm\n  $VOLUMES\n  php:$PHPVERSION-cli\n  php -f $SCRIPT $WEBROOT $@\n" && exit 0
 
-docker run \
-  --rm \
-  --volume $WEBROOT:$WEBROOT \
-  --volume $WORKDIR:$WORKDIR:ro \
-  --workdir $WORKDIR \
-  php:$PHPVERSION-cli \
-  php -f $SCRIPT $WEBROOT "$@"
+docker run --rm $VOLUMES php:$PHPVERSION-cli php -f $SCRIPT $WEBROOT "$@"
 
 exit 0
