@@ -1,3 +1,16 @@
+kirbytools (1.5.5) unstable; urgency=medium
+
+  * 9d9d780 Removed dependency to PHP and added it as suggestion
+    together with docker
+  * e96adaa Only run PHPBIN if it is not empty
+  * 096eb3d Added note in case of empty PHPBIN
+  * 5235f50 Provide local modifications which should not be ov erwritten
+  * 4258562 Added createUserByDocker example script
+  * bc71fa9 Added -f in fron of script for PHPBIN
+  * 10614a9 Changed to an universal PHPBIN replacement
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Thu, 21 Mar 2024 09:01:53 +0100
+
 kirbytools (1.5.4) unstable; urgency=medium
 
   * a2b8944 Added cleanup of cache and sessions dirs
