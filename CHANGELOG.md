@@ -1,6 +1,13 @@
 # Changelog
 
-## v1.5.5 (2024-03-21)
+## v1.5.6 (2024-03-21)
+
+- Fixed issue with symlinked kirby folder [Uwe Gehring] [2953cc3](https://github.com/Adspectus/kirbytools/commit/2953cc36ee1ad8f5a4365e7e3d1bd26672b1541b)
+- Changed variable presets [Uwe Gehring] [62ad1f8](https://github.com/Adspectus/kirbytools/commit/62ad1f8314ed1b4fa740389cb035759dda89153e)
+- Fixed docdir instead of packagedir [Uwe Gehring] [39fa544](https://github.com/Adspectus/kirbytools/commit/39fa544ea995b3c9f3d475c8ecc67b6b48be41a8)
+- Ecplicitly set xz for compression [Uwe Gehring] [29e16c3](https://github.com/Adspectus/kirbytools/commit/29e16c3bfdeae7aeca4a98cc6b18bc287f8ae513)
+
+## v1.5.5 (2024-03-21) Release 1.5.5 (Removed php dependency)
 
 - Changed to an universal PHPBIN replacement [Uwe Gehring] [10614a9](https://github.com/Adspectus/kirbytools/commit/10614a963bef4e15868836245993f1663084554b)
 - Added -f in fron of script for PHPBIN [Uwe Gehring] [bc71fa9](https://github.com/Adspectus/kirbytools/commit/bc71fa9dae33dc60b01b79417d7ca66423e5b39e)
