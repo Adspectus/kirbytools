@@ -1,23 +1,33 @@
 # Changelog
 
-## v1.5.4 (2022-01-27)
+## v1.5.5 (2024-03-21)
+
+- Changed to an universal PHPBIN replacement [Uwe Gehring] [10614a9](https://github.com/Adspectus/kirbytools/commit/10614a963bef4e15868836245993f1663084554b)
+- Added -f in fron of script for PHPBIN [Uwe Gehring] [bc71fa9](https://github.com/Adspectus/kirbytools/commit/bc71fa9dae33dc60b01b79417d7ca66423e5b39e)
+- Added createUserByDocker example script [Uwe Gehring] [4258562](https://github.com/Adspectus/kirbytools/commit/4258562948c4f3a6b7849b4933f73b378dc88081)
+- Provide local modifications which should not be ov erwritten [Uwe Gehring] [5235f50](https://github.com/Adspectus/kirbytools/commit/5235f5040a4bbda012d23783f03288e148627241)
+- Added note in case of empty PHPBIN [Uwe Gehring] [096eb3d](https://github.com/Adspectus/kirbytools/commit/096eb3d51af6cc5cef7dc3f4c245d3bd5597e6f7)
+- Only run PHPBIN if it is not empty [Uwe Gehring] [e96adaa](https://github.com/Adspectus/kirbytools/commit/e96adaacd120a8f8255d6756543d3a1b4a6e94a5)
+- Removed dependency to PHP and added it as suggestion together with docker [Uwe Gehring] [9d9d780](https://github.com/Adspectus/kirbytools/commit/9d9d7805e3c3f812a742ca03c7e5b0bb4d0f2282)
+
+## v1.5.4 (2022-01-27) Release 1.5.4
 
 - Updated README [Uwe Gehring] [0243254](https://github.com/Adspectus/kirbytools/commit/024325461cd4fad5fea38c206df3b8c076018044)
 - Added cleanup of cache and sessions dirs [Uwe Gehring] [a2b8944](https://github.com/Adspectus/kirbytools/commit/a2b8944b1df04b2ce89ca384dc048f33c6b5e26f)
 
-## v1.5.3 (2021-05-09)
+## v1.5.3 (2021-05-09) Release 1.5.3
 
 - Changed the default vhost name [Uwe Gehring] [bf039e5](https://github.com/Adspectus/kirbytools/commit/bf039e5c4777a7a962c206a21ee741a735c7e2f5)
 
-## v1.5.2 (2020-12-29)
+## v1.5.2 (2020-12-29) Release 1.5.2
 
 - Bugfix: Removing old and creating new symlink [Uwe Gehring] [3a99a6c](https://github.com/Adspectus/kirbytools/commit/3a99a6c31438f0c11a195e3f27b1c858911c5ffc)
 
-## v1.5.1 (2020-12-29)
+## v1.5.1 (2020-12-29) Release 1.5.1
 
 - Updated README.md [Uwe Gehring] [e1f0a28](https://github.com/Adspectus/kirbytools/commit/e1f0a28da6d30adc25cbc8de95a02f337d235f34)
 
-## v1.5.0 (2020-12-29)
+## v1.5.0 (2020-12-29) Release 1.5.0
 
 - Finished manpage of kirbychangeversion [Uwe Gehring] [319e4fd](https://github.com/Adspectus/kirbytools/commit/319e4fd3bd9ae1a7608a6bc16937accfe09851d1)
 - First working version [Uwe Gehring] [2a1bef4](https://github.com/Adspectus/kirbytools/commit/2a1bef42b6da43c0e7e541d51efb1a4951290853)
@@ -35,25 +45,25 @@
 - Adding new script kirbychangeversion [Uwe Gehring] [bb14ffd](https://github.com/Adspectus/kirbytools/commit/bb14ffd12311a649ba0b120bebd01bac14e51279)
 - Adding new script kirbychangeversion [Uwe Gehring] [0d7ab07](https://github.com/Adspectus/kirbytools/commit/0d7ab071a844d9f5a0c0de4bf58aa58756701072)
 
-## v1.4.4 (2020-09-02)
+## v1.4.4 (2020-09-02) Release 1.4.4
 
 - Bugfix for function askTag [Uwe Gehring] [84fa33c](https://github.com/Adspectus/kirbytools/commit/84fa33c302c59a86bdd8b28b85ceb81adf55264e)
 
-## v1.4.3 (2020-09-02)
+## v1.4.3 (2020-09-02) Release 1.4.3
 
 - Bugfix for function askTag [Uwe Gehring] [7dff4d2](https://github.com/Adspectus/kirbytools/commit/7dff4d266fe826aaa24d6de63c8900175641f22a)
 - Change: Read version from changelog [Uwe Gehring] [1f705c9](https://github.com/Adspectus/kirbytools/commit/1f705c9858cec4a811449dfa1dfe092e299c3428)
 
-## v1.4.2 (2020-06-18)
+## v1.4.2 (2020-06-18) Release 1.4.2
 
 - Changed order of last section with templates [Uwe Gehring] [977adf3](https://github.com/Adspectus/kirbytools/commit/977adf3feb5c43ab2ed15b36ddf7508fd736a9b7)
 
-## v1.4.1 (2020-06-16)
+## v1.4.1 (2020-06-16) Release 1.4.1
 
 - Fixed typo [Uwe Gehring] [2f41fad](https://github.com/Adspectus/kirbytools/commit/2f41fad147dad7f344714c569a000790d20fa179)
 - Changed README [Uwe Gehring] [b2702d7](https://github.com/Adspectus/kirbytools/commit/b2702d75f9f878d684b9b1cde046ee26ea1e7920)
 
-## v1.4.0 (2020-06-14)
+## v1.4.0 (2020-06-14) Release 1.4.0
 
 - Restart apache2 only if necessary [Uwe Gehring] [a57e63e](https://github.com/Adspectus/kirbytools/commit/a57e63e33fcf3674a929e7b8a7b0f5d4a378ad9b)
 - Ask for confirmation before apache2 restart [Uwe Gehring] [164686d](https://github.com/Adspectus/kirbytools/commit/164686d4f059a2c996c675bae896b21c7be93945)
