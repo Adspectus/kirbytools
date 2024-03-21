@@ -14,3 +14,6 @@ MANDIR=source/man
 override_dh_auto_build:
 	for prg in ${XML};do xsltproc ${XSLOPT} -o ${MANDIR}/ ${XSL} ${MANDIR}/kirby$$prg.1.xml;done
 	dh_auto_build
+
+override_dh_builddeb:
+	dh_builddeb -- -Zxz
