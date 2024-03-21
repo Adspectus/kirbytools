@@ -5,8 +5,10 @@
 ## Do not change this file! Put your changes in $HOME/.kirbyrc. If $HOME/.kirbyrc
 ## does not exists, it will be created by any call to one of the kirbytools scripts
 ## and you can change all variables there.
-KIRBYTOOLSVERSION="$(zcat /usr/share/doc/kirbytools/changelog.gz | head -n1 |  sed -e 's/.*(\(.*\)).*/\1/')"
-KIRBYTOOLSPACKAGEDIR="/usr/share/kirbytools"
+KIRBYTOOLSPACKAGENAME="kirbytools"
+KIRBYTOOLSPACKAGEDIR="/usr/share/$KIRBYTOOLSPACKAGENAME"
+KIRBYTOOLSDOCDIR="/usr/share/doc/$KIRBYTOOLSPACKAGENAME"
+KIRBYTOOLSVERSION="$(zcat $KIRBYTOOLSDOCDIR/changelog.gz | head -n1 |  sed -e 's/.*(\(.*\)).*/\1/')"
 
 # The Github URL where we can find kirby packages to download [https://github.com/getkirby]
 KIRBYGITURL="https://github.com/getkirby"
@@ -15,7 +17,7 @@ KIRBYGITURL="https://github.com/getkirby"
 KIRBYGITAPIURL="https://api.github.com/repos/getkirby"
 
 # The functions file
-KIRBYFUNCTIONS="/etc/kirbytools/kirbyfunctions"
+KIRBYFUNCTIONS="/etc/$KIRBYTOOLSPACKAGENAME/kirbyfunctions"
 
 # The personal configuration file
 KIRBYUSERRC="$HOME/.kirbyrc"
