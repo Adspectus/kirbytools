@@ -1,3 +1,12 @@
+kirbytools (1.5.6) unstable; urgency=medium
+
+  * 29e16c3 Ecplicitly set xz for compression
+  * 39fa544 Fixed docdir instead of packagedir
+  * 62ad1f8 Changed variable presets
+  * 2953cc3 Fixed issue with symlinked kirby folder
+
+ -- Uwe Gehring <adspectus@fastmail.com>  Thu, 21 Mar 2024 15:07:07 +0100
+
 kirbytools (1.5.5) unstable; urgency=medium
 
   * 9d9d780 Removed dependency to PHP and added it as suggestion
